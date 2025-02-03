@@ -2,6 +2,49 @@ import SwiftUI
 import SwiftData
 import UserNotifications
 
+// MARK: - Constants
+private extension WelcomeView {
+    enum Constants {
+        enum VStack {
+            static let spacing: CGFloat = 20
+        }
+        
+        enum Icon {
+            static let frameHeight: CGFloat = 100
+        }
+        
+        enum Button {
+            static let backgroundColor = Color(red: 0.0, green: 0.8, blue: 0.5, opacity: 0.8)
+            static let cornerRadius: CGFloat = 10
+            static let horizontalPadding: CGFloat = 40
+            static let verticalPadding: CGFloat = 10
+            static let frameWidth: CGFloat = 200
+            static let frameHeight: CGFloat = 50
+            static let offsetY: CGFloat = 30
+        }
+        
+        enum Text {
+            static let fontSize: CGFloat = 20
+            static let horizontalPadding: CGFloat = 100
+            static let topPadding: CGFloat = -400
+            static let offsetX: CGFloat = 100
+            static let offsetY: CGFloat = -100
+        }
+        
+        enum HStack {
+            static let spacing: CGFloat = 8
+            static let bottomPadding: CGFloat = 20
+            static let offsetY: CGFloat = 80
+        }
+        
+        enum Circle {
+            static let size: CGFloat = 10
+            static let activeColor = Color(red: 0.0, green: 0.8, blue: 0.5, opacity: 0.8)
+            static let inactiveColor = Color.gray
+        }
+    }
+}
+
 struct WelcomeView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel: WelcomeViewModel
@@ -20,7 +63,7 @@ struct WelcomeView: View {
                 ForEach(viewModel.slides.indices, id: \.self) { index in
                     let slide = viewModel.slides[index]
                     
-                    VStack(spacing: 20) {
+                    VStack(spacing: Constants.VStack.spacing) {
                         if !slide.icons.isEmpty {
                             ZStack {
                                 ForEach(slide.icons) { icon in
@@ -31,7 +74,7 @@ struct WelcomeView: View {
                                         .offset(icon.offset)
                                 }
                             }
-                            .frame(height: 100)
+                            .frame(height: Constants.Icon.frameHeight)
                         }
                         
                         ForEach(slide.slideTitles) { slideTitle in
@@ -55,10 +98,10 @@ struct WelcomeView: View {
                                 requestNotificationPermission()
                             }
                             .padding()
-                            .background(Color(red: 0.0, green: 0.8, blue: 0.5, opacity: 0.8))
+                            .background(Constants.Button.backgroundColor)
                             .foregroundColor(.white)
-                            .cornerRadius(10)
-                            .offset(x: 0, y: 30)
+                            .cornerRadius(Constants.Button.cornerRadius)
+                            .offset(y: Constants.Button.offsetY)
                             .alert(isPresented: $showNotificationAlert) {
                                 if notificationPermissionGranted {
                                     return Alert(title: Text("Notifications Enabled"), message: Text("You will now receive notifications."), dismissButton: .default(Text("OK")))
@@ -68,43 +111,39 @@ struct WelcomeView: View {
                             }
                         }
                         
-
-                        Spacer()
-                        
                         if slide.number == 4 {
                             Text("Search: Allows you to find reminders using keywords in the title, description, or other attributes.")
-                                .font(.system(size: 20))
+                                .font(.system(size: Constants.Text.fontSize))
                                 .foregroundColor(.primary)
                                 .multilineTextAlignment(.leading)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .lineLimit(nil)
-                                .padding(.horizontal, 100)
-                                .padding(.top, -400)
-                                .offset(x:100, y: -100)
-
+                                .padding(.horizontal, Constants.Text.horizontalPadding)
+                                .padding(.top, Constants.Text.topPadding)
+                                .offset(x: Constants.Text.offsetX, y: Constants.Text.offsetY)
                         }
+                        
                         if slide.number == 4 {
                             Text("Sort: Helps you organize your reminders by date, name, or other parameters.")
-                                .font(.system(size: 20))
+                                .font(.system(size: Constants.Text.fontSize))
                                 .foregroundColor(.primary)
                                 .multilineTextAlignment(.leading)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .lineLimit(nil)
-                                .padding(.horizontal, 100)
-                                .padding(.top, -400)
-                                .offset(x:100, y: 150)
-
+                                .padding(.horizontal, Constants.Text.horizontalPadding)
+                                .padding(.top, Constants.Text.topPadding)
+                                .offset(x: Constants.Text.offsetX, y: Constants.Text.offsetY + 150)
                         }
 
-                        HStack(spacing: 8) {
+                        HStack(spacing: Constants.HStack.spacing) {
                             ForEach(viewModel.slides.indices, id: \.self) { i in
                                 Circle()
-                                    .fill(i == viewModel.currentPage ? Color(red: 0.0, green: 0.8, blue: 0.5, opacity: 0.8) : Color.gray)
-                                    .frame(width: 10, height: 10)
+                                    .fill(i == viewModel.currentPage ? Constants.Circle.activeColor : Constants.Circle.inactiveColor)
+                                    .frame(width: Constants.Circle.size, height: Constants.Circle.size)
                             }
                         }
-                        .padding(.bottom, 20)
-                        .offset(x: 0, y: 80)
+                        .padding(.bottom, Constants.HStack.bottomPadding)
+                        .offset(y: Constants.HStack.offsetY)
 
                         if index < viewModel.slides.count - 1 {
                             Button("Next") {
@@ -112,28 +151,26 @@ struct WelcomeView: View {
                                     viewModel.nextPage()
                                 }
                             }
-                            .padding(.horizontal, 40)
-                            .padding(.vertical, 10)
-                            .background(Color(red: 0.0, green: 0.8, blue: 0.5, opacity: 0.8))
+                            .padding(.horizontal, Constants.Button.horizontalPadding)
+                            .padding(.vertical, Constants.Button.verticalPadding)
+                            .background(Constants.Button.backgroundColor)
                             .foregroundColor(.white)
-                            .cornerRadius(20)
-                            .frame(width: 200, height: 50)
-                            .offset(x: 0, y: -40)
+                            .cornerRadius(Constants.Button.cornerRadius)
+                            .frame(width: Constants.Button.frameWidth, height: Constants.Button.frameHeight)
+                            .offset(y: Constants.Button.offsetY)
                         } else {
                             Button("Get Started!") {
                                 viewModel.markWelcomeAsSeen()
                                 dismiss()
                             }
-                            .padding(.horizontal, 40)
-                            .padding(.vertical, 10)
-                            .background(Color(red: 0.0, green: 0.8, blue: 0.5, opacity: 0.8))
+                            .padding(.horizontal, Constants.Button.horizontalPadding)
+                            .padding(.vertical, Constants.Button.verticalPadding)
+                            .background(Constants.Button.backgroundColor)
                             .foregroundColor(.white)
-                            .cornerRadius(20)
-                            .frame(width: 200, height: 50)
-                            .offset(x: 0, y: -40)
-                            
+                            .cornerRadius(Constants.Button.cornerRadius)
+                            .frame(width: Constants.Button.frameWidth, height: Constants.Button.frameHeight)
+                            .offset(y: Constants.Button.offsetY)
                         }
-
                     }
                     .tag(index)
                 }
@@ -155,7 +192,6 @@ struct WelcomeView: View {
                 }
                 Spacer()
             }
-
         }
     }
     
@@ -163,19 +199,15 @@ struct WelcomeView: View {
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             DispatchQueue.main.async {
-                if granted {
-                    notificationPermissionGranted = true
-                } else {
-                    notificationPermissionGranted = false
-                }
+                notificationPermissionGranted = granted
                 showNotificationAlert = true
             }
         }
     }
 }
 
+
+
 #Preview {
     WelcomeView(modelContext: try! ModelContainer(for: WelcomeModel.self).mainContext)
 }
-
-

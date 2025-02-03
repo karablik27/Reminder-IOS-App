@@ -4,8 +4,9 @@ import Foundation
 
 
 struct WelcomeScreenData {
+    // MARK: - Constants
     private enum Constants {
-        // Slide 1
+        
         enum Slide1 {
             static let titleOffsetX: CGFloat = 0
             static let titleOffsetY: CGFloat = 35
@@ -15,7 +16,6 @@ struct WelcomeScreenData {
             static let textFont = Font.system(size: 17)
         }
         
-        // Slide 2
         enum Slide2 {
             static let icon1OffsetX: CGFloat = -130
             static let icon1OffsetY: CGFloat = 110
@@ -41,7 +41,6 @@ struct WelcomeScreenData {
             static let bodyFont = Font.body
         }
         
-        // Slide 3
         enum Slide3 {
             static let titleOffsetX: CGFloat = 0
             static let titleOffsetY: CGFloat = 35
