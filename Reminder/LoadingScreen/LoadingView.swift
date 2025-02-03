@@ -5,10 +5,9 @@ struct LoadingView: View {
     // MARK: - Constants
     private enum Constants {
         enum Image {
-            static let offsetX: CGFloat = 5
-            static let offsetY: CGFloat = -150
-            static let width: CGFloat = 150
-            static let height: CGFloat = 160
+            static let widthMultiplier: CGFloat = 0.4
+            static let heightMultiplier: CGFloat = 0.2
+            static let verticalOffset: CGFloat = -0.15
         }
         
         enum Animation {
@@ -18,8 +17,8 @@ struct LoadingView: View {
         }
         
         enum WelcomeText {
-            static let offsetX: CGFloat = 5
-            static let offsetY: CGFloat = -160
+            static let fontSize: CGFloat = 34
+            static let verticalOffset: CGFloat = -20
         }
     }
     
@@ -30,49 +29,49 @@ struct LoadingView: View {
     @State private var showWelcome = false
 
     var body: some View {
-        ZStack {
-            Color(.systemBackground)
-                .ignoresSafeArea()
+        GeometryReader { geometry in
+            ZStack {
+                Color(.systemBackground)
+                    .ignoresSafeArea()
 
-            VStack {
-                Spacer()
-                
-                Image("App Icon")
-                    .resizable()
-                    .offset(
-                        x: Constants.Image.offsetX,
-                        y: Constants.Image.offsetY
-                    )
-                    .frame(
-                        width: Constants.Image.width,
-                        height: Constants.Image.height
-                    )
-                    .opacity(logoOpacity)
-                    .onAppear {
-                        withAnimation(.easeIn(duration: Constants.Animation.duration)) {
-                            logoOpacity = Constants.Animation.finalOpacity
+                VStack(spacing: 0) {
+                    Spacer()
+                    
+                    // Центральный контейнер для логотипа и текста
+                    VStack(spacing: Constants.WelcomeText.verticalOffset) {
+                        Image("App Icon")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(
+                                width: geometry.size.width * Constants.Image.widthMultiplier,
+                                height: geometry.size.height * Constants.Image.heightMultiplier
+                            )
+                            .offset(y: geometry.size.height * Constants.Image.verticalOffset)
+                            .opacity(logoOpacity)
+
+                        if viewModel.loadingModel.isFirst {
+                            Text("Welcome")
+                                .font(.system(size: Constants.WelcomeText.fontSize, weight: .bold))
+                                .padding()
                         }
                     }
-
-                if viewModel.loadingModel.isFirst {
-                    Text("Welcome")
-                        .padding()
-                        .font(.title)
-                        .offset(
-                            x: Constants.WelcomeText.offsetX,
-                            y: Constants.WelcomeText.offsetY
-                        )
+                    .frame(maxWidth: .infinity)
+                    
+                    Spacer()
                 }
-
-                Spacer()
             }
-        }
-        .fullScreenCover(isPresented: $showWelcome) {
-            WelcomeView(modelContext: modelContext)
-        }
-        .onChange(of: viewModel.isFinishedLoading) { old, new in
-            if new && viewModel.loadingModel.isFirst {
-                showWelcome = true
+            .onAppear {
+                withAnimation(.easeIn(duration: Constants.Animation.duration)) {
+                    logoOpacity = Constants.Animation.finalOpacity
+                }
+            }
+            .fullScreenCover(isPresented: $showWelcome) {
+                WelcomeView(modelContext: modelContext)
+            }
+            .onChange(of: viewModel.isFinishedLoading) { old, new in
+                if new && viewModel.loadingModel.isFirst {
+                    showWelcome = true
+                }
             }
         }
     }
@@ -81,5 +80,3 @@ struct LoadingView: View {
 #Preview {
     LoadingView()
 }
-
-

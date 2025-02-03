@@ -2,68 +2,69 @@ import SwiftUI
 import SwiftData
 import UserNotifications
 
-// MARK: - Constants
-private extension WelcomeView {
-    enum Constants {
-        enum VStack {
-            static let spacing: CGFloat = 20
-        }
-        
-        enum Icon {
-            static let frameHeight: CGFloat = 100
+struct WelcomeView: View {
+    // MARK: - Constants
+    private enum Constants {
+        enum Layout {
+            static let vStackSpacing: CGFloat = UIScreen.main.bounds.height * 0.02
+            static let zStackHeight: CGFloat = UIScreen.main.bounds.height * 0.12
         }
         
         enum Button {
-            static let backgroundColor = Color(red: 0.0, green: 0.8, blue: 0.5, opacity: 0.8)
             static let cornerRadius: CGFloat = 10
-            static let horizontalPadding: CGFloat = 40
-            static let verticalPadding: CGFloat = 10
-            static let frameWidth: CGFloat = 200
-            static let frameHeight: CGFloat = 50
-            static let offsetY: CGFloat = 30
+            static let width: CGFloat = UIScreen.main.bounds.width * 0.5
+            static let height: CGFloat = UIScreen.main.bounds.height * 0.06
+            static let offsetY: CGFloat = UIScreen.main.bounds.height * 0.03
+            static let horizontalPadding: CGFloat = UIScreen.main.bounds.width * 0.05
+            static let verticalPadding: CGFloat = UIScreen.main.bounds.height * 0.01
+            static let navigationOffsetY: CGFloat = -UIScreen.main.bounds.height * 0.05
         }
         
-        enum Text {
-            static let fontSize: CGFloat = 20
-            static let horizontalPadding: CGFloat = 100
-            static let topPadding: CGFloat = -400
-            static let offsetX: CGFloat = 100
-            static let offsetY: CGFloat = -100
+        enum Colors {
+            static let mainGreen = Color(red: 0.0, green: 0.8, blue: 0.5, opacity: 0.8)
         }
         
-        enum HStack {
-            static let spacing: CGFloat = 8
-            static let bottomPadding: CGFloat = 20
-            static let offsetY: CGFloat = 80
+        enum Search {
+            static let fontSize: CGFloat = UIScreen.main.bounds.width * 0.045
+            static let horizontalPadding: CGFloat = UIScreen.main.bounds.width * 0.1
+            static let offsetX: CGFloat = UIScreen.main.bounds.width * 0.24
+            static let offsetY: CGFloat = -UIScreen.main.bounds.height * 0.35
+            static let sortOffsetY: CGFloat = -UIScreen.main.bounds.height * 0.18
+            static let maxTextWidth: CGFloat = UIScreen.main.bounds.width * 0.52
         }
         
-        enum Circle {
-            static let size: CGFloat = 10
-            static let activeColor = Color(red: 0.0, green: 0.8, blue: 0.5, opacity: 0.8)
-            static let inactiveColor = Color.gray
+        enum Dots {
+            static let spacing: CGFloat = UIScreen.main.bounds.width * 0.02
+            static let bottomPadding: CGFloat = UIScreen.main.bounds.height * 0.02
+            static let offsetY: CGFloat = UIScreen.main.bounds.height * 0.08
+            static let size: CGFloat = UIScreen.main.bounds.width * 0.025
+        }
+        
+        enum CloseButton {
+            static let fontSize: CGFloat = UIScreen.main.bounds.width * 0.05
         }
     }
-}
-
-struct WelcomeView: View {
+    
+    // MARK: - Properties
     @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel: WelcomeViewModel
     @Environment(\.dismiss) private var dismiss
-
     @State private var showNotificationAlert = false
     @State private var notificationPermissionGranted = false
-
+    
+    // MARK: - Initialization
     init(modelContext: ModelContext) {
         _viewModel = StateObject(wrappedValue: WelcomeViewModel(modelContext: modelContext))
     }
     
+    // MARK: - Body
     var body: some View {
         ZStack {
             TabView(selection: $viewModel.currentPage) {
                 ForEach(viewModel.slides.indices, id: \.self) { index in
                     let slide = viewModel.slides[index]
                     
-                    VStack(spacing: Constants.VStack.spacing) {
+                    VStack(spacing: Constants.Layout.vStackSpacing) {
                         if !slide.icons.isEmpty {
                             ZStack {
                                 ForEach(slide.icons) { icon in
@@ -74,7 +75,7 @@ struct WelcomeView: View {
                                         .offset(icon.offset)
                                 }
                             }
-                            .frame(height: Constants.Icon.frameHeight)
+                            .frame(height: Constants.Layout.zStackHeight)
                         }
                         
                         ForEach(slide.slideTitles) { slideTitle in
@@ -84,7 +85,7 @@ struct WelcomeView: View {
                                 .offset(slideTitle.offset)
                                 .multilineTextAlignment(.center)
                         }
-
+                        
                         ForEach(slide.slideTexts) { slideText in
                             Text(slideText.text)
                                 .font(slideText.font)
@@ -92,91 +93,93 @@ struct WelcomeView: View {
                                 .offset(slideText.offset)
                                 .multilineTextAlignment(slideText.alignment)
                         }
-                    
+                        
                         if slide.number == 3 {
                             Button("Allow Notifications") {
                                 requestNotificationPermission()
                             }
                             .padding()
-                            .background(Constants.Button.backgroundColor)
+                            .background(Constants.Colors.mainGreen)
                             .foregroundColor(.white)
                             .cornerRadius(Constants.Button.cornerRadius)
                             .offset(y: Constants.Button.offsetY)
                             .alert(isPresented: $showNotificationAlert) {
                                 if notificationPermissionGranted {
-                                    return Alert(title: Text("Notifications Enabled"), message: Text("You will now receive notifications."), dismissButton: .default(Text("OK")))
+                                    return Alert(
+                                        title: Text("Notifications Enabled"),
+                                        message: Text("You will now receive notifications."),
+                                        dismissButton: .default(Text("OK"))
+                                    )
                                 } else {
-                                    return Alert(title: Text("Notifications Denied"), message: Text("You can enable notifications in settings."), dismissButton: .default(Text("OK")))
+                                    return Alert(
+                                        title: Text("Notifications Denied"),
+                                        message: Text("You can enable notifications in settings."),
+                                        dismissButton: .default(Text("OK"))
+                                    )
                                 }
                             }
                         }
                         
-                        if slide.number == 4 {
-                            Text("Search: Allows you to find reminders using keywords in the title, description, or other attributes.")
-                                .font(.system(size: Constants.Text.fontSize))
-                                .foregroundColor(.primary)
-                                .multilineTextAlignment(.leading)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .lineLimit(nil)
-                                .padding(.horizontal, Constants.Text.horizontalPadding)
-                                .padding(.top, Constants.Text.topPadding)
-                                .offset(x: Constants.Text.offsetX, y: Constants.Text.offsetY)
-                        }
+                        Spacer()
                         
                         if slide.number == 4 {
-                            Text("Sort: Helps you organize your reminders by date, name, or other parameters.")
-                                .font(.system(size: Constants.Text.fontSize))
+                            Text("Search: Allows you to find reminders using keywords in the title, description, or other attributes.")
+                                .font(.system(size: Constants.Search.fontSize))
                                 .foregroundColor(.primary)
                                 .multilineTextAlignment(.leading)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .lineLimit(nil)
-                                .padding(.horizontal, Constants.Text.horizontalPadding)
-                                .padding(.top, Constants.Text.topPadding)
-                                .offset(x: Constants.Text.offsetX, y: Constants.Text.offsetY + 150)
-                        }
+                                .frame(maxWidth: Constants.Search.maxTextWidth, alignment: .leading)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .padding(.horizontal, Constants.Search.horizontalPadding)
+                                .offset(x: Constants.Search.offsetX, y: Constants.Search.offsetY)
 
-                        HStack(spacing: Constants.HStack.spacing) {
+                            Text("Sort: Helps you organize your reminders by date, name, or other parameters.")
+                                .font(.system(size: Constants.Search.fontSize))
+                                .foregroundColor(.primary)
+                                .multilineTextAlignment(.leading)
+                                .frame(maxWidth: Constants.Search.maxTextWidth, alignment: .leading)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .padding(.horizontal, Constants.Search.horizontalPadding)
+                                .offset(x: Constants.Search.offsetX, y: Constants.Search.sortOffsetY)
+                        }
+                        
+                        HStack(spacing: Constants.Dots.spacing) {
                             ForEach(viewModel.slides.indices, id: \.self) { i in
                                 Circle()
-                                    .fill(i == viewModel.currentPage ? Constants.Circle.activeColor : Constants.Circle.inactiveColor)
-                                    .frame(width: Constants.Circle.size, height: Constants.Circle.size)
+                                    .fill(i == viewModel.currentPage ? Constants.Colors.mainGreen : Color.gray)
+                                    .frame(width: Constants.Dots.size, height: Constants.Dots.size)
                             }
                         }
-                        .padding(.bottom, Constants.HStack.bottomPadding)
-                        .offset(y: Constants.HStack.offsetY)
-
+                        .padding(.bottom, Constants.Dots.bottomPadding)
+                        .offset(y: Constants.Dots.offsetY)
+                        
                         if index < viewModel.slides.count - 1 {
                             Button("Next") {
                                 withAnimation {
                                     viewModel.nextPage()
                                 }
                             }
-                            .padding(.horizontal, Constants.Button.horizontalPadding)
-                            .padding(.vertical, Constants.Button.verticalPadding)
-                            .background(Constants.Button.backgroundColor)
+                            .frame(width: Constants.Button.width, height: Constants.Button.height)
+                            .background(Constants.Colors.mainGreen)
                             .foregroundColor(.white)
                             .cornerRadius(Constants.Button.cornerRadius)
-                            .frame(width: Constants.Button.frameWidth, height: Constants.Button.frameHeight)
-                            .offset(y: Constants.Button.offsetY)
+                            .offset(y: Constants.Button.navigationOffsetY)
                         } else {
                             Button("Get Started!") {
                                 viewModel.markWelcomeAsSeen()
                                 dismiss()
                             }
-                            .padding(.horizontal, Constants.Button.horizontalPadding)
-                            .padding(.vertical, Constants.Button.verticalPadding)
-                            .background(Constants.Button.backgroundColor)
+                            .frame(width: Constants.Button.width, height: Constants.Button.height)
+                            .background(Constants.Colors.mainGreen)
                             .foregroundColor(.white)
                             .cornerRadius(Constants.Button.cornerRadius)
-                            .frame(width: Constants.Button.frameWidth, height: Constants.Button.frameHeight)
-                            .offset(y: Constants.Button.offsetY)
+                            .offset(y: Constants.Button.navigationOffsetY)
                         }
                     }
                     .tag(index)
                 }
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-
+            
             VStack {
                 HStack {
                     Spacer()
@@ -186,7 +189,7 @@ struct WelcomeView: View {
                     }) {
                         Image(systemName: "chevron.right.2")
                             .foregroundColor(.black)
-                            .font(.system(size: 20))
+                            .font(.system(size: Constants.CloseButton.fontSize))
                     }
                     .padding()
                 }
@@ -195,7 +198,8 @@ struct WelcomeView: View {
         }
     }
     
-    func requestNotificationPermission() {
+    // MARK: - Helper Methods
+    private func requestNotificationPermission() {
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             DispatchQueue.main.async {
@@ -205,8 +209,6 @@ struct WelcomeView: View {
         }
     }
 }
-
-
 
 #Preview {
     WelcomeView(modelContext: try! ModelContainer(for: WelcomeModel.self).mainContext)
