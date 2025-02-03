@@ -51,6 +51,8 @@ struct WelcomeView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showNotificationAlert = false
     @State private var notificationPermissionGranted = false
+    @State private var showMainView = false
+    @AppStorage("isFirstLaunch") private var isFirstLaunch: Bool = true
     
     // MARK: - Initialization
     init(modelContext: ModelContext) {
@@ -59,6 +61,14 @@ struct WelcomeView: View {
     
     // MARK: - Body
     var body: some View {
+        if showMainView {
+            MainView(modelContext: modelContext)
+        } else {
+            welcomeContent
+        }
+    }
+    
+    private var welcomeContent: some View {
         ZStack {
             TabView(selection: $viewModel.currentPage) {
                 ForEach(viewModel.slides.indices, id: \.self) { index in
@@ -165,8 +175,7 @@ struct WelcomeView: View {
                             .offset(y: Constants.Button.navigationOffsetY)
                         } else {
                             Button("Get Started!") {
-                                viewModel.markWelcomeAsSeen()
-                                dismiss()
+                                completeWelcome()
                             }
                             .frame(width: Constants.Button.width, height: Constants.Button.height)
                             .background(Constants.Colors.mainGreen)
@@ -184,8 +193,7 @@ struct WelcomeView: View {
                 HStack {
                     Spacer()
                     Button(action: {
-                        viewModel.markWelcomeAsSeen()
-                        dismiss()
+                        completeWelcome()
                     }) {
                         Image(systemName: "chevron.right.2")
                             .foregroundColor(.black)
@@ -199,6 +207,14 @@ struct WelcomeView: View {
     }
     
     // MARK: - Helper Methods
+    private func completeWelcome() {
+        isFirstLaunch = false
+        viewModel.markWelcomeAsSeen()
+        withAnimation {
+            showMainView = true
+        }
+    }
+    
     private func requestNotificationPermission() {
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
@@ -211,5 +227,5 @@ struct WelcomeView: View {
 }
 
 #Preview {
-    WelcomeView(modelContext: try! ModelContainer(for: WelcomeModel.self).mainContext)
+    WelcomeView(modelContext: try! ModelContainer(for: Event.self).mainContext)
 }

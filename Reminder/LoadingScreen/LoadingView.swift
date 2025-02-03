@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import SwiftData
 
 struct LoadingView: View {
     // MARK: - Constants
@@ -27,6 +28,7 @@ struct LoadingView: View {
     @StateObject private var viewModel = LoadingViewModel()
     @State private var logoOpacity: Double = Constants.Animation.initialOpacity
     @State private var showWelcome = false
+    @State private var showMainView = false
 
     var body: some View {
         GeometryReader { geometry in
@@ -63,14 +65,29 @@ struct LoadingView: View {
             .onAppear {
                 withAnimation(.easeIn(duration: Constants.Animation.duration)) {
                     logoOpacity = Constants.Animation.finalOpacity
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        if viewModel.loadingModel.isFirst {
+                            showWelcome = true
+                        } else {
+                            showMainView = true
+                        }
+                    }
                 }
             }
             .fullScreenCover(isPresented: $showWelcome) {
                 WelcomeView(modelContext: modelContext)
             }
+            .fullScreenCover(isPresented: $showMainView) {
+                MainView(modelContext: modelContext)
+            }
             .onChange(of: viewModel.isFinishedLoading) { old, new in
-                if new && viewModel.loadingModel.isFirst {
-                    showWelcome = true
+                if new {
+                    if viewModel.loadingModel.isFirst {
+                        showMainView = false
+                        showWelcome = true
+                    } else {
+                        showMainView = true
+                    }
                 }
             }
         }
