@@ -2,9 +2,31 @@ import SwiftUI
 import Combine
 
 struct LoadingView: View {
+    // MARK: - Constants
+    private enum Constants {
+        enum Image {
+            static let offsetX: CGFloat = 5
+            static let offsetY: CGFloat = -150
+            static let width: CGFloat = 150
+            static let height: CGFloat = 160
+        }
+        
+        enum Animation {
+            static let duration: Double = 0.5
+            static let initialOpacity: Double = 0.0
+            static let finalOpacity: Double = 1.0
+        }
+        
+        enum WelcomeText {
+            static let offsetX: CGFloat = 5
+            static let offsetY: CGFloat = -160
+        }
+    }
+    
+    // MARK: - Properties
     @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel = LoadingViewModel()
-    @State private var logoOpacity: Double = 0.0
+    @State private var logoOpacity: Double = Constants.Animation.initialOpacity
     @State private var showWelcome = false
 
     var body: some View {
@@ -17,12 +39,18 @@ struct LoadingView: View {
                 
                 Image("App Icon")
                     .resizable()
-                    .offset(x: 5, y: -150)
-                    .frame(width: 150, height: 160)
+                    .offset(
+                        x: Constants.Image.offsetX,
+                        y: Constants.Image.offsetY
+                    )
+                    .frame(
+                        width: Constants.Image.width,
+                        height: Constants.Image.height
+                    )
                     .opacity(logoOpacity)
                     .onAppear {
-                        withAnimation(.easeIn(duration: 0.5)) {
-                            logoOpacity = 1.0
+                        withAnimation(.easeIn(duration: Constants.Animation.duration)) {
+                            logoOpacity = Constants.Animation.finalOpacity
                         }
                     }
 
@@ -30,7 +58,10 @@ struct LoadingView: View {
                     Text("Welcome")
                         .padding()
                         .font(.title)
-                        .offset(x: 5, y: -160)
+                        .offset(
+                            x: Constants.WelcomeText.offsetX,
+                            y: Constants.WelcomeText.offsetY
+                        )
                 }
 
                 Spacer()
