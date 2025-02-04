@@ -7,7 +7,7 @@ enum EventType: String, Codable, CaseIterable {
     case birthdays = "Birthdays"
     case study = "Study"
     case movies = "Movies"
-    case other = "Other" // Добавили case other
+    case other = "Other"
 }
 
 @Model
@@ -17,7 +17,7 @@ class MainModel {
     var date: Date
     var isBookmarked: Bool
     var icon: String
-    var type: EventType // Добавляем тип события
+    var type: EventType
     
     var daysLeft: Int {
         Calendar.current.dateComponents([.day], from: Date(), to: date).day ?? 0
@@ -33,7 +33,7 @@ class MainModel {
         return formatter.string(from: date)
     }
     
-    init(id: UUID = UUID(), title: String, date: Date, isBookmarked: Bool = false, icon: String, type: EventType = .allEvents) { // Изменили значение по умолчанию на .allEvents
+    init(id: UUID = UUID(), title: String, date: Date, isBookmarked: Bool = false, icon: String, type: EventType = .allEvents) {
         self.id = id
         self.title = title
         self.date = date
