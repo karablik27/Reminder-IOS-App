@@ -123,6 +123,7 @@ struct MainView: View {
                     }
                 }
                 
+                
                 VStack {
                     Spacer()
                     CustomTabBar(selectedTab: $selectedTab)
