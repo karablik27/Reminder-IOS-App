@@ -227,5 +227,5 @@ struct WelcomeView: View {
 }
 
 #Preview {
-    WelcomeView(modelContext: try! ModelContainer(for: Event.self).mainContext)
+    WelcomeView(modelContext: try! ModelContainer(for: MainModel.self).mainContext)
 }
