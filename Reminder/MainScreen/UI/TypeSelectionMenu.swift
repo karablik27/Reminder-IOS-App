@@ -86,6 +86,46 @@ struct TypeOptionRow: View {
 
 
 
+struct SortOptionRow: View {
+    let option: MainViewModel.SortOption
+    let isSelected: Bool
+    let action: () -> Void
+    
+    var description: String {
+        switch option {
+        case .byDate:
+            return "You will see events sorted by date."
+        case .byName:
+            return "You will see events sorted by name."
+        }
+    }
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: isSelected ? "star.fill" : "star")
+                    .foregroundColor(isSelected ? .black : .gray)
+                    .frame(width: 24, height: 24)
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(option.rawValue)
+                        .font(.body)
+                        .fontWeight(.medium)
+                        .foregroundColor(.primary)
+                    
+                    Text(description)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                
+                Spacer()
+            }
+            .contentShape(Rectangle())
+        }
+    }
+}
+
 struct SortSelectionMenu: View {
     @Binding var isPresented: Bool
     @Binding var selectedSort: MainViewModel.SortOption
@@ -95,34 +135,24 @@ struct SortSelectionMenu: View {
         NavigationView {
             List {
                 ForEach(MainViewModel.SortOption.allCases, id: \.self) { option in
-                    Button(action: {
-                        selectedSort = option
-                        dismiss()
-                    }) {
-                        HStack {
-                            Image(systemName: selectedSort == option ? "star.fill" : "star")
-                                .foregroundColor(selectedSort == option ? .black : .gray)
-                                .frame(width: 24, height: 24)
-                            
-                            Text(option.rawValue)
-                                .font(.body)
-                                .fontWeight(.medium)
-                                .foregroundColor(.primary)
-                            
-                            Spacer()
+                    SortOptionRow(
+                        option: option,
+                        isSelected: selectedSort == option,
+                        action: {
+                            selectedSort = option
+                            dismiss()
                         }
-                    }
-                    .contentShape(Rectangle())
+                    )
+                    .listRowInsets(EdgeInsets(top: 8, leading: 20, bottom: 8, trailing: 20))
+                    .listRowSeparator(.visible)
                 }
-                .listRowInsets(EdgeInsets(top: 8, leading: 20, bottom: 8, trailing: 20))
-                .listRowSeparator(.visible)
             }
             .listStyle(.plain)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Text("Sort")
-                            .font(.headline)
-                            .foregroundColor(.primary)
+                        .font(.headline)
+                        .foregroundColor(.primary)
                 }
             }
         }
@@ -131,3 +161,4 @@ struct SortSelectionMenu: View {
         .presentationCornerRadius(25)
     }
 }
+

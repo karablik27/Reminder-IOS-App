@@ -38,8 +38,6 @@ struct LoadingView: View {
 
                 VStack(spacing: 0) {
                     Spacer()
-                    
-                    // Центральный контейнер для логотипа и текста
                     VStack(spacing: Constants.WelcomeText.verticalOffset) {
                         Image("App Icon")
                             .resizable()

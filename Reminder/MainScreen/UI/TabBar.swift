@@ -1,29 +1,34 @@
 import SwiftUI
+import SwiftData
 
 private enum Constants {
     enum TabBar {
         static let height: CGFloat = UIScreen.main.bounds.height * 0.1
-        static let iconSize: CGFloat = 24
-        static let plusButtonSize: CGFloat = 60
-        static let cornerRadius: CGFloat = 35
+        static let iconSize: CGFloat = UIScreen.main.bounds.width * 0.06
+        static let plusButtonSize: CGFloat = UIScreen.main.bounds.width * 0.15
+        static let cornerRadius: CGFloat = UIScreen.main.bounds.width * 0.09
+        static let shadowRadius: CGFloat = UIScreen.main.bounds.width * 0.025
+        static let shadowOpacity: Double = 0.15
+        static let strokeWidth: CGFloat = UIScreen.main.bounds.width * 0.007
+        static let plusButtonOffset: CGFloat = UIScreen.main.bounds.height * -0.03
     }
     
     enum Colors {
         static let mainGreen = Color(red: 0.8, green: 1, blue: 0.85, opacity: 0.9)
         static let background = Color(.systemBackground)
     }
-    
 }
 
 struct CustomTabBar: View {
     @Binding var selectedTab: Int
+    @Environment(\.modelContext) private var modelContext // Получаем modelContext через Environment
     
     var body: some View {
         HStack(spacing: 0) {
             TabBarButton(image: "list.bullet", index: 0, selectedTab: $selectedTab)
             TabBarButton(image: "bookmark", index: 1, selectedTab: $selectedTab)
             
-            Button(action: {}) {
+            NavigationLink(destination: AddEventView(viewModel: AddEventViewModel(modelContext: modelContext))) {
                 ZStack {
                     Circle()
                         .fill(.white)

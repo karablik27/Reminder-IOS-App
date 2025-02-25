@@ -1,6 +1,5 @@
 import SwiftUI
 import SwiftData
-import Combine
 
 private enum Constants {
     enum Layout {
@@ -30,9 +29,10 @@ struct MainView: View {
     @State private var showSortMenu = false
     @State private var isTypeExpanded = false
     @State private var isSortExpanded = false
+    @State private var showAddEventView = false
 
     init(modelContext: ModelContext) {
-        _viewModel = StateObject(wrappedValue: MainViewModel(modelContext: modelContext))
+        _viewModel = StateObject(wrappedValue: MainViewModel())
     }
 
     var body: some View {
@@ -61,13 +61,13 @@ struct MainView: View {
                     HStack(spacing: 12) {
                         Button(action: { viewModel.toggleSortDirection() }) {
                             Image(systemName: viewModel.isAscending ? "arrow.up.arrow.down" : "arrow.up.arrow.down")
-                                .foregroundColor(.black)
-                                .frame(width: 25, height: 25)
+                                .foregroundColor(.primary)
+                                .frame(width: 30, height: 30)
                         }
                         
-                        Button(action: { 
+                        Button(action: {
                             isTypeExpanded.toggle()
-                            showTypeMenu = true 
+                            showTypeMenu = true
                         }) {
                             HStack {
                                 Text(viewModel.selectedEventType.rawValue)
@@ -78,12 +78,12 @@ struct MainView: View {
                             .padding(.horizontal, 12)
                             .padding(.vertical, 8)
                             .background(Color(.systemGray6))
-                            .cornerRadius(15)
+                            .cornerRadius(8)
                         }
                         
-                        Button(action: { 
+                        Button(action: {
                             isSortExpanded.toggle()
-                            showSortMenu = true 
+                            showSortMenu = true
                         }) {
                             HStack {
                                 Text(viewModel.selectedSortOption.rawValue)
@@ -94,7 +94,7 @@ struct MainView: View {
                             .padding(.horizontal, 12)
                             .padding(.vertical, 8)
                             .background(Color(.systemGray6))
-                            .cornerRadius(15)
+                            .cornerRadius(8)
                         }
                         
                         Spacer()
@@ -111,7 +111,6 @@ struct MainView: View {
                                 .font(.subheadline)
                                 .foregroundColor(.gray)
                             Spacer()
-                            Spacer()
                         }
                     } else {
                         List {
@@ -123,72 +122,27 @@ struct MainView: View {
                     }
                 }
                 
-                
                 VStack {
                     Spacer()
                     CustomTabBar(selectedTab: $selectedTab)
                 }
             }
-            .sheet(isPresented: $showTypeMenu, onDismiss: {
-                isTypeExpanded = false
-            }) {
-                TypeSelectionMenu(
-                    isPresented: $showTypeMenu,
-                    selectedType: $viewModel.selectedEventType
-                )
+            .environment(\.modelContext, modelContext)
+            
+            .sheet(isPresented: $showTypeMenu, onDismiss: { isTypeExpanded = false }) {
+                TypeSelectionMenu(isPresented: $showTypeMenu, selectedType: $viewModel.selectedEventType)
             }
-            .sheet(isPresented: $showSortMenu, onDismiss: {
-                isSortExpanded = false
-            }) {
-                SortSelectionMenu(
-                    isPresented: $showSortMenu,
-                    selectedSort: $viewModel.selectedSortOption
-                )
+            
+            .sheet(isPresented: $showSortMenu, onDismiss: { isSortExpanded = false }) {
+                SortSelectionMenu(isPresented: $showSortMenu, selectedSort: $viewModel.selectedSortOption)
+            }
+            
+            .sheet(isPresented: $showAddEventView) {
+                AddEventView(viewModel: AddEventViewModel(modelContext: modelContext))
             }
         }
     }
 }
-
-struct EventRow: View {
-    let model: MainModel
-    
-    var body: some View {
-        HStack {
-            Button(action: {}) {
-                Image(systemName: "bookmark")
-                    .foregroundColor(.gray)
-            }
-            .padding(.trailing, 4)
-            
-            Image(systemName: model.icon)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 40, height: 40)
-                .padding(8)
-                .background(Color(.systemGray6))
-                .clipShape(Circle())
-            
-            VStack(alignment: .leading, spacing: 4) {
-                Text(model.title)
-                    .font(.headline)
-                Text("\(model.dateFormatted) \(model.dayOfWeek).")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-            }
-            
-            Spacer()
-            
-            Text("\(model.daysLeft) days")
-                .font(.subheadline)
-            
-            Image(systemName: "chevron.right")
-                .foregroundColor(.gray)
-        }
-        .padding(.vertical, 8)
-    }
-}
-
-
 
 #Preview {
     MainView(modelContext: try! ModelContainer(for: MainModel.self).mainContext)

@@ -1,6 +1,6 @@
-import Foundation
 import SwiftData
 import Combine
+import SwiftUI
 
 class MainViewModel: ObservableObject {
     @Published var models: [MainModel] = []
@@ -9,20 +9,20 @@ class MainViewModel: ObservableObject {
     @Published var selectedEventType: EventType = .allEvents
     @Published var selectedSortOption: SortOption = .byDate
     @Published var isAscending = true
-    
-    private var modelContext: ModelContext
+
+    @Query private var modelsQuery: [MainModel]
+
     private var cancellables = Set<AnyCancellable>()
-    
+
     enum SortOption: String, CaseIterable {
         case byDate = "By date"
         case byName = "By name"
     }
-    
-    init(modelContext: ModelContext) {
-        self.modelContext = modelContext
+
+    init() {
         setupBindings()
     }
-    
+
     private func setupBindings() {
         Publishers.CombineLatest3($selectedEventType, $selectedSortOption, $isAscending)
             .sink { [weak self] type, sort, ascending in
@@ -30,12 +30,13 @@ class MainViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
-    
+
     private func filterAndSortEvents(type: EventType, sort: SortOption, ascending: Bool) {
         // Сначала фильтруем по типу
-        var filteredModels = models
+        var filteredModels = modelsQuery
+        
         if type != .allEvents {
-            filteredModels = models.filter { $0.type == type }
+            filteredModels = modelsQuery.filter { $0.type == type }
         }
         
         // Затем сортируем
@@ -50,9 +51,9 @@ class MainViewModel: ObservableObject {
             }
         }
         
-        models = filteredModels
+        models = filteredModels // Обновляем локальную модель для UI
     }
-    
+
     func toggleSortDirection() {
         isAscending.toggle()
     }
