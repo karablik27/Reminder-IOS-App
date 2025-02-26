@@ -2,13 +2,13 @@ import SwiftUI
 
 struct TypeSelectionMenu: View {
     @Binding var isPresented: Bool
-    @Binding var selectedType: EventType
+    @Binding var selectedType: Enums.EventType
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationView {
             List {
-                ForEach(EventType.allCases, id: \.self) { type in
+                ForEach(Enums.EventType.allCases, id: \.self) { type in
                     TypeOptionRow(
                         type: type,
                         isSelected: selectedType == type,
@@ -37,7 +37,7 @@ struct TypeSelectionMenu: View {
 }
 
 struct TypeOptionRow: View {
-    let type: EventType
+    let type: Enums.EventType
     let isSelected: Bool
     let action: () -> Void
     
