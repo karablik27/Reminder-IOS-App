@@ -87,7 +87,7 @@ struct TypeOptionRow: View {
 
 
 struct SortOptionRow: View {
-    let option: MainViewModel.SortOption
+    let option: SortOption
     let isSelected: Bool
     let action: () -> Void
     
@@ -128,13 +128,13 @@ struct SortOptionRow: View {
 
 struct SortSelectionMenu: View {
     @Binding var isPresented: Bool
-    @Binding var selectedSort: MainViewModel.SortOption
+    @Binding var selectedSort: SortOption
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationView {
             List {
-                ForEach(MainViewModel.SortOption.allCases, id: \.self) { option in
+                ForEach(SortOption.allCases, id: \.self) { option in
                     SortOptionRow(
                         option: option,
                         isSelected: selectedSort == option,

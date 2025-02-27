@@ -6,7 +6,8 @@ struct ReminderApp: App {
     let sharedModelContainer: ModelContainer = {
         let schema = Schema([
             LoadingModel.self,
-            WelcomeModel.self
+            WelcomeModel.self,
+            MainModel.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -24,6 +25,3 @@ struct ReminderApp: App {
         }
     }
 }
-
-
-

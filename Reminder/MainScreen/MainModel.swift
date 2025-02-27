@@ -2,7 +2,6 @@ import Foundation
 import SwiftData
 
 enum Enums {
-    
     enum EventType: String, Codable, CaseIterable {
         case allEvents = "All events"
         case holidays = "Holidays"
@@ -11,8 +10,8 @@ enum Enums {
         case movies = "Movies"
         case other = "Other"
     }
-
-    enum FirstRemind : String, Codable, CaseIterable {
+    
+    enum FirstRemind: String, Codable, CaseIterable {
         case oneHourBefore = "1 hour before"
         case twoHourBefore = "2 hour before"
         case threeHourBefore = "3 hour before"
@@ -32,7 +31,6 @@ enum Enums {
         case seventeenHourBefore = "17 hour before"
         case oneDayBefore = "1 day before"
         case oneWeekBefore = "1 week before"
-        
     }
     
     enum ReminderFrequency: String, Codable, CaseIterable {
@@ -40,7 +38,6 @@ enum Enums {
         case everyDay = "Every 1 day"
         case everyWeek = "Every 1 week"
     }
-    
 }
 
 @Model
@@ -58,17 +55,17 @@ final class MainModel {
     var daysLeft: Int {
         Calendar.current.dateComponents([.day], from: Date(), to: date).day ?? 0
     }
-
+    
     var dateFormatted: String {
         date.formatted(date: .numeric, time: .omitted)
     }
-
+    
     var dayOfWeek: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "EEE"
         return formatter.string(from: date)
     }
-
+    
     init(id: UUID = UUID(), title: String, date: Date, icon: String, type: Enums.EventType = .allEvents, isBookmarked: Bool = false, information: String = "", firstRemind: Enums.FirstRemind = .oneDayBefore, howOften: Enums.ReminderFrequency = .everyHour) {
         self.id = id
         self.title = title
@@ -81,7 +78,3 @@ final class MainModel {
         self.howOften = howOften
     }
 }
-
-
-
-
