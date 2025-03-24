@@ -56,5 +56,32 @@ class MainViewModel: ObservableObject {
         print("Sort direction toggled to \(isAscending ? "ascending" : "descending")")
         loadEvents() // Обновляем события при смене направления сортировки
     }
+    
+    func deleteEvent(_ event: MainModel) {
+            modelContext.delete(event)
+            do {
+                try modelContext.save()
+                loadEvents()
+                print("Событие удалено успешно")
+            } catch {
+                print("Ошибка при удалении события: \(error)")
+            }
+        }
+
+        // Метод для удаления всех событий
+        func deleteAllEvents() {
+            let fetchDescriptor = FetchDescriptor<MainModel>()
+            do {
+                let allEvents = try modelContext.fetch(fetchDescriptor)
+                for event in allEvents {
+                    modelContext.delete(event)
+                }
+                try modelContext.save()
+                loadEvents()
+                print("Все события удалены успешно.")
+            } catch {
+                print("Ошибка при удалении всех событий: \(error)")
+            }
+        }
 }
 

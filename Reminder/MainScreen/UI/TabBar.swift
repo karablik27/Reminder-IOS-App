@@ -21,7 +21,7 @@ private enum Constants {
 
 struct CustomTabBar: View {
     @Binding var selectedTab: Int
-    @Environment(\.modelContext) private var modelContext // Получаем modelContext через Environment
+    @Environment(\.modelContext) private var modelContext
     
     var body: some View {
         HStack(spacing: 0) {

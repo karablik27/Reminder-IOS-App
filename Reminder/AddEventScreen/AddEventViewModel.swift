@@ -7,6 +7,7 @@ class AddEventViewModel: ObservableObject {
 
     @Published var newTitle: String = ""
     @Published var newIcon: String = "App Icon"
+    @Published var newEventDate: Date = Date()
     @Published var newType: Enums.EventType = .allEvents
     @Published var newInformation: String = ""
     @Published var newFirstRemind: Enums.FirstRemind = .oneDayBefore
@@ -47,7 +48,7 @@ class AddEventViewModel: ObservableObject {
         print("First Remind: \(newFirstRemind.rawValue)")
         print("How Often: \(newHowOften.rawValue)")
 
-        let newEvent = MainModel(id: UUID(), title: newTitle, date: Date(), icon: newIcon, type: newType, isBookmarked: false, information: newInformation, firstRemind: newFirstRemind, howOften: newHowOften)
+        let newEvent = MainModel(id: UUID(), title: newTitle, date: newEventDate, icon: newIcon, type: newType, isBookmarked: false, information: newInformation, firstRemind: newFirstRemind, howOften: newHowOften)
         
         modelContext.insert(newEvent)
         
@@ -60,14 +61,6 @@ class AddEventViewModel: ObservableObject {
         }
     }
 
-    func deleteEvent(event: MainModel) {
-        modelContext.delete(event)
-        do {
-            try modelContext.save()
-        } catch {
-            print("Ошибка при удалении: \(error)")
-        }
-    }
 
     private func resetForm() {
         newTitle = ""

@@ -53,8 +53,11 @@ final class MainModel {
     @Attribute var howOften: Enums.ReminderFrequency
 
     var daysLeft: Int {
-        Calendar.current.dateComponents([.day], from: Date(), to: date).day ?? 0
+        let today = Calendar.current.startOfDay(for: Date())
+        let eventDay = Calendar.current.startOfDay(for: date)
+        return Calendar.current.dateComponents([.day], from: today, to: eventDay).day ?? 0
     }
+
     
     var dateFormatted: String {
         date.formatted(date: .numeric, time: .omitted)
@@ -65,6 +68,11 @@ final class MainModel {
         formatter.dateFormat = "EEE"
         return formatter.string(from: date)
     }
+    
+    var isBeautiful: Bool {
+            return date.isBeautifulDate()
+    }
+
     
     init(id: UUID = UUID(), title: String, date: Date, icon: String, type: Enums.EventType = .allEvents, isBookmarked: Bool = false, information: String = "", firstRemind: Enums.FirstRemind = .oneDayBefore, howOften: Enums.ReminderFrequency = .everyHour) {
         self.id = id
