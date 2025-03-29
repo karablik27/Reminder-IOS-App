@@ -67,7 +67,6 @@ extension Date {
             return true
         }
         
-        // Если ни один из критериев не сработал — возвращаем false
         return false
     }
     

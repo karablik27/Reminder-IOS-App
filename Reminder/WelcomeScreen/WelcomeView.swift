@@ -20,9 +20,6 @@ struct WelcomeView: View {
             static let navigationOffsetY: CGFloat = -UIScreen.main.bounds.height * 0.05
         }
         
-        enum Colors {
-            static let mainGreen = Color(red: 0.0, green: 0.8, blue: 0.5, opacity: 0.8)
-        }
         
         enum Search {
             static let fontSize: CGFloat = UIScreen.main.bounds.width * 0.045
@@ -109,7 +106,7 @@ struct WelcomeView: View {
                                 requestNotificationPermission()
                             }
                             .padding()
-                            .background(Constants.Colors.mainGreen)
+                            .background(Colors.mainGreen)
                             .foregroundColor(.white)
                             .cornerRadius(Constants.Button.cornerRadius)
                             .offset(y: Constants.Button.offsetY)
@@ -155,7 +152,7 @@ struct WelcomeView: View {
                         HStack(spacing: Constants.Dots.spacing) {
                             ForEach(viewModel.slides.indices, id: \.self) { i in
                                 Circle()
-                                    .fill(i == viewModel.currentPage ? Constants.Colors.mainGreen : Color.gray)
+                                    .fill(i == viewModel.currentPage ? Colors.mainGreen : Color.gray)
                                     .frame(width: Constants.Dots.size, height: Constants.Dots.size)
                             }
                         }
@@ -169,7 +166,7 @@ struct WelcomeView: View {
                                 }
                             }
                             .frame(width: Constants.Button.width, height: Constants.Button.height)
-                            .background(Constants.Colors.mainGreen)
+                            .background(Colors.mainGreen)
                             .foregroundColor(.white)
                             .cornerRadius(Constants.Button.cornerRadius)
                             .offset(y: Constants.Button.navigationOffsetY)
@@ -178,7 +175,7 @@ struct WelcomeView: View {
                                 completeWelcome()
                             }
                             .frame(width: Constants.Button.width, height: Constants.Button.height)
-                            .background(Constants.Colors.mainGreen)
+                            .background(Colors.mainGreen)
                             .foregroundColor(.white)
                             .cornerRadius(Constants.Button.cornerRadius)
                             .offset(y: Constants.Button.navigationOffsetY)

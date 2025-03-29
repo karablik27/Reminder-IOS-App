@@ -39,7 +39,7 @@ struct LoadingView: View {
                 VStack(spacing: 0) {
                     Spacer()
                     VStack(spacing: Constants.WelcomeText.verticalOffset) {
-                        Image("App Icon")
+                        Image("default_icon")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(

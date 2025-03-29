@@ -29,12 +29,10 @@ struct CustomCalendarView: View {
             .padding(.top, 20)
             
             
-            // Горизонтальная линия под надписью
             Divider()
-                .padding(.top, 8)    // Отступ между текстом и линией
-                .padding(.bottom, 8) // Дополнительный отступ после лини
+                .padding(.top, 8)
+                .padding(.bottom, 8)
             
-            // Pickers для месяца и года
             HStack {
                 Picker("Month", selection: $selectedMonth) {
                     ForEach(months, id: \.self) { month in
@@ -80,15 +78,12 @@ extension CustomCalendarView {
         let calendar = Calendar.current
         let dayNumber = calendar.component(.day, from: date)
         
-        // Проверяем, красивая ли дата
         let isBeautiful = date.isBeautifulDate()
         
-        // Проверяем, является ли эта дата выбранной
         let isSelected = calendar.isDate(date, inSameDayAs: selectedDate)
         
         return Text("\(dayNumber)")
             .font(.body)
-            // Если дата красивая — зелёный текст
             .foregroundColor(isBeautiful ? .green : .primary)
             .frame(width: 32, height: 32)
             .background(
@@ -97,14 +92,13 @@ extension CustomCalendarView {
             )
             .overlay(
                 Circle()
-                    .stroke(isSelected ? Color.green : Color.clear, lineWidth: 2)
+                    .stroke(isSelected ? Colors.mainGreen : Color.clear, lineWidth: 2)
             )
             .onTapGesture {
                 selectedDate = date
             }
     }
     
-    /// Отображаем только дни текущего месяца
     private func generateDaysInMonth(month: Int, year: Int) -> [Date] {
         var result: [Date] = []
         guard let startOfMonth = dateFrom(day: 1, month: month, year: year) else {
@@ -122,7 +116,6 @@ extension CustomCalendarView {
         return result
     }
     
-    /// Шапка с днями недели (Mon, Tue, ...)
     private var dayOfWeekHeader: some View {
         HStack {
             ForEach(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"], id: \.self) { weekday in
@@ -156,7 +149,6 @@ extension CustomCalendarView {
         return Calendar.current.date(from: comps)
     }
     
-    /// Если выбранный день (selectedDate) не существует в новом месяце, корректируем.
     private func updateSelectedDateIfNeeded() {
         let calendar = Calendar.current
         let currentDay = calendar.component(.day, from: selectedDate)

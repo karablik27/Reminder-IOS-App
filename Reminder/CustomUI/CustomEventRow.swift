@@ -1,5 +1,13 @@
 import SwiftUI
 struct EventRow: View {
+    
+    private enum Constants {
+        static let frameWidthAndHeight: CGFloat = 40
+        static let padding: CGFloat = 8
+        static let paddingTrailing: CGFloat = 4
+        static let paddingVertical: CGFloat = 8
+        static let spacing: CGFloat = 4
+    }
     let model: MainModel
     
     var body: some View {
@@ -8,17 +16,17 @@ struct EventRow: View {
                 Image(systemName: "bookmark")
                     .foregroundColor(.gray)
             }
-            .padding(.trailing, 4)
+            .padding(.trailing, Constants.paddingTrailing)
             
             Image(systemName: model.icon)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 40, height: 40)
-                .padding(8)
+                .frame(width: Constants.frameWidthAndHeight, height: Constants.frameWidthAndHeight)
+                .padding(Constants.padding)
                 .background(Color(.systemGray6))
                 .clipShape(Circle())
             
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: Constants.spacing) {
                 Text(model.title)
                     .font(.headline)
                 Text("\(model.dateFormatted) \(model.dayOfWeek).")
@@ -34,7 +42,7 @@ struct EventRow: View {
             Image(systemName: "chevron.right")
                 .foregroundColor(.gray)
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, Constants.paddingVertical)
     }
 }
 

@@ -10,12 +10,16 @@ private enum Constants {
         static let emptyStateVerticalPadding: CGFloat = 0
     }
     enum Colors {
-        static let mainGreen = Color(red: 0.8, green: 1, blue: 0.85, opacity: 0.9)
         static let background = Color(.systemBackground)
+        static let mainGreen = Color(red: 0.8, green: 1, blue: 0.85, opacity: 0.9)
     }
     enum Text {
         static let titleSize: CGFloat = 34
         static let subtitleSize: CGFloat = 17
+    }
+    enum TabBar {
+        static let height: CGFloat = 64
+        static let extraHeight: CGFloat = 80
     }
 }
 
@@ -23,151 +27,89 @@ struct MainView: View {
     @State private var selectedTab: Int = 0
     @StateObject private var viewModel: MainViewModel
     @Environment(\.modelContext) private var modelContext
+    
     @State private var showTypeMenu = false
     @State private var showSortMenu = false
     @State private var isTypeExpanded = false
     @State private var isSortExpanded = false
-    @State private var showAddEventView = false
     @State private var showDeleteOptions = false
-
+    
     init(modelContext: ModelContext) {
         _viewModel = StateObject(wrappedValue: MainViewModel(modelContext: modelContext))
-        print("MainView initialized with modelContext: \(modelContext)")
     }
-
+    
     var body: some View {
         NavigationView {
-            ZStack {
+            ZStack(alignment: .bottom) {
+                
+                // Фон экрана
                 Constants.Colors.background.ignoresSafeArea()
+                
+                // Основной контент
                 VStack(spacing: 0) {
-                    // Заголовок и кнопка поиска
-                    HStack {
-                        Text("Events")
-                            .font(.system(size: Constants.Text.titleSize, weight: .bold))
-                        Spacer()
-                        Button(action: {
-                            // Действие для поиска (при необходимости)
-                        }) {
-                            Image(systemName: "magnifyingglass")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 25, height: 25)
-                                .foregroundColor(.primary)
-                                .padding(10)
-                        }
-                    }
-                    .padding()
-
-                    // Панель с сортировкой, выбором типа, сортировкой и кнопкой удаления
-                    HStack(spacing: 12) {
-                        Button(action: {
-                            viewModel.toggleSortDirection()
-                        }) {
-                            Image(systemName: viewModel.isAscending ? "arrow.up.arrow.down" : "arrow.up.arrow.down")
-                                .foregroundColor(.primary)
-                                .frame(width: 30, height: 30)
-                        }
-                        Button(action: {
-                            isTypeExpanded.toggle()
-                            showTypeMenu = true
-                        }) {
-                            HStack {
-                                Text(viewModel.selectedEventType.rawValue)
-                                    .foregroundColor(.primary)
-                                Image(systemName: isTypeExpanded ? "chevron.up" : "chevron.down")
-                                    .foregroundColor(.primary)
-                            }
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                        }
-                        Button(action: {
-                            isSortExpanded.toggle()
-                            showSortMenu = true
-                        }) {
-                            HStack {
-                                Text(viewModel.selectedSortOption.rawValue)
-                                    .foregroundColor(.primary)
-                                Image(systemName: isSortExpanded ? "chevron.up" : "chevron.down")
-                                    .foregroundColor(.primary)
-                            }
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                        }
-                        // Кнопка удаления (иконка мусорки)
-                        Button(action: {
-                            showDeleteOptions = true
-                        }) {
-                            Image(systemName: "trash")
-                                .foregroundColor(.red)
-                                .frame(width: 30, height: 30)
-                        }
-                        Spacer()
-                    }
-                    .padding(.horizontal)
+                    // -- Заголовок
+                    headerSection
+                        // Уменьшаем отступы
+                        .padding(.horizontal)
+                        .padding(.top, 8)
+                        .padding(.bottom, 4)
                     
-                    // Отображение списка событий или пустого состояния
-                    if viewModel.filteredModels.isEmpty {
-                        VStack(spacing: Constants.Layout.emptyStateSpacing) {
-                            Spacer(minLength: Constants.Layout.emptyStateVerticalPadding)
-                            Text("No events yet")
-                                .font(.title2)
-                                .foregroundColor(.gray)
-                            Text("Add your first event using + button")
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
-                            Spacer()
-                        }
-                    } else {
-                        List {
-                            ForEach(viewModel.filteredModels) { model in
-                                HStack {
-                                    VStack(alignment: .leading) {
-                                        Text(model.title)
-                                            .font(.headline)
-                                        Text("\(model.dateFormatted) \(model.dayOfWeek)")
-                                            .font(.subheadline)
-                                            .foregroundColor(.secondary)
-                                    }
-                                    Spacer()
-                                    Text("\(model.daysLeft) days")
-                                        .font(.subheadline)
-                                        .foregroundColor(.primary)
-                                    Image(systemName: "chevron.right")
-                                        .foregroundColor(.primary)
-                                }
-                                .padding(.vertical, Constants.Layout.padding)
-                                .background(Color.white)
-                                .cornerRadius(Constants.Layout.cornerRadius)
-                                .shadow(radius: 5)
-                            }
-                        }
-                        .listStyle(PlainListStyle())
-                    }
+                    // -- Блок сортировки
+                    sortSection
+                        // Тоже уменьшаем/убираем лишние отступы
+                        .padding(.horizontal)
+                        .padding(.bottom, 4)
+                    
+                    // Divider под сортировкой
+                    Divider()
+                        .frame(height: 1)
+                        .background(Color(.systemGray4))
+                        .padding(.bottom, 4)
+                    
+                    contentSection
                 }
+                // Отступ снизу, чтобы контент не налез на таббар
+                .padding(.bottom, Constants.TabBar.height)
+                
+                // «Прямоугольник» для фона под таббаром + нижний Divider
+                VStack(spacing: 0) {
+                    Spacer()
+                    
+                    // Нижний Divider (если нужен)
+                    Divider()
+                        .frame(height: 1)
+                        .background(Color(.systemGray4))
+                    
+                    Rectangle()
+                        .fill(Constants.Colors.background)
+                        .frame(height: Constants.TabBar.height + Constants.TabBar.extraHeight)
+                        .ignoresSafeArea(edges: .horizontal)
+                }
+                .ignoresSafeArea(edges: .bottom)
+                
+                // Таббар поверх
                 VStack {
                     Spacer()
                     CustomTabBar(selectedTab: $selectedTab)
                 }
             }
             .environment(\.modelContext, modelContext)
+            // Меню выбора типа
             .sheet(isPresented: $showTypeMenu, onDismiss: {
                 isTypeExpanded = false
                 viewModel.loadEvents()
             }) {
                 TypeSelectionMenu(isPresented: $showTypeMenu, selectedType: $viewModel.selectedEventType)
             }
+            // Меню выбора сортировки
             .sheet(isPresented: $showSortMenu, onDismiss: {
                 isSortExpanded = false
                 viewModel.loadEvents()
             }) {
                 SortSelectionMenu(isPresented: $showSortMenu, selectedSort: $viewModel.selectedSortOption)
             }
-            
-            .confirmationDialog("Delete Events", isPresented: $showDeleteOptions, titleVisibility: .visible) {
+            // Диалог удаления
+            .confirmationDialog("Delete Events", isPresented: $showDeleteOptions) {
                 Button("Delete All Events", role: .destructive) {
                     viewModel.deleteAllEvents()
                 }
@@ -177,9 +119,146 @@ struct MainView: View {
         .onAppear {
             viewModel.loadEvents()
         }
+        .environmentObject(viewModel)
     }
-}
-
-#Preview {
-    MainView(modelContext: try! ModelContainer(for: MainModel.self).mainContext)
+    
+    // MARK: - Subviews
+    
+    private var headerSection: some View {
+        HStack {
+            Text("Events")
+                .font(.system(size: Constants.Text.titleSize, weight: .bold))
+            Spacer()
+            Button(action: {
+                // Поиск
+            }) {
+                Image(systemName: "magnifyingglass")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 25, height: 25)
+                    .foregroundColor(.primary)
+                    .padding(10)
+            }
+        }
+    }
+    
+    private var sortSection: some View {
+        HStack(spacing: 12) {
+            Button(action: {
+                viewModel.toggleSortDirection()
+            }) {
+                Image(systemName: viewModel.isAscending ? "arrow.up.arrow.down" : "arrow.up.arrow.down")
+                    .foregroundColor(.primary)
+                    .frame(width: 30, height: 30)
+            }
+            
+            Button(action: {
+                isTypeExpanded.toggle()
+                showTypeMenu = true
+            }) {
+                HStack {
+                    Text(viewModel.selectedEventType.rawValue)
+                        .foregroundColor(.primary)
+                    Image(systemName: isTypeExpanded ? "chevron.up" : "chevron.down")
+                        .foregroundColor(.primary)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(Color(.systemGray6))
+                .cornerRadius(8)
+            }
+            
+            Button(action: {
+                isSortExpanded.toggle()
+                showSortMenu = true
+            }) {
+                HStack {
+                    Text(viewModel.selectedSortOption.rawValue)
+                        .foregroundColor(.primary)
+                    Image(systemName: isSortExpanded ? "chevron.up" : "chevron.down")
+                        .foregroundColor(.primary)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(Color(.systemGray6))
+                .cornerRadius(8)
+            }
+            
+            Button(action: {
+                showDeleteOptions = true
+            }) {
+                Image(systemName: "trash")
+                    .foregroundColor(.red)
+                    .frame(width: 30, height: 30)
+            }
+            Spacer()
+        }
+    }
+    
+    private var contentSection: some View {
+        Group {
+            if viewModel.filteredModels.isEmpty {
+                VStack(spacing: Constants.Layout.emptyStateSpacing) {
+                    Spacer(minLength: Constants.Layout.emptyStateVerticalPadding)
+                    Text("No events yet")
+                        .font(.title2)
+                        .foregroundColor(.gray)
+                    Text("Add your first event using + button")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                    Spacer()
+                }
+            } else {
+                List {
+                    ForEach(viewModel.filteredModels.indices, id: \.self) { i in
+                        let model = viewModel.filteredModels[i]
+                        
+                        VStack(spacing: 0) {
+                            HStack {
+                                if let iconData = model.iconData,
+                                   let uiImage = UIImage(data: iconData) {
+                                    Image(uiImage: uiImage)
+                                        .resizable()
+                                        .frame(width: 60, height: 60)
+                                        .clipShape(Circle())
+                                        .padding(.leading, 10)
+                                        .padding(.trailing, 8)
+                                } else {
+                                    Image(model.icon)
+                                        .resizable()
+                                        .frame(width: 60, height: 60)
+                                        .clipShape(Circle())
+                                        .padding(.leading, 10)
+                                        .padding(.trailing, 8)
+                                }
+                                
+                                VStack(alignment: .leading) {
+                                    Text(model.title)
+                                        .font(.headline)
+                                    Text("\(model.dateFormatted) \(model.dayOfWeek)")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                Text(viewModel.timeLeftString(for: model))
+                                    .font(.subheadline)
+                                    .foregroundColor(.primary)
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 18, weight: .semibold))
+                                    .offset(x: -8)
+                                    .foregroundColor(.primary)
+                            }
+                            .padding(.vertical, 16)
+                            .background(Color.white)
+                            .cornerRadius(Constants.Layout.cornerRadius)
+                            .shadow(radius: 5)
+                        }
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
+                    }
+                }
+                .listStyle(PlainListStyle())
+            }
+        }
+    }
 }

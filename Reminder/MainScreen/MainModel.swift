@@ -1,44 +1,7 @@
 import Foundation
 import SwiftData
 
-enum Enums {
-    enum EventType: String, Codable, CaseIterable {
-        case allEvents = "All events"
-        case holidays = "Holidays"
-        case birthdays = "Birthdays"
-        case study = "Study"
-        case movies = "Movies"
-        case other = "Other"
-    }
-    
-    enum FirstRemind: String, Codable, CaseIterable {
-        case oneHourBefore = "1 hour before"
-        case twoHourBefore = "2 hour before"
-        case threeHourBefore = "3 hour before"
-        case fourHourBefore = "4 hour before"
-        case fiveHourBefore = "5 hour before"
-        case sixHourBefore = "6 hour before"
-        case sevenHourBefore = "7 hour before"
-        case eightHourBefore = "8 hour before"
-        case nineHourBefore = "9 hour before"
-        case tenHourBefore = "10 hour before"
-        case elevenHourBefore = "11 hour before"
-        case twelveHourBefore = "12 hour before"
-        case thirteenHourBefore = "13 hour before"
-        case fourteenHourBefore = "14 hour before"
-        case fifteenHourBefore = "15 hour before"
-        case sixteenHourBefore = "16 hour before"
-        case seventeenHourBefore = "17 hour before"
-        case oneDayBefore = "1 day before"
-        case oneWeekBefore = "1 week before"
-    }
-    
-    enum ReminderFrequency: String, Codable, CaseIterable {
-        case everyHour = "Every 1 hour"
-        case everyDay = "Every 1 day"
-        case everyWeek = "Every 1 week"
-    }
-}
+
 
 @Model
 final class MainModel {
@@ -46,11 +9,12 @@ final class MainModel {
     @Attribute var title: String
     @Attribute var date: Date
     @Attribute var icon: String
-    @Attribute var type: Enums.EventType
+    @Attribute var type: EventTypeMain
     @Attribute var isBookmarked: Bool = false
     @Attribute var information: String
-    @Attribute var firstRemind: Enums.FirstRemind
-    @Attribute var howOften: Enums.ReminderFrequency
+    @Attribute var firstRemind: FirstRemind
+    @Attribute var howOften: ReminderFrequency
+    @Attribute var iconData: Data? = nil
 
     var daysLeft: Int {
         let today = Calendar.current.startOfDay(for: Date())
@@ -65,7 +29,7 @@ final class MainModel {
     
     var dayOfWeek: String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "EEE"
+        formatter.dateFormat = "EEE" + "."
         return formatter.string(from: date)
     }
     
@@ -74,7 +38,7 @@ final class MainModel {
     }
 
     
-    init(id: UUID = UUID(), title: String, date: Date, icon: String, type: Enums.EventType = .allEvents, isBookmarked: Bool = false, information: String = "", firstRemind: Enums.FirstRemind = .oneDayBefore, howOften: Enums.ReminderFrequency = .everyHour) {
+    init(id: UUID = UUID(), title: String, date: Date, icon: String, type: EventTypeMain = .allEvents, isBookmarked: Bool = false, information: String = "", firstRemind: FirstRemind = .oneDayBefore, howOften: ReminderFrequency = .everyHour) {
         self.id = id
         self.title = title
         self.date = date
