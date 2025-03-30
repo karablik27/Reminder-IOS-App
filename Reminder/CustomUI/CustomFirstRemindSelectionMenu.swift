@@ -1,6 +1,19 @@
 import SwiftUI
 
 struct CustomFirstRemindSelectionMenuAddEvent: View {
+    
+    private enum Constants {
+        
+        static let listRowInsetsTop: CGFloat = 8
+        static let listRowInsetsLeading: CGFloat = 16
+        static let listRowInsetsBottom: CGFloat = 8
+        static let listRowInsetsTrailing: CGFloat = 16
+        
+        static let presentationDetentsHeight: CGFloat = 304
+        static let presentationCornerRadius: CGFloat = 24
+        
+    }
+    
     @Binding var isPresented: Bool
     @Binding var selectedRemind: FirstRemind
     @Environment(\.dismiss) private var dismiss
@@ -13,12 +26,11 @@ struct CustomFirstRemindSelectionMenuAddEvent: View {
                         remind: remind,
                         isSelected: selectedRemind == remind,
                         action: {
-                            // При выборе пункта
                             selectedRemind = remind
                             dismiss()
                         }
                     )
-                    .listRowInsets(EdgeInsets(top: 8, leading: 20, bottom: 8, trailing: 20))
+                    .listRowInsets(EdgeInsets(top: Constants.listRowInsetsTop, leading: Constants.listRowInsetsLeading, bottom: Constants.listRowInsetsBottom, trailing: Constants.listRowInsetsTrailing))
                     .listRowSeparator(.visible)
                 }
             }
@@ -31,13 +43,23 @@ struct CustomFirstRemindSelectionMenuAddEvent: View {
                 }
             }
         }
-        .presentationDetents([.height(300), .medium, .large])
+        .presentationDetents([.height(Constants.presentationDetentsHeight), .medium, .large])
         .presentationDragIndicator(.visible)
-        .presentationCornerRadius(25)
+        .presentationCornerRadius(Constants.presentationCornerRadius)
     }
 }
 
 struct RemindOptionRowAddEvent: View {
+    
+    private enum Constants {
+        static let HstackSpacing: CGFloat = 12
+        
+        static let ImageFrameWidth: CGFloat = 24
+        static let ImageFrameHeight: CGFloat = 24
+        
+        static let VstackSpacing: CGFloat = 4
+    }
+    
     let remind: FirstRemind
     let isSelected: Bool
     let action: () -> Void
@@ -48,12 +70,12 @@ struct RemindOptionRowAddEvent: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(alignment: .top, spacing: 12) {
+            HStack(alignment: .top, spacing: Constants.HstackSpacing) {
                 Image(systemName: isSelected ? "star.fill" : "star")
                     .foregroundColor(isSelected ? .black : .gray)
-                    .frame(width: 24, height: 24)
+                    .frame(width: Constants.ImageFrameWidth, height: Constants.ImageFrameHeight)
                 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: Constants.VstackSpacing) {
                     Text(remind.rawValue)
                         .font(.body)
                         .fontWeight(.medium)

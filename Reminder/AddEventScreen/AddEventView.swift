@@ -84,7 +84,7 @@ struct AddEventView: View {
         .navigationBarBackButtonHidden(true)
         .sheet(isPresented: $showCalendarSheet) {
             CustomCalendarView(selectedDate: $viewModel.newEventDate)
-                .presentationDetents([.medium, .large])
+                .presentationDetents([.height(520), .large])
                 .presentationDragIndicator(.visible)
                 .presentationCornerRadius(25)
         }
