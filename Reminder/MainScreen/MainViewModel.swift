@@ -49,6 +49,16 @@ class MainViewModel: ObservableObject {
             filteredModels = []
         }
     }
+    
+    func toggleBookmark(for event: MainModel) {
+        event.isBookmarked.toggle()
+        do {
+            try modelContext.save()
+            loadEvents()
+        } catch {
+            print("Ошибка при сохранении isBookmarked: \(error)")
+        }
+    }
 
     func toggleSortDirection() {
         isAscending.toggle()

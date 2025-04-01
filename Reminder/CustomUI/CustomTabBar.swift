@@ -1,67 +1,104 @@
 import SwiftUI
 import SwiftData
 
-private enum Constants {
-    enum TabBar {
-        // Размер зелёного бара
-        static let height: CGFloat = UIScreen.main.bounds.height * 0.1
-        static let iconSize: CGFloat = UIScreen.main.bounds.width * 0.06
+// MARK: - Shape для фона таб-бара с вырезом (notch) в верхней центральной части
+struct TabBarShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        let cornerRadius = Constants.TabBar.cornerRadius
+        let notchRadius = Constants.TabBar.notchRadius
+        let notchWidth = notchRadius * 2
+        let centerX = rect.midX
         
-        // Большой белый круг (декоративный)
-        static let whiteCircleSize: CGFloat = 60
+        // Основной скруглённый прямоугольник
+        let mainPath = Path(roundedRect: rect, cornerRadius: cornerRadius)
         
-        // Меньший круг-кнопка (NavigationLink), внутри белый с чёрной границей
-        static let linkCircleSize: CGFloat = 44
+        // Дуга (полукруг), которую вычтем из основного прямоугольника
+        var notchPath = Path()
+        notchPath.addArc(
+            center: CGPoint(x: centerX, y: rect.minY),
+            radius: notchWidth / 2,
+            startAngle: .degrees(360),
+            endAngle: .degrees(180),
+            clockwise: false
+        )
         
-        // Радиус и тень бара
-        static let cornerRadius: CGFloat = UIScreen.main.bounds.width * 0.09
-        static let shadowRadius: CGFloat = UIScreen.main.bounds.width * 0.025
-        static let shadowOpacity: Double = 0.15
-        
-        // Смещение кругов вверх
-        static let circleOffsetY: CGFloat = -0.55 * whiteCircleSize
+        // Возвращаем разность: (скруглённый прямоугольник) - (дуга)
+        return mainPath.subtracting(notchPath)
     }
 }
 
+// MARK: - Константы
+private enum Constants {
+    enum TabBar {
+        /// Высота таб-бара (без выреза)
+        static let height: CGFloat = 90
+        /// Размер иконок
+        static let iconSize: CGFloat = 28
+        /// Радиус выреза (notch)
+        static let notchRadius: CGFloat = 35
+        /// Размер кнопки "plus" – NavigationLink
+        static let linkCircleSize: CGFloat = 44
+        /// Скругление таб-бара
+        static let cornerRadius: CGFloat = 56
+        /// Параметры тени
+        static let shadowRadius: CGFloat = 12
+        static let shadowOpacity: Double = 0.15
+        
+        static let offsetY: CGFloat = -37
+    }
+    
+    enum Colors {
+        static let GreenTabBar = Color(red: 0.8, green: 1, blue: 0.85, opacity: 0.9)
+    }
+}
+
+// MARK: - CustomTabBar
 struct CustomTabBar: View {
     @Binding var selectedTab: Int
     @Environment(\.modelContext) private var modelContext
     
     var body: some View {
         ZStack {
-            // 1) Зелёный таббар
-            HStack(spacing: 0) {
-                TabBarButton(image: "list.bullet", index: 0, selectedTab: $selectedTab)
-                TabBarButton(image: "bookmark",   index: 1, selectedTab: $selectedTab)
-                TabBarButton(image: "clock",      index: 2, selectedTab: $selectedTab)
-                TabBarButton(image: "gearshape",  index: 3, selectedTab: $selectedTab)
-            }
-            .padding()
-            .frame(height: Constants.TabBar.height)
-            .background(Colors.GreenTabBar) // Ваш зелёный цвет
-            .cornerRadius(Constants.TabBar.cornerRadius)
-            .shadow(
-                color: .black.opacity(Constants.TabBar.shadowOpacity),
-                radius: Constants.TabBar.shadowRadius,
-                x: 0, y: 0
-            )
-            .padding(.horizontal)
-            
-            // 2) Большой белый круг (декоративный, не кнопка)
-            Circle()
+            // 1) Белая базовая форма – чтобы в области выреза был белый фон
+            TabBarShape()
                 .fill(Color.white)
-                .frame(width: Constants.TabBar.whiteCircleSize,
-                       height: Constants.TabBar.whiteCircleSize)
-                .offset(y: Constants.TabBar.circleOffsetY)
+                .frame(height: Constants.TabBar.height)
+                .padding(.horizontal)
+                .zIndex(0)
             
-            // 3) Меньший круг - NavigationLink (белый, с чёрной окантовкой, чёрным плюсом)
+            // 2) Зеленая форма таб-бара с вырезом и тенью
+            TabBarShape()
+                .fill(Constants.Colors.GreenTabBar)
+                .shadow(
+                    color: .black.opacity(Constants.TabBar.shadowOpacity),
+                    radius: Constants.TabBar.shadowRadius,
+                    x: 0, y: 0
+                )
+                .frame(height: Constants.TabBar.height)
+                .zIndex(1)
+            
+            // 3) Иконки таб-бара
+            HStack {
+                TabBarButton(image: "list.bullet", index: 0, selectedTab: $selectedTab)
+                TabBarButton(image: "bookmark", index: 1, selectedTab: $selectedTab)
+                
+                // Отступ для кнопки "plus"
+                Spacer(minLength: Constants.TabBar.notchRadius * 2)
+                
+                TabBarButton(image: "clock", index: 2, selectedTab: $selectedTab)
+                TabBarButton(image: "gearshape", index: 3, selectedTab: $selectedTab)
+            }
+            .padding(.horizontal, 32)
+            .frame(height: Constants.TabBar.height)
+            .zIndex(2)
+            
+            // 4) Кнопка плюс в центре выреза
             NavigationLink(destination: AddEventView(viewModel: AddEventViewModel(modelContext: modelContext))) {
                 ZStack {
                     Circle()
                         .fill(Color.white)
                         .overlay(
-                            Circle()
-                                .stroke(.black, lineWidth: 4)
+                            Circle().stroke(Color.black, lineWidth: 4)
                         )
                         .frame(width: Constants.TabBar.linkCircleSize,
                                height: Constants.TabBar.linkCircleSize)
@@ -71,12 +108,14 @@ struct CustomTabBar: View {
                         .foregroundColor(.black)
                 }
             }
-            // Смещаем так же, чтобы быть в центре белого круга
-            .offset(y: Constants.TabBar.circleOffsetY)
+            .offset(y: Constants.TabBar.offsetY)
+            .zIndex(3)
         }
+        .frame(maxWidth: .infinity)
     }
 }
 
+// MARK: - Пример кнопки-иконки
 struct TabBarButton: View {
     let image: String
     let index: Int

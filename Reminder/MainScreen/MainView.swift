@@ -1,30 +1,63 @@
 import SwiftUI
 import SwiftData
 
+
+// MARK: - Constants
 private enum Constants {
-    enum Layout {
-        static let cornerRadius: CGFloat = 25
-        static let iconSize: CGFloat = 60
-        static let padding: CGFloat = 16
-        static let emptyStateSpacing: CGFloat = 10
-        static let emptyStateVerticalPadding: CGFloat = 0
+    
+    enum body {
+        static let VStackspacing: CGFloat = 0
+        static let headerSectionPadding: CGFloat = 8
     }
-    enum Colors {
-        static let background = Color(.systemBackground)
-        static let mainGreen = Color(red: 0.8, green: 1, blue: 0.85, opacity: 0.9)
-    }
+    
     enum Text {
-        static let titleSize: CGFloat = 34
-        static let subtitleSize: CGFloat = 17
+        static let subtitleSize: CGFloat = 16
+        static let titleSize: CGFloat = 32
     }
+    
+    enum headerSection {
+        static let iconSize: CGFloat = 32
+        static let padding: CGFloat = 8
+    }
+    
+    enum sortSection {
+        static let spacing: CGFloat = 8
+        static let paddingHorizontal: CGFloat = 8
+        static let paddingVertical: CGFloat = 8
+        static let cornerRadius: CGFloat = 8
+        static let iconSize: CGFloat = 32
+    }
+    
+    enum contentSection {
+        static let VStackspacing: CGFloat = 8
+        static let spacer: CGFloat = 0
+        static let frameHeight: CGFloat = 104
+    }
+    
     enum TabBar {
+        static let selectedTab: Int = 0
         static let height: CGFloat = 64
-        static let extraHeight: CGFloat = 80
+        static let extraHeight: CGFloat = 72
     }
+    
+    enum eventCell {
+        static let HStackspacing: CGFloat = 0
+        static let shadowRadius: CGFloat = 4
+        static let paddingLeading: CGFloat = 8
+        static let paddingTrailing: CGFloat = 8
+        static let paddingVertical: CGFloat = 16
+        static let fontSizeIcon: CGFloat = 24
+        static let cornerRadius: CGFloat = 24
+        static let iconSize: CGFloat = 64
+    }
+    
+    
 }
 
+
+// MARK: - MainView
 struct MainView: View {
-    @State private var selectedTab: Int = 0
+    @State private var selectedTab: Int = Constants.TabBar.selectedTab
     @StateObject private var viewModel: MainViewModel
     @Environment(\.modelContext) private var modelContext
     
@@ -32,88 +65,61 @@ struct MainView: View {
     @State private var showSortMenu = false
     @State private var isTypeExpanded = false
     @State private var isSortExpanded = false
+    
     @State private var showDeleteOptions = false
+    @State private var showDeleteAllAlert = false
     
     init(modelContext: ModelContext) {
         _viewModel = StateObject(wrappedValue: MainViewModel(modelContext: modelContext))
     }
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack(alignment: .bottom) {
-                
-                // Фон экрана
-                Constants.Colors.background.ignoresSafeArea()
-                
-                // Основной контент
-                VStack(spacing: 0) {
-                    // -- Заголовок
+                Colors.background.ignoresSafeArea()
+                VStack(spacing: Constants.body.VStackspacing) {
                     headerSection
-                        // Уменьшаем отступы
                         .padding(.horizontal)
-                        .padding(.top, 8)
-                        .padding(.bottom, 4)
-                    
-                    // -- Блок сортировки
+                        .padding(.top, Constants.body.headerSectionPadding)
                     sortSection
-                        // Тоже уменьшаем/убираем лишние отступы
                         .padding(.horizontal)
-                        .padding(.bottom, 4)
-                    
-                    // Divider под сортировкой
-                    Divider()
-                        .frame(height: 1)
-                        .background(Color(.systemGray4))
-                        .padding(.bottom, 4)
-                    
                     contentSection
                 }
-                // Отступ снизу, чтобы контент не налез на таббар
-                .padding(.bottom, Constants.TabBar.height)
-                
-                // «Прямоугольник» для фона под таббаром + нижний Divider
-                VStack(spacing: 0) {
-                    Spacer()
-                    
-                    // Нижний Divider (если нужен)
-                    Divider()
-                        .frame(height: 1)
-                        .background(Color(.systemGray4))
-                    
-                    Rectangle()
-                        .fill(Constants.Colors.background)
-                        .frame(height: Constants.TabBar.height + Constants.TabBar.extraHeight)
-                        .ignoresSafeArea(edges: .horizontal)
-                }
-                .ignoresSafeArea(edges: .bottom)
-                
-                // Таббар поверх
-                VStack {
-                    Spacer()
+                .safeAreaInset(edge: .bottom) {
                     CustomTabBar(selectedTab: $selectedTab)
+                        .padding(.horizontal)
                 }
             }
             .environment(\.modelContext, modelContext)
-            // Меню выбора типа
             .sheet(isPresented: $showTypeMenu, onDismiss: {
                 isTypeExpanded = false
                 viewModel.loadEvents()
             }) {
-                TypeSelectionMenu(isPresented: $showTypeMenu, selectedType: $viewModel.selectedEventType)
+                TypeSelectionMenu(isPresented: $showTypeMenu,
+                                  selectedType: $viewModel.selectedEventType)
             }
-            // Меню выбора сортировки
             .sheet(isPresented: $showSortMenu, onDismiss: {
                 isSortExpanded = false
                 viewModel.loadEvents()
             }) {
-                SortSelectionMenu(isPresented: $showSortMenu, selectedSort: $viewModel.selectedSortOption)
+                SortSelectionMenu(isPresented: $showSortMenu,
+                                  selectedSort: $viewModel.selectedSortOption)
             }
-            // Диалог удаления
-            .confirmationDialog("Delete Events", isPresented: $showDeleteOptions) {
+            .confirmationDialog("Delete Events", isPresented: $showDeleteOptions, titleVisibility: .visible) {
                 Button("Delete All Events", role: .destructive) {
-                    viewModel.deleteAllEvents()
+                    showDeleteAllAlert = true
                 }
                 Button("Cancel", role: .cancel) { }
+            } message: {
+                Text("Are you sure you want to delete all events?")
+            }
+            .alert("Do you want to delete all events?", isPresented: $showDeleteAllAlert) {
+                Button("Delete", role: .destructive) {
+                    viewModel.deleteAllEvents()
+                }
+                Button("Don't delete", role: .cancel) { }
+            } message: {
+                Text("When all events are deleted, all data about them will be erased without the possibility of recovery.")
             }
         }
         .onAppear {
@@ -123,142 +129,180 @@ struct MainView: View {
     }
     
     // MARK: - Subviews
-    
     private var headerSection: some View {
         HStack {
             Text("Events")
                 .font(.system(size: Constants.Text.titleSize, weight: .bold))
             Spacer()
-            Button(action: {
-                // Поиск
-            }) {
+            Button {
+            } label: {
                 Image(systemName: "magnifyingglass")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 25, height: 25)
+                    .frame(width: Constants.headerSection.iconSize, height: Constants.headerSection.iconSize)
                     .foregroundColor(.primary)
-                    .padding(10)
+                    .padding(Constants.headerSection.padding)
             }
         }
     }
     
     private var sortSection: some View {
-        HStack(spacing: 12) {
-            Button(action: {
+        HStack(spacing: Constants.sortSection.spacing) {
+            Button {
                 viewModel.toggleSortDirection()
-            }) {
-                Image(systemName: viewModel.isAscending ? "arrow.up.arrow.down" : "arrow.up.arrow.down")
+            } label: {
+                Image(systemName: "arrow.up.arrow.down")
                     .foregroundColor(.primary)
-                    .frame(width: 30, height: 30)
+                    .frame(width: Constants.sortSection.iconSize, height: Constants.sortSection.iconSize)
             }
-            
-            Button(action: {
+            Button {
                 isTypeExpanded.toggle()
                 showTypeMenu = true
-            }) {
+            } label: {
                 HStack {
                     Text(viewModel.selectedEventType.rawValue)
                         .foregroundColor(.primary)
                     Image(systemName: isTypeExpanded ? "chevron.up" : "chevron.down")
                         .foregroundColor(.primary)
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
+                .padding(.horizontal, Constants.sortSection.paddingHorizontal)
+                .padding(.vertical, Constants.sortSection.paddingVertical)
                 .background(Color(.systemGray6))
-                .cornerRadius(8)
+                .cornerRadius(Constants.sortSection.cornerRadius)
             }
-            
-            Button(action: {
+            Button {
                 isSortExpanded.toggle()
                 showSortMenu = true
-            }) {
+            } label: {
                 HStack {
                     Text(viewModel.selectedSortOption.rawValue)
                         .foregroundColor(.primary)
                     Image(systemName: isSortExpanded ? "chevron.up" : "chevron.down")
                         .foregroundColor(.primary)
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
+                .padding(.horizontal, Constants.sortSection.paddingHorizontal)
+                .padding(.vertical, Constants.sortSection.paddingVertical)
                 .background(Color(.systemGray6))
-                .cornerRadius(8)
+                .cornerRadius(Constants.sortSection.cornerRadius)
             }
-            
-            Button(action: {
+            Button {
                 showDeleteOptions = true
-            }) {
+            } label: {
                 Image(systemName: "trash")
                     .foregroundColor(.red)
-                    .frame(width: 30, height: 30)
+                    .frame(width: Constants.sortSection.iconSize, height: Constants.sortSection.iconSize)
             }
             Spacer()
         }
     }
     
+    // MARK: - Content Section
     private var contentSection: some View {
-        Group {
-            if viewModel.filteredModels.isEmpty {
-                VStack(spacing: Constants.Layout.emptyStateSpacing) {
-                    Spacer(minLength: Constants.Layout.emptyStateVerticalPadding)
+        if viewModel.filteredModels.isEmpty {
+            return AnyView(
+                VStack(spacing: Constants.contentSection.VStackspacing) {
+                    Spacer(minLength: Constants.contentSection.spacer)
                     Text("No events yet")
                         .font(.title2)
                         .foregroundColor(.gray)
-                    Text("Add your first event using + button")
+                    Text("Add your first event using the + button")
                         .font(.subheadline)
                         .foregroundColor(.gray)
                     Spacer()
                 }
-            } else {
+            )
+        } else {
+            return AnyView(
                 List {
-                    ForEach(viewModel.filteredModels.indices, id: \.self) { i in
-                        let model = viewModel.filteredModels[i]
-                        
-                        VStack(spacing: 0) {
-                            HStack {
-                                if let iconData = model.iconData,
-                                   let uiImage = UIImage(data: iconData) {
-                                    Image(uiImage: uiImage)
-                                        .resizable()
-                                        .frame(width: 60, height: 60)
-                                        .clipShape(Circle())
-                                        .padding(.leading, 10)
-                                        .padding(.trailing, 8)
-                                } else {
-                                    Image(model.icon)
-                                        .resizable()
-                                        .frame(width: 60, height: 60)
-                                        .clipShape(Circle())
-                                        .padding(.leading, 10)
-                                        .padding(.trailing, 8)
-                                }
-                                
-                                VStack(alignment: .leading) {
-                                    Text(model.title)
-                                        .font(.headline)
-                                    Text("\(model.dateFormatted) \(model.dayOfWeek)")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                }
-                                Spacer()
-                                Text(viewModel.timeLeftString(for: model))
-                                    .font(.subheadline)
-                                    .foregroundColor(.primary)
-                                Image(systemName: "chevron.right")
-                                    .font(.system(size: 18, weight: .semibold))
-                                    .offset(x: -8)
-                                    .foregroundColor(.primary)
+                    ForEach(viewModel.filteredModels, id: \.id) { model in
+                        GeometryReader { geo in
+                            eventCell(model: model)
+                                .opacity(computeOpacity(geo))
+                                .animation(.easeInOut, value: computeOpacity(geo))
+                                .contentShape(Rectangle())
+                        }
+                        .frame(height: Constants.contentSection.frameHeight)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(role: .destructive) {
+                                viewModel.deleteEvent(model)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
                             }
-                            .padding(.vertical, 16)
-                            .background(Color.white)
-                            .cornerRadius(Constants.Layout.cornerRadius)
-                            .shadow(radius: 5)
                         }
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
                     }
                 }
                 .listStyle(PlainListStyle())
-            }
+            )
         }
+    }
+    
+    private func computeOpacity(_ geo: GeometryProxy) -> Double {
+            let cellFrame = geo.frame(in: .global)
+            let screenHeight = UIScreen.main.bounds.height
+            let safeAreaInsets = UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .flatMap { $0.windows }
+                .first?.safeAreaInsets.bottom ?? 0
+            let tabBarTop = screenHeight - (Constants.TabBar.height + safeAreaInsets)
+            let margin: CGFloat = 8
+            return cellFrame.maxY >= tabBarTop + margin ? 0 : 1
+        }
+    
+    // MARK: - eventCell
+    private func eventCell(model: MainModel) -> some View {
+        HStack {
+            Button {
+                viewModel.toggleBookmark(for: model)
+            } label: {
+                Image(systemName: model.isBookmarked ? "bookmark.fill" : "bookmark")
+                    .font(.system(size: Constants.eventCell.fontSizeIcon))
+                    .foregroundColor(model.isBookmarked ? .black : .gray)
+            }
+            .buttonStyle(PlainButtonStyle())
+            .padding(.leading, Constants.eventCell.paddingLeading)
+            .padding(.trailing, Constants.eventCell.paddingTrailing)
+            if let iconData = model.iconData, let uiImage = UIImage(data: iconData) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .frame(width: Constants.eventCell.iconSize, height: Constants.eventCell.iconSize)
+                    .clipShape(Circle())
+            } else {
+                Image(model.icon)
+                    .resizable()
+                    .frame(width: Constants.eventCell.iconSize, height: Constants.eventCell.iconSize)
+                    .clipShape(Circle())
+            }
+            
+            VStack(alignment: .leading) {
+                Text(model.title)
+                    .font(.headline)
+                Text("\(model.dateFormatted) \(model.dayOfWeek)")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+            NavigationLink {
+                EditEventView(viewModel: EditEventViewModel(modelContext: modelContext, event: model))
+                    .environmentObject(viewModel)
+            } label: {
+                HStack(spacing: Constants.eventCell.HStackspacing) {
+                    Text(viewModel.timeLeftString(for: model))
+                        .font(.subheadline)
+                        .foregroundColor(.primary)
+                }
+                .frame(maxWidth: .infinity, alignment: .trailing)
+            }
+            .buttonStyle(PlainButtonStyle())
+            
+            Spacer()
+        }
+        
+        .padding(.vertical, Constants.eventCell.paddingVertical)
+        .background(Color.white)
+        .cornerRadius(Constants.eventCell.cornerRadius)
+        .shadow(radius: Constants.eventCell.shadowRadius)
     }
 }
