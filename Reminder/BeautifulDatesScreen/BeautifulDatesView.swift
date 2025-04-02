@@ -51,89 +51,81 @@ private enum Constants {
 }
 
 // MARK: - MainView
-struct MainView: View {
-    @State private var selectedTab: Int = Constants.TabBar.selectedTab
-    @StateObject private var viewModel: MainViewModel
+struct BeautifulDatesView: View {
     @Environment(\.modelContext) private var modelContext
+    @StateObject private var viewModel: BeautifulDatesViewModel
     
     @State private var showTypeMenu = false
     @State private var showSortMenu = false
     @State private var isTypeExpanded = false
     @State private var isSortExpanded = false
-    
     @State private var showDeleteOptions = false
     @State private var showDeleteAllAlert = false
     
     init(modelContext: ModelContext) {
-        _viewModel = StateObject(wrappedValue: MainViewModel(modelContext: modelContext))
+        _viewModel = StateObject(wrappedValue: BeautifulDatesViewModel(modelContext: modelContext))
     }
     
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottom) {
                 Colors.background.ignoresSafeArea()
-                
                 VStack(spacing: Constants.body.VStackspacing) {
                     headerSection
                         .padding(.horizontal)
                         .padding(.top, Constants.body.headerSectionPadding)
-                    
                     sortSection
                         .padding(.horizontal)
-                    
                     contentSection
                 }
             }
             .environment(\.modelContext, modelContext)
             .sheet(isPresented: $showTypeMenu, onDismiss: {
                 isTypeExpanded = false
-                viewModel.loadEvents()
+                viewModel.loadBeautifulEvents()
             }) {
                 TypeSelectionMenu(isPresented: $showTypeMenu,
                                   selectedType: $viewModel.selectedEventType)
             }
             .sheet(isPresented: $showSortMenu, onDismiss: {
                 isSortExpanded = false
-                viewModel.loadEvents()
+                viewModel.loadBeautifulEvents()
             }) {
                 SortSelectionMenu(isPresented: $showSortMenu,
                                   selectedSort: $viewModel.selectedSortOption)
             }
-            .confirmationDialog("Delete Events", isPresented: $showDeleteOptions, titleVisibility: .visible) {
-                Button("Delete All Events", role: .destructive) {
+            .confirmationDialog("Delete Beautiful Events", isPresented: $showDeleteOptions, titleVisibility: .visible) {
+                Button("Delete All Beautiful Events", role: .destructive) {
                     showDeleteAllAlert = true
                 }
                 Button("Cancel", role: .cancel) { }
             } message: {
-                Text("Are you sure you want to delete all events?")
+                Text("Are you sure you want to delete all beautiful events?")
             }
-            .alert("Do you want to delete all events?", isPresented: $showDeleteAllAlert) {
+            .alert("Delete Beautiful Events", isPresented: $showDeleteAllAlert) {
                 Button("Delete", role: .destructive) {
-                    viewModel.deleteAllEvents()
+                    viewModel.deleteAllBeautifulEvents()
                 }
                 Button("Don't delete", role: .cancel) { }
             } message: {
-                Text("When all events are deleted, all data about them will be erased without the possibility of recovery.")
+                Text("When all beautiful events are deleted, they cannot be recovered.")
             }
         }
         .onAppear {
-            viewModel.loadEvents()
+            viewModel.loadBeautifulEvents()
         }
         .environmentObject(viewModel)
     }
 }
 
-
 // MARK: - Private subviews
-private extension MainView {
+private extension BeautifulDatesView {
     
     private var headerSection: some View {
         HStack {
-            Text("Events")
+            Text("Beautiful Dates")
                 .font(.system(size: Constants.Text.titleSize, weight: .bold))
-            
             Spacer()
-            
             Button {
             } label: {
                 Image(systemName: "gearshape")
@@ -211,7 +203,7 @@ private extension MainView {
                     Image(systemName: "magnifyingglass")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: Constants.sortSection.iconSize, height: Constants.sortSection.iconSize)
+                        .frame(width: Constants.sortSection.iconSize, height: Constants.sortSection.iconSize) // Настройте по вкусу
                         .foregroundColor(.primary)
                 }
             }
@@ -219,18 +211,17 @@ private extension MainView {
            
         }
     }
-
     
-    // MARK: - Content Section
+    // MARK: Content Section
     private var contentSection: some View {
         if viewModel.filteredModels.isEmpty {
             return AnyView(
                 VStack(spacing: Constants.contentSection.VStackspacing) {
                     Spacer(minLength: Constants.contentSection.spacer)
-                    Text("No events yet")
+                    Text("No beautiful events yet")
                         .font(.title2)
                         .foregroundColor(.gray)
-                    Text("Add your first event using the + button")
+                    Text("Beautiful events will appear here")
                         .font(.subheadline)
                         .foregroundColor(.gray)
                     Spacer()
@@ -269,7 +260,7 @@ private extension MainView {
         }
     }
     
-    // MARK: - Compute Opacity
+    // MARK: Compute Opacity
     private func computeOpacity(_ geo: GeometryProxy) -> Double {
         let cellFrame = geo.frame(in: .global)
         let screenHeight = UIScreen.main.bounds.height
@@ -282,7 +273,7 @@ private extension MainView {
         return cellFrame.maxY >= tabBarTop + margin ? 0 : 1
     }
     
-    // MARK: - Event Cell
+    // MARK: Event Cell
     private func eventCell(model: MainModel) -> some View {
         HStack {
             Button {
@@ -317,7 +308,6 @@ private extension MainView {
             }
             
             Spacer()
-            
             NavigationLink {
                 EditEventView(viewModel: EditEventViewModel(modelContext: modelContext, event: model))
                     .environmentObject(viewModel)
@@ -330,7 +320,6 @@ private extension MainView {
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }
             .buttonStyle(PlainButtonStyle())
-            
             Spacer()
         }
         .padding(.vertical, Constants.eventCell.paddingVertical)
@@ -338,4 +327,5 @@ private extension MainView {
         .cornerRadius(Constants.eventCell.cornerRadius)
         .shadow(radius: Constants.eventCell.shadowRadius)
     }
+    
 }

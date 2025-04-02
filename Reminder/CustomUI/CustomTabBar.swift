@@ -52,21 +52,21 @@ private enum Constants {
     }
 }
 
-// MARK: - CustomTabBar
+
 struct CustomTabBar: View {
     @Binding var selectedTab: Int
     @Environment(\.modelContext) private var modelContext
-    
+
     var body: some View {
         ZStack {
-            // 1) Белая базовая форма – чтобы в области выреза был белый фон
+            // 1) Базовая белая форма
             TabBarShape()
                 .fill(Color.white)
                 .frame(height: Constants.TabBar.height)
                 .padding(.horizontal)
                 .zIndex(0)
             
-            // 2) Зеленая форма таб-бара с вырезом и тенью
+            // 2) Зеленая форма таб-бара с тенью
             TabBarShape()
                 .fill(Constants.Colors.GreenTabBar)
                 .shadow(
@@ -79,20 +79,24 @@ struct CustomTabBar: View {
             
             // 3) Иконки таб-бара
             HStack {
+                // Вкладка "Events"
                 TabBarButton(image: "list.bullet", index: 0, selectedTab: $selectedTab)
-                TabBarButton(image: "bookmark", index: 1, selectedTab: $selectedTab)
+                
+                TabBarButton(image: "sparkles", index: 1, selectedTab: $selectedTab)
                 
                 // Отступ для кнопки "plus"
                 Spacer(minLength: Constants.TabBar.notchRadius * 2)
                 
-                TabBarButton(image: "clock", index: 2, selectedTab: $selectedTab)
-                TabBarButton(image: "gearshape", index: 3, selectedTab: $selectedTab)
+                TabBarButton(image: "bookmark", index: 2, selectedTab: $selectedTab)
+                // Дополнительные вкладки
+                TabBarButton(image: "clock", index: 3, selectedTab: $selectedTab)
+                
             }
             .padding(.horizontal, 32)
             .frame(height: Constants.TabBar.height)
             .zIndex(2)
             
-            // 4) Кнопка плюс в центре выреза
+            // 4) Кнопка "plus" в центре выреза
             NavigationLink(destination: AddEventView(viewModel: AddEventViewModel(modelContext: modelContext))) {
                 ZStack {
                     Circle()
@@ -108,19 +112,21 @@ struct CustomTabBar: View {
                         .foregroundColor(.black)
                 }
             }
+            .buttonStyle(PlainButtonStyle()) // Добавляем стиль кнопки
             .offset(y: Constants.TabBar.offsetY)
             .zIndex(3)
+
         }
         .frame(maxWidth: .infinity)
     }
 }
 
-// MARK: - Пример кнопки-иконки
+// Пример кнопки для таб-бара:
 struct TabBarButton: View {
     let image: String
     let index: Int
     @Binding var selectedTab: Int
-    
+
     var body: some View {
         Button {
             selectedTab = index
@@ -132,3 +138,4 @@ struct TabBarButton: View {
         }
     }
 }
+

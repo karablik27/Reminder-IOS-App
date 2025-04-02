@@ -134,7 +134,7 @@ struct EditEventView: View {
             }
         }
         // MARK: - Sync local image -> viewModel.iconData
-        .onChange(of: userSelectedImage) { newImage in
+        .onChange(of: userSelectedImage) { newImage, oldImage in
             if let newImage = newImage {
                 viewModel.iconData = newImage.jpegData(compressionQuality: 1.0)
             } else {

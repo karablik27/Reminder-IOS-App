@@ -3,40 +3,32 @@ import SwiftData
 
 struct AddEventView: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject var mainViewModel: MainViewModel
     @ObservedObject var viewModel: AddEventViewModel
-    
-    // Состояния для выбора иконки
+
+    // Состояния для выбора иконки и показа шитов
     @State private var showIconActionSheet = false
     @State private var showImagePicker = false
     @State private var showCamera = false
     @State private var userSelectedImage: UIImage? = nil
     
-    // Состояния для календаря / выбора типа
     @State private var showCalendarSheet = false
     @State private var showTimePicker = false
     @State private var showTypeMenu = false
     @State private var isTypeExpanded = false
     
-    // Состояния для FirstRemind
     @State private var showRemindMenu = false
     @State private var isRemindExpanded = false
     
-    // Состояния для HowOften
     @State private var showHowOftenMenu = false
     @State private var isHowOftenExpanded = false
-    
-    
+
     var body: some View {
         ZStack {
             Color.white.ignoresSafeArea()
-            
             VStack(spacing: 0) {
-                // MARK: - Кастомный верхний бар
+                // Верхняя панель
                 HStack {
-                    Button(action: {
-                        dismiss()
-                    }) {
+                    Button { dismiss() } label: {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 18, weight: .bold))
                             .foregroundColor(.black)
@@ -46,35 +38,18 @@ struct AddEventView: View {
                 .padding(.horizontal)
                 .padding(.vertical, 8)
                 
-                // MARK: - Основная прокрутка
+                // Скролл-контент
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 16) {
-                        
                         iconAndTitleSection
-                        
-                        // NAME
                         fieldNameSection
-                        
-                        // DATE
                         dateSection
-                        
                         timeSection
-                        
-                        // TYPE
                         typeSection
-                        
-                        // INFORMATION
                         informationSection
-                        
-                        // FIRST REMIND
                         firstRemindButtonSection
-                        
-                        // HOW OFTEN
                         howOftenButtonSection
-                        
-                        // CREATE button
                         createButton
-                        
                         Spacer(minLength: 40)
                     }
                     .padding(.bottom, 16)
@@ -82,6 +57,7 @@ struct AddEventView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+        // Шиты для выбора даты, типа, изображения и т.д.
         .sheet(isPresented: $showCalendarSheet) {
             CustomCalendarView(selectedDate: $viewModel.newEventDate)
                 .presentationDetents([.height(520), .large])
@@ -92,47 +68,41 @@ struct AddEventView: View {
             isTypeExpanded = false
             viewModel.updateIcon()
         }) {
-            CustomTypeSelectionMenuAddEvent(
-                isPresented: $showTypeMenu,
-                selectedType: $viewModel.newType
-            )
+            CustomTypeSelectionMenuAddEvent(isPresented: $showTypeMenu,
+                                            selectedType: $viewModel.newType)
         }
         .sheet(isPresented: $showImagePicker) {
-            ImagePickerView(
-                selectedImage: $userSelectedImage,
-                useCamera: showCamera
-            )
+            ImagePickerView(selectedImage: $userSelectedImage, useCamera: showCamera)
         }
         .sheet(isPresented: $showRemindMenu, onDismiss: {
             isRemindExpanded = false
         }) {
-            CustomFirstRemindSelectionMenuAddEvent(
-                isPresented: $showRemindMenu,
-                selectedRemind: $viewModel.newFirstRemind
-            )
+            CustomFirstRemindSelectionMenuAddEvent(isPresented: $showRemindMenu,
+                                                   selectedRemind: $viewModel.newFirstRemind)
         }
         .sheet(isPresented: $showHowOftenMenu, onDismiss: {
             isHowOftenExpanded = false
         }) {
-            // Новый список выбора HowOften
-            CustomHowOftenSelectionMenuAddEvent(
-                isPresented: $showHowOftenMenu,
-                selectedHowOften: $viewModel.newHowOften
-            )
+            CustomHowOftenSelectionMenuAddEvent(isPresented: $showHowOftenMenu,
+                                                selectedHowOften: $viewModel.newHowOften)
         }
         .sheet(isPresented: $showTimePicker) {
-                CustomTimePickerView(selectedTime: $viewModel.newEventTime)
-            }
+            CustomTimePickerView(selectedTime: $viewModel.newEventTime)
+        }
         .onAppear {
             viewModel.updateNextEventNumber()
+        }
+        .onChange(of: userSelectedImage) { newImage, _ in
+            if let newImage = newImage {
+                viewModel.newIconData = newImage.jpegData(compressionQuality: 1.0)
+            } else {
+                viewModel.newIconData = nil
+            }
         }
     }
 }
 
-// MARK: - Вспомогательные View
 extension AddEventView {
-    
-    // 1) Иконка + Заголовок
     private var iconAndTitleSection: some View {
         HStack {
             Spacer()
@@ -144,7 +114,6 @@ extension AddEventView {
                         Circle()
                             .stroke(Color.black, lineWidth: 2)
                             .frame(width: 80, height: 80)
-                        
                         if let userImage = userSelectedImage {
                             Image(uiImage: userImage)
                                 .resizable()
@@ -167,25 +136,21 @@ extension AddEventView {
                     }
                 }
                 .actionSheet(isPresented: $showIconActionSheet) {
-                    ActionSheet(
-                        title: Text("Choose icon"),
-                        buttons: [
-                            .default(Text("Take Photo"), action: {
-                                showCamera = true
-                                showImagePicker = true
-                            }),
-                            .default(Text("Choose from Gallery"), action: {
-                                showCamera = false
-                                showImagePicker = true
-                            }),
-                            .default(Text("Use default icon"), action: {
-                                userSelectedImage = nil
-                            }),
-                            .cancel()
-                        ]
-                    )
+                    ActionSheet(title: Text("Choose icon"), buttons: [
+                        .default(Text("Take Photo"), action: {
+                            showCamera = true
+                            showImagePicker = true
+                        }),
+                        .default(Text("Choose from Gallery"), action: {
+                            showCamera = false
+                            showImagePicker = true
+                        }),
+                        .default(Text("Use default icon"), action: {
+                            userSelectedImage = nil
+                        }),
+                        .cancel()
+                    ])
                 }
-                
                 Text(viewModel.displayedTitle)
                     .font(.system(size: 24, weight: .bold))
                     .foregroundColor(.primary)
@@ -195,30 +160,25 @@ extension AddEventView {
         .padding(.top, 8)
         .padding(.horizontal, 16)
     }
-
     
-    // 2) NAME
     private var fieldNameSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("NAME")
                 .font(.subheadline).fontWeight(.semibold)
                 .foregroundColor(.secondary)
                 .textCase(.uppercase)
-            
             TextField("Event title", text: $viewModel.newTitle)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
         }
         .padding(.horizontal, 16)
     }
     
-    // 3) DATE
     private var dateSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("DATE")
                 .font(.subheadline).fontWeight(.semibold)
                 .foregroundColor(.secondary)
                 .textCase(.uppercase)
-            
             Button {
                 showCalendarSheet = true
             } label: {
@@ -230,16 +190,13 @@ extension AddEventView {
                         .foregroundColor(.black)
                 }
                 .padding(12)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-                )
+                .overlay(RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.gray.opacity(0.4), lineWidth: 1))
             }
         }
         .padding(.horizontal, 16)
     }
     
-    // MARK: - TIME SECTION
     private var timeSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("TIME")
@@ -257,23 +214,19 @@ extension AddEventView {
                         .foregroundColor(.black)
                 }
                 .padding(12)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-                )
+                .overlay(RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.gray.opacity(0.4), lineWidth: 1))
             }
         }
         .padding(.horizontal, 16)
     }
     
-    // 4) TYPE
     private var typeSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("TYPE")
                 .font(.subheadline).fontWeight(.semibold)
                 .foregroundColor(.secondary)
                 .textCase(.uppercase)
-            
             Button {
                 isTypeExpanded.toggle()
                 showTypeMenu = true
@@ -286,30 +239,25 @@ extension AddEventView {
                         .foregroundColor(.gray)
                 }
                 .padding(12)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-                )
+                .overlay(RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.gray.opacity(0.4), lineWidth: 1))
             }
         }
         .padding(.horizontal, 16)
     }
     
-    // 5) INFORMATION
     private var informationSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("INFORMATION")
                 .font(.subheadline).fontWeight(.semibold)
                 .foregroundColor(.secondary)
                 .textCase(.uppercase)
-            
             TextField("Add information", text: $viewModel.newInformation)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
         }
         .padding(.horizontal, 16)
     }
     
-    // 6) FIRST REMIND
     private var firstRemindButtonSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("FIRST REMIND")
@@ -328,23 +276,19 @@ extension AddEventView {
                         .foregroundColor(.gray)
                 }
                 .padding(12)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-                )
+                .overlay(RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.gray.opacity(0.4), lineWidth: 1))
             }
         }
         .padding(.horizontal, 16)
     }
     
-    // 7) HOW OFTEN
     private var howOftenButtonSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("HOW OFTEN")
                 .font(.subheadline).fontWeight(.semibold)
                 .foregroundColor(.secondary)
                 .textCase(.uppercase)
-            
             Button {
                 isHowOftenExpanded.toggle()
                 showHowOftenMenu = true
@@ -357,16 +301,13 @@ extension AddEventView {
                         .foregroundColor(.gray)
                 }
                 .padding(12)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-                )
+                .overlay(RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.gray.opacity(0.4), lineWidth: 1))
             }
         }
         .padding(.horizontal, 16)
     }
     
-    // 8) CREATE button
     private var createButton: some View {
         Button {
             if let userImage = userSelectedImage {
@@ -376,19 +317,15 @@ extension AddEventView {
                 viewModel.newIcon = viewModel.defaultIcon(for: viewModel.newType)
             }
             viewModel.addEvent()
-            mainViewModel.loadEvents()
             dismiss()
         } label: {
             Text("CREATE")
                 .font(.headline)
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity, minHeight: 50)
-                .buttonStyle(.plain)
-                .background(
-                    (viewModel.newTitle.isEmpty || viewModel.newType == .none)
-                    ? Colors.createButtonDisabledColor
-                    : Colors.mainGreen
-                )
+                .background((viewModel.newTitle.isEmpty || viewModel.newType == .none)
+                            ? Colors.createButtonDisabledColor
+                            : Colors.mainGreen)
                 .cornerRadius(16)
         }
         .padding(.horizontal, 16)

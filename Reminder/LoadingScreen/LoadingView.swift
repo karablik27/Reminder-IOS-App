@@ -35,7 +35,7 @@ struct LoadingView: View {
             ZStack {
                 Color(.systemBackground)
                     .ignoresSafeArea()
-
+                
                 VStack(spacing: 0) {
                     Spacer()
                     VStack(spacing: Constants.WelcomeText.verticalOffset) {
@@ -48,7 +48,7 @@ struct LoadingView: View {
                             )
                             .offset(y: geometry.size.height * Constants.Image.verticalOffset)
                             .opacity(logoOpacity)
-
+                        
                         if viewModel.loadingModel.isFirst {
                             Text("Welcome")
                                 .font(.system(size: Constants.WelcomeText.fontSize, weight: .bold))
@@ -76,7 +76,8 @@ struct LoadingView: View {
                 WelcomeView(modelContext: modelContext)
             }
             .fullScreenCover(isPresented: $showMainView) {
-                MainView(modelContext: modelContext)
+                // Передаём modelContext в ContentView
+                ContentView(modelContext: modelContext)
             }
             .onChange(of: viewModel.isFinishedLoading) { old, new in
                 if new {

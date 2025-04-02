@@ -50,11 +50,10 @@ private enum Constants {
     }
 }
 
-// MARK: - MainView
-struct MainView: View {
-    @State private var selectedTab: Int = Constants.TabBar.selectedTab
-    @StateObject private var viewModel: MainViewModel
+// MARK: MainView
+struct HistoryView: View {
     @Environment(\.modelContext) private var modelContext
+    @StateObject private var viewModel: HistoryViewModel
     
     @State private var showTypeMenu = false
     @State private var showSortMenu = false
@@ -65,7 +64,7 @@ struct MainView: View {
     @State private var showDeleteAllAlert = false
     
     init(modelContext: ModelContext) {
-        _viewModel = StateObject(wrappedValue: MainViewModel(modelContext: modelContext))
+        _viewModel = StateObject(wrappedValue: HistoryViewModel(modelContext: modelContext))
     }
     
     var body: some View {
@@ -85,55 +84,55 @@ struct MainView: View {
                 }
             }
             .environment(\.modelContext, modelContext)
+            
             .sheet(isPresented: $showTypeMenu, onDismiss: {
                 isTypeExpanded = false
-                viewModel.loadEvents()
+                viewModel.loadHistoryEvents()
             }) {
                 TypeSelectionMenu(isPresented: $showTypeMenu,
                                   selectedType: $viewModel.selectedEventType)
             }
+            
             .sheet(isPresented: $showSortMenu, onDismiss: {
                 isSortExpanded = false
-                viewModel.loadEvents()
+                viewModel.loadHistoryEvents()
             }) {
                 SortSelectionMenu(isPresented: $showSortMenu,
                                   selectedSort: $viewModel.selectedSortOption)
             }
-            .confirmationDialog("Delete Events", isPresented: $showDeleteOptions, titleVisibility: .visible) {
-                Button("Delete All Events", role: .destructive) {
+            
+            .confirmationDialog("Delete History Events", isPresented: $showDeleteOptions, titleVisibility: .visible) {
+                Button("Delete All History Events", role: .destructive) {
                     showDeleteAllAlert = true
                 }
                 Button("Cancel", role: .cancel) { }
             } message: {
-                Text("Are you sure you want to delete all events?")
+                Text("Are you sure you want to delete all history events?")
             }
-            .alert("Do you want to delete all events?", isPresented: $showDeleteAllAlert) {
+            .alert("Do you want to delete all history events?", isPresented: $showDeleteAllAlert) {
                 Button("Delete", role: .destructive) {
-                    viewModel.deleteAllEvents()
+                    viewModel.deleteAllHistoryEvents()
                 }
                 Button("Don't delete", role: .cancel) { }
             } message: {
-                Text("When all events are deleted, all data about them will be erased without the possibility of recovery.")
+                Text("When all history events are deleted, all data about them will be erased without the possibility of recovery.")
             }
         }
         .onAppear {
-            viewModel.loadEvents()
+            viewModel.loadHistoryEvents()
         }
         .environmentObject(viewModel)
     }
 }
 
-
 // MARK: - Private subviews
-private extension MainView {
+private extension HistoryView {
     
-    private var headerSection: some View {
+    var headerSection: some View {
         HStack {
-            Text("Events")
+            Text("History")
                 .font(.system(size: Constants.Text.titleSize, weight: .bold))
-            
             Spacer()
-            
             Button {
             } label: {
                 Image(systemName: "gearshape")
@@ -211,7 +210,7 @@ private extension MainView {
                     Image(systemName: "magnifyingglass")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: Constants.sortSection.iconSize, height: Constants.sortSection.iconSize)
+                        .frame(width: Constants.sortSection.iconSize, height: Constants.sortSection.iconSize) // Настройте по вкусу
                         .foregroundColor(.primary)
                 }
             }
@@ -219,18 +218,17 @@ private extension MainView {
            
         }
     }
-
     
     // MARK: - Content Section
-    private var contentSection: some View {
+    var contentSection: some View {
         if viewModel.filteredModels.isEmpty {
             return AnyView(
                 VStack(spacing: Constants.contentSection.VStackspacing) {
                     Spacer(minLength: Constants.contentSection.spacer)
-                    Text("No events yet")
+                    Text("No history yet")
                         .font(.title2)
                         .foregroundColor(.gray)
-                    Text("Add your first event using the + button")
+                    Text("Finished events will appear here")
                         .font(.subheadline)
                         .foregroundColor(.gray)
                     Spacer()
@@ -283,7 +281,7 @@ private extension MainView {
     }
     
     // MARK: - Event Cell
-    private func eventCell(model: MainModel) -> some View {
+    func eventCell(model: MainModel) -> some View {
         HStack {
             Button {
                 viewModel.toggleBookmark(for: model)

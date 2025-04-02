@@ -20,8 +20,6 @@ struct CustomCalendarView: View {
         
         static let dayCellSize: CGFloat = 32
         
-        // Фиксированная высота для календарной сетки (6 строк)
-        // (6 * dayCellSize) + (5 * gridSpacing) = (6 * 32) + (5 * 12) = 192 + 60 = 252
         static let calendarGridHeight: CGFloat = 252
     }
     
@@ -42,7 +40,6 @@ struct CustomCalendarView: View {
     
     var body: some View {
         VStack(spacing: Constants.vStackSpacing) {
-            // Заголовок "Date" слева
             HStack {
                 Text("Date")
                     .font(.headline)
@@ -56,7 +53,6 @@ struct CustomCalendarView: View {
                 .padding(.top, Constants.dividerTopPadding)
                 .padding(.bottom, Constants.dividerBottomPadding)
             
-            // Пикеры для месяца и года
             HStack {
                 Picker("Month", selection: $selectedMonth) {
                     ForEach(months, id: \.self) { month in
@@ -78,10 +74,8 @@ struct CustomCalendarView: View {
             }
             .padding(.vertical, Constants.pickerVerticalPadding)
             
-            // Заголовок дней недели
             dayOfWeekHeader
             
-            // Сетка дней с фиксированной высотой
             let allCells = generateCalendarCells(month: selectedMonth, year: selectedYear)
             LazyVGrid(
                 columns: Array(repeating: GridItem(.flexible()), count: Constants.daysInWeek),
@@ -97,12 +91,16 @@ struct CustomCalendarView: View {
                 }
             }
             .padding(.horizontal)
-            .frame(height: Constants.calendarGridHeight) // Фиксированная высота
+            .frame(height: Constants.calendarGridHeight)
             
             Spacer()
         }
-        .onChange(of: selectedMonth) { _ in updateSelectedDateIfNeeded() }
-        .onChange(of: selectedYear) { _ in updateSelectedDateIfNeeded() }
+        .onChange(of: selectedMonth) { newValue, oldValue in
+            updateSelectedDateIfNeeded()
+        }
+        .onChange(of: selectedYear) { newValue, oldValue in
+            updateSelectedDateIfNeeded()
+        }
     }
 }
 

@@ -2,31 +2,29 @@ import SwiftUI
 import SwiftData
 import Combine
 
-class MainViewModel: ObservableObject {
+
+class BeautifulDatesViewModel: ObservableObject {
+
     // MARK: - Published Properties
-    @Published var selectedTab: Int = 0
-    @Published var searchText: String = ""
     @Published var selectedEventType: EventTypeMain = .allEvents
     @Published var selectedSortOption: SortOption = .byDate
     @Published var isAscending = true
     @Published var filteredModels: [MainModel] = []
     @Published var currentDate: Date = Date()
-
+    
     // MARK: - Private Properties
     private var modelContext: ModelContext
     private var timerCancellable: AnyCancellable?
-
+    
     // MARK: - Initializer
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
-        print("MainViewModel initialized with modelContext: \(modelContext)")
-        loadEvents()
+        loadBeautifulEvents()
         startTimer()
     }
-
-    // MARK: - Event Loading
-    func loadEvents() {
-        print("Loading events...")
+    
+    // MARK: - Loading Beautiful Events
+    func loadBeautifulEvents() {
         var sortDescriptors: [SortDescriptor<MainModel>] = []
         switch selectedSortOption {
         case .byDate:
@@ -36,19 +34,50 @@ class MainViewModel: ObservableObject {
         }
         
         let fetchDescriptor = FetchDescriptor<MainModel>(sortBy: sortDescriptors)
+        
         do {
             let allEvents = try modelContext.fetch(fetchDescriptor)
-            print("Fetched \(allEvents.count) events from modelContext.")
+            let allBeautiful = allEvents.filter { $0.isBeautiful }
             if selectedEventType == .allEvents {
-                filteredModels = allEvents
-                print("No filter applied. Showing all events.")
+                filteredModels = allBeautiful
             } else {
-                filteredModels = allEvents.filter { $0.type == selectedEventType }
-                print("Filtered by type \(selectedEventType.rawValue). Showing \(filteredModels.count) events.")
+                filteredModels = allBeautiful.filter { $0.type == selectedEventType }
             }
         } catch {
-            print("Error fetching events: \(error)")
+            print("Error fetching beautiful events: \(error)")
             filteredModels = []
+        }
+    }
+    
+    // MARK: - Sorting Methods
+    func toggleSortDirection() {
+        isAscending.toggle()
+        loadBeautifulEvents()
+    }
+    
+    // MARK: - Deletion Methods
+    func deleteEvent(_ event: MainModel) {
+        modelContext.delete(event)
+        do {
+            try modelContext.save()
+            loadBeautifulEvents()
+        } catch {
+            print("Error deleting event: \(error)")
+        }
+    }
+    
+    func deleteAllBeautifulEvents() {
+        let fetchDescriptor = FetchDescriptor<MainModel>()
+        do {
+            let allEvents = try modelContext.fetch(fetchDescriptor)
+            let allBeautiful = allEvents.filter { $0.isBeautiful }
+            for event in allBeautiful {
+                modelContext.delete(event)
+            }
+            try modelContext.save()
+            loadBeautifulEvents()
+        } catch {
+            print("Error deleting all beautiful events: \(error)")
         }
     }
     
@@ -57,43 +86,9 @@ class MainViewModel: ObservableObject {
         event.isBookmarked.toggle()
         do {
             try modelContext.save()
-            loadEvents()
+            loadBeautifulEvents()
         } catch {
-            print("Error saving bookmark status: \(error)")
-        }
-    }
-
-    // MARK: - Sorting Methods
-    func toggleSortDirection() {
-        isAscending.toggle()
-        print("Sort direction toggled to \(isAscending ? "ascending" : "descending")")
-        loadEvents()
-    }
-    
-    // MARK: - Event Deletion
-    func deleteEvent(_ event: MainModel) {
-        modelContext.delete(event)
-        do {
-            try modelContext.save()
-            loadEvents()
-            print("Event successfully deleted")
-        } catch {
-            print("Error deleting event: \(error)")
-        }
-    }
-    
-    func deleteAllEvents() {
-        let fetchDescriptor = FetchDescriptor<MainModel>()
-        do {
-            let allEvents = try modelContext.fetch(fetchDescriptor)
-            for event in allEvents {
-                modelContext.delete(event)
-            }
-            try modelContext.save()
-            loadEvents()
-            print("All events successfully deleted.")
-        } catch {
-            print("Error deleting all events: \(error)")
+            print("Error toggling bookmark: \(error)")
         }
     }
     
@@ -112,7 +107,6 @@ class MainViewModel: ObservableObject {
         if event.date <= now {
             return "Finish"
         }
-        
         let diff = event.date.timeIntervalSince(now)
         let days = Int(diff / 86400)
         if days >= 1 {

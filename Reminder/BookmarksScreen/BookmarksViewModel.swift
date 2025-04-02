@@ -2,31 +2,31 @@ import SwiftUI
 import SwiftData
 import Combine
 
-class MainViewModel: ObservableObject {
+// MARK: - BookmarksViewModel
+class BookmarksViewModel: ObservableObject {
+    
     // MARK: - Published Properties
-    @Published var selectedTab: Int = 0
-    @Published var searchText: String = ""
     @Published var selectedEventType: EventTypeMain = .allEvents
     @Published var selectedSortOption: SortOption = .byDate
     @Published var isAscending = true
     @Published var filteredModels: [MainModel] = []
     @Published var currentDate: Date = Date()
-
+    
     // MARK: - Private Properties
     private var modelContext: ModelContext
     private var timerCancellable: AnyCancellable?
-
+    
     // MARK: - Initializer
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
-        print("MainViewModel initialized with modelContext: \(modelContext)")
-        loadEvents()
+        loadBookmarks()
         startTimer()
     }
-
-    // MARK: - Event Loading
-    func loadEvents() {
-        print("Loading events...")
+    
+    // MARK: - Data Loading
+    func loadBookmarks() {
+        print("Loading bookmarked events...")
+        
         var sortDescriptors: [SortDescriptor<MainModel>] = []
         switch selectedSortOption {
         case .byDate:
@@ -35,65 +35,24 @@ class MainViewModel: ObservableObject {
             sortDescriptors = [SortDescriptor(\.title, order: isAscending ? .forward : .reverse)]
         }
         
-        let fetchDescriptor = FetchDescriptor<MainModel>(sortBy: sortDescriptors)
+        let fetchDescriptor = FetchDescriptor<MainModel>(
+            predicate: #Predicate { event in
+                event.isBookmarked == true
+            },
+            sortBy: sortDescriptors
+        )
+        
         do {
-            let allEvents = try modelContext.fetch(fetchDescriptor)
-            print("Fetched \(allEvents.count) events from modelContext.")
+            let bookmarked = try modelContext.fetch(fetchDescriptor)
             if selectedEventType == .allEvents {
-                filteredModels = allEvents
-                print("No filter applied. Showing all events.")
+                filteredModels = bookmarked
             } else {
-                filteredModels = allEvents.filter { $0.type == selectedEventType }
-                print("Filtered by type \(selectedEventType.rawValue). Showing \(filteredModels.count) events.")
+                filteredModels = bookmarked.filter { $0.type == selectedEventType }
             }
+            print("Fetched \(filteredModels.count) bookmarked events.")
         } catch {
-            print("Error fetching events: \(error)")
+            print("Error fetching bookmarked events: \(error)")
             filteredModels = []
-        }
-    }
-    
-    // MARK: - Bookmark Handling
-    func toggleBookmark(for event: MainModel) {
-        event.isBookmarked.toggle()
-        do {
-            try modelContext.save()
-            loadEvents()
-        } catch {
-            print("Error saving bookmark status: \(error)")
-        }
-    }
-
-    // MARK: - Sorting Methods
-    func toggleSortDirection() {
-        isAscending.toggle()
-        print("Sort direction toggled to \(isAscending ? "ascending" : "descending")")
-        loadEvents()
-    }
-    
-    // MARK: - Event Deletion
-    func deleteEvent(_ event: MainModel) {
-        modelContext.delete(event)
-        do {
-            try modelContext.save()
-            loadEvents()
-            print("Event successfully deleted")
-        } catch {
-            print("Error deleting event: \(error)")
-        }
-    }
-    
-    func deleteAllEvents() {
-        let fetchDescriptor = FetchDescriptor<MainModel>()
-        do {
-            let allEvents = try modelContext.fetch(fetchDescriptor)
-            for event in allEvents {
-                modelContext.delete(event)
-            }
-            try modelContext.save()
-            loadEvents()
-            print("All events successfully deleted.")
-        } catch {
-            print("Error deleting all events: \(error)")
         }
     }
     
@@ -106,7 +65,56 @@ class MainViewModel: ObservableObject {
             }
     }
     
-    // MARK: - Time Left Calculation
+    // MARK: - Sorting Methods
+    func toggleSortDirection() {
+        isAscending.toggle()
+        print("Bookmarks sort toggled to \(isAscending ? "ascending" : "descending")")
+        loadBookmarks()
+    }
+    
+    // MARK: - Deletion Methods
+    func deleteEvent(_ event: MainModel) {
+        modelContext.delete(event)
+        do {
+            try modelContext.save()
+            loadBookmarks()
+            print("Bookmarked event deleted.")
+        } catch {
+            print("Error deleting bookmarked event: \(error)")
+        }
+    }
+    
+    func deleteAllBookmarkedEvents() {
+        let fetchDescriptor = FetchDescriptor<MainModel>(
+            predicate: #Predicate { event in
+                event.isBookmarked == true
+            }
+        )
+        do {
+            let allBookmarked = try modelContext.fetch(fetchDescriptor)
+            for event in allBookmarked {
+                modelContext.delete(event)
+            }
+            try modelContext.save()
+            loadBookmarks()
+            print("All bookmarked events deleted.")
+        } catch {
+            print("Error deleting all bookmarked events: \(error)")
+        }
+    }
+    
+    // MARK: - Bookmark Handling
+    func toggleBookmark(for event: MainModel) {
+        event.isBookmarked.toggle()
+        do {
+            try modelContext.save()
+            loadBookmarks()
+        } catch {
+            print("Error toggling bookmark: \(error)")
+        }
+    }
+    
+    // MARK: - Time Calculation
     func timeLeftString(for event: MainModel) -> String {
         let now = currentDate
         if event.date <= now {
