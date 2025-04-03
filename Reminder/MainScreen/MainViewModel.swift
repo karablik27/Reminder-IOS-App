@@ -125,6 +125,16 @@ class MainViewModel: ObservableObject {
         }
     }
     
+    // MARK: - Новое вычисляемое свойство для результатов поиска
+    var searchResults: [MainModel] {
+        let text = searchText.lowercased()
+        if text.isEmpty {
+            return filteredModels
+        } else {
+            return filteredModels.filter { $0.title.lowercased().contains(text) }
+        }
+    }
+    
     // MARK: - Deinitializer
     deinit {
         timerCancellable?.cancel()

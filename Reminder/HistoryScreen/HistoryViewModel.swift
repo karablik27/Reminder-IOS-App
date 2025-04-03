@@ -11,10 +11,20 @@ class HistoryViewModel: ObservableObject {
     @Published var isAscending = true
     @Published var filteredModels: [MainModel] = []
     @Published var currentDate: Date = Date()
+    @Published var searchText: String = ""
     
     // MARK: - Private Properties
     private var modelContext: ModelContext
     private var timerCancellable: AnyCancellable?
+    
+    var searchResults: [MainModel] {
+        let text = searchText.lowercased()
+        if text.isEmpty {
+            return filteredModels
+        } else {
+            return filteredModels.filter { $0.title.lowercased().contains(text) }
+        }
+    }
     
     // MARK: - Initializer
     init(modelContext: ModelContext) {

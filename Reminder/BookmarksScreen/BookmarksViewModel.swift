@@ -11,6 +11,7 @@ class BookmarksViewModel: ObservableObject {
     @Published var isAscending = true
     @Published var filteredModels: [MainModel] = []
     @Published var currentDate: Date = Date()
+    @Published var searchText: String = ""
     
     // MARK: - Private Properties
     private var modelContext: ModelContext
@@ -130,6 +131,15 @@ class BookmarksViewModel: ObservableObject {
             let minutes = Int((diff.truncatingRemainder(dividingBy: 3600)) / 60)
             let seconds = Int(diff.truncatingRemainder(dividingBy: 60))
             return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+        }
+    }
+    
+    var searchResults: [MainModel] {
+        let text = searchText.lowercased()
+        if text.isEmpty {
+            return filteredModels
+        } else {
+            return filteredModels.filter { $0.title.lowercased().contains(text) }
         }
     }
     

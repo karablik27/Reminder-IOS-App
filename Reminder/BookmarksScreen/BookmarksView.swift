@@ -1,86 +1,52 @@
 import SwiftUI
 import SwiftData
 
-// MARK: - Constants
-private enum Constants {
-    
-    enum body {
-        static let VStackspacing: CGFloat = 0
-        static let headerSectionPadding: CGFloat = 8
-    }
-    
-    enum Text {
-        static let subtitleSize: CGFloat = 16
-        static let titleSize: CGFloat = 32
-    }
-    
-    enum headerSection {
-        static let iconSize: CGFloat = 24
-    }
-    
-    enum sortSection {
-        static let spacing: CGFloat = 8
-        static let paddingHorizontal: CGFloat = 8
-        static let paddingVertical: CGFloat = 8
-        static let cornerRadius: CGFloat = 8
-        static let iconSize: CGFloat = 24
-    }
-    
-    enum contentSection {
-        static let VStackspacing: CGFloat = 8
-        static let spacer: CGFloat = 0
-        static let frameHeight: CGFloat = 104
-    }
-    
-    enum TabBar {
-        static let selectedTab: Int = 0
-        static let height: CGFloat = 64
-        static let extraHeight: CGFloat = 72
-    }
-    
-    enum eventCell {
-        static let HStackspacing: CGFloat = 0
-        static let shadowRadius: CGFloat = 4
-        static let paddingLeading: CGFloat = 8
-        static let paddingTrailing: CGFloat = 8
-        static let paddingVertical: CGFloat = 16
-        static let fontSizeIcon: CGFloat = 24
-        static let cornerRadius: CGFloat = 24
-        static let iconSize: CGFloat = 64
-    }
-    
-    
-}
-
-// MARK: - MainView
 struct BookmarksView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel: BookmarksViewModel
-    
+
     @State private var showTypeMenu = false
     @State private var showSortMenu = false
     @State private var isTypeExpanded = false
     @State private var isSortExpanded = false
-    
+
     @State private var showDeleteOptions = false
     @State private var showDeleteAllAlert = false
-    
+    @State private var showSearchView = false
+
     init(modelContext: ModelContext) {
         _viewModel = StateObject(wrappedValue: BookmarksViewModel(modelContext: modelContext))
     }
-    
+
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottom) {
                 Colors.background.ignoresSafeArea()
-                
-                VStack(spacing: Constants.body.VStackspacing) {
-                    headerSection
-                        .padding(.horizontal)
-                        .padding(.top, Constants.body.headerSectionPadding)
+                VStack(spacing: ConstantsMain.body.VStackspacing) {
+                    HeaderSectionView(title: "Bookmarks") {
+                        // Настройки (если нужны)
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, ConstantsMain.body.headerSectionPadding)
                     
-                    sortSection
-                        .padding(.horizontal)
+                    SortSectionView(
+                        selectedType: viewModel.selectedEventType.rawValue,
+                        selectedSortOption: viewModel.selectedSortOption.rawValue,
+                        isTypeExpanded: isTypeExpanded,
+                        isSortExpanded: isSortExpanded,
+                        toggleSortAction: { viewModel.toggleSortDirection() },
+                        typeMenuAction: {
+                            isTypeExpanded.toggle()
+                            showTypeMenu = true
+                        },
+                        sortMenuAction: {
+                            isSortExpanded.toggle()
+                            showSortMenu = true
+                        },
+                        deleteAction: { showDeleteOptions = true },
+                        searchAction: { showSearchView = true }
+                    )
+                    .padding(.horizontal)
                     
                     contentSection
                 }
@@ -90,15 +56,17 @@ struct BookmarksView: View {
                 isTypeExpanded = false
                 viewModel.loadBookmarks()
             }) {
-                TypeSelectionMenu(isPresented: $showTypeMenu,
-                                  selectedType: $viewModel.selectedEventType)
+                TypeSelectionMenu(isPresented: $showTypeMenu, selectedType: $viewModel.selectedEventType)
             }
             .sheet(isPresented: $showSortMenu, onDismiss: {
                 isSortExpanded = false
                 viewModel.loadBookmarks()
             }) {
-                SortSelectionMenu(isPresented: $showSortMenu,
-                                  selectedSort: $viewModel.selectedSortOption)
+                SortSelectionMenu(isPresented: $showSortMenu, selectedSort: $viewModel.selectedSortOption)
+            }
+            .fullScreenCover(isPresented: $showSearchView) {
+                BookmarksSearchView(viewModel: viewModel, isSearchActive: $showSearchView)
+                    .environment(\.modelContext, modelContext)
             }
             .confirmationDialog("Delete Bookmarked Events", isPresented: $showDeleteOptions, titleVisibility: .visible) {
                 Button("Delete All Bookmarked Events", role: .destructive) {
@@ -117,113 +85,16 @@ struct BookmarksView: View {
                 Text("When all bookmarked events are deleted, all data about them will be erased without the possibility of recovery.")
             }
         }
-        .onAppear {
-            viewModel.loadBookmarks()
-        }
+        .onAppear { viewModel.loadBookmarks() }
         .environmentObject(viewModel)
     }
-}
-
-// MARK: - Subviews
-private extension BookmarksView {
     
-    private var headerSection: some View {
-        HStack {
-            Text("Bookmarks")
-                .font(.system(size: Constants.Text.titleSize, weight: .bold))
-            Spacer()
-            Button {
-            } label: {
-                Image(systemName: "gearshape")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: Constants.headerSection.iconSize, height: Constants.headerSection.iconSize)
-                    .foregroundColor(.primary)
-            }
-        }
-    }
-    
-    // MARK: - Sort Section
-    private var sortSection: some View {
-        HStack(spacing: Constants.sortSection.spacing) {
-            
-            HStack(spacing: Constants.sortSection.spacing) {
-                
-                Button {
-                    viewModel.toggleSortDirection()
-                } label: {
-                    Image(systemName: "arrow.up.arrow.down")
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundColor(.primary)
-                        .frame(width: Constants.sortSection.iconSize,
-                               height: Constants.sortSection.iconSize)
-                }
-                
-                Button {
-                    isTypeExpanded.toggle()
-                    showTypeMenu = true
-                } label: {
-                    HStack {
-                        Text(viewModel.selectedEventType.rawValue)
-                            .foregroundColor(.primary)
-                        Image(systemName: isTypeExpanded ? "chevron.up" : "chevron.down")
-                            .foregroundColor(.primary)
-                    }
-                    .padding(.horizontal, Constants.sortSection.paddingHorizontal)
-                    .padding(.vertical, Constants.sortSection.paddingVertical)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(Constants.sortSection.cornerRadius)
-                }
-                
-                Button {
-                    isSortExpanded.toggle()
-                    showSortMenu = true
-                } label: {
-                    HStack {
-                        Text(viewModel.selectedSortOption.rawValue)
-                            .foregroundColor(.primary)
-                        Image(systemName: isSortExpanded ? "chevron.up" : "chevron.down")
-                            .foregroundColor(.primary)
-                    }
-                    .padding(.horizontal, Constants.sortSection.paddingHorizontal)
-                    .padding(.vertical, Constants.sortSection.paddingVertical)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(Constants.sortSection.cornerRadius)
-                }
-                
-                Button {
-                    showDeleteOptions = true
-                } label: {
-                    Image(systemName: "trash")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: Constants.sortSection.iconSize, height: Constants.sortSection.iconSize)
-                        .foregroundColor(.red)
-                }
-                
-                Spacer()
-                
-                Button {
-                } label: {
-                    Image(systemName: "magnifyingglass")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: Constants.sortSection.iconSize, height: Constants.sortSection.iconSize) // Настройте по вкусу
-                        .foregroundColor(.primary)
-                }
-            }
-            
-           
-        }
-    }
-    
-    // MARK: Content Section
+    // MARK: - Content Section
     private var contentSection: some View {
         if viewModel.filteredModels.isEmpty {
             return AnyView(
-                VStack(spacing: Constants.contentSection.VStackspacing) {
-                    Spacer(minLength: Constants.contentSection.spacer)
+                VStack(spacing: ConstantsMain.contentSection.VStackspacing) {
+                    Spacer(minLength: ConstantsMain.contentSection.spacer)
                     Text("No bookmarks yet")
                         .font(.title2)
                         .foregroundColor(.gray)
@@ -233,7 +104,7 @@ private extension BookmarksView {
                     Spacer()
                 }
                 .safeAreaInset(edge: .bottom) {
-                    Color.clear.frame(height: Constants.TabBar.height)
+                    Color.clear.frame(height: ConstantsMain.TabBar.height)
                 }
             )
         } else {
@@ -241,12 +112,21 @@ private extension BookmarksView {
                 List {
                     ForEach(viewModel.filteredModels, id: \.id) { model in
                         GeometryReader { geo in
-                            eventCell(model: model)
-                                .opacity(computeOpacity(geo))
-                                .animation(.easeInOut, value: computeOpacity(geo))
-                                .contentShape(Rectangle())
+                            EventCellView(
+                                model: model,
+                                toggleBookmark: { viewModel.toggleBookmark(for: $0) },
+                                timeLeftString: { viewModel.timeLeftString(for: $0) },
+                                editDestination: {
+                                    AnyView(
+                                        EditEventView(viewModel: EditEventViewModel(modelContext: modelContext, event: model))
+                                            .environmentObject(viewModel)
+                                    )
+                                }
+                            )
+                            .adjustableOpacity(tabBarHeight: ConstantsMain.TabBar.height, margin: 8)
+                            .contentShape(Rectangle())
                         }
-                        .frame(height: Constants.contentSection.frameHeight)
+                        .frame(height: ConstantsMain.contentSection.frameHeight)
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button(role: .destructive) {
                                 viewModel.deleteEvent(model)
@@ -260,80 +140,9 @@ private extension BookmarksView {
                 }
                 .listStyle(PlainListStyle())
                 .safeAreaInset(edge: .bottom) {
-                    Color.clear.frame(height: Constants.TabBar.height)
+                    Color.clear.frame(height: ConstantsMain.TabBar.height)
                 }
             )
         }
-    }
-    
-    // MARK: Compute Opacity
-    private func computeOpacity(_ geo: GeometryProxy) -> Double {
-        let cellFrame = geo.frame(in: .global)
-        let screenHeight = UIScreen.main.bounds.height
-        let safeAreaInsets = UIApplication.shared.connectedScenes
-            .compactMap { $0 as? UIWindowScene }
-            .flatMap { $0.windows }
-            .first?.safeAreaInsets.bottom ?? 0
-        let tabBarTop = screenHeight - (Constants.TabBar.height + safeAreaInsets)
-        let margin: CGFloat = 8
-        return cellFrame.maxY >= tabBarTop + margin ? 0 : 1
-    }
-
-    
-    // MARK: Event Cell
-    private func eventCell(model: MainModel) -> some View {
-        HStack {
-            Button {
-                viewModel.toggleBookmark(for: model)
-            } label: {
-                Image(systemName: model.isBookmarked ? "bookmark.fill" : "bookmark")
-                    .font(.system(size: Constants.eventCell.fontSizeIcon))
-                    .foregroundColor(model.isBookmarked ? .black : .gray)
-            }
-            .buttonStyle(PlainButtonStyle())
-            .padding(.leading, Constants.eventCell.paddingLeading)
-            .padding(.trailing, Constants.eventCell.paddingTrailing)
-            
-            if let iconData = model.iconData, let uiImage = UIImage(data: iconData) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .frame(width: Constants.eventCell.iconSize, height: Constants.eventCell.iconSize)
-                    .clipShape(Circle())
-            } else {
-                Image(model.icon)
-                    .resizable()
-                    .frame(width: Constants.eventCell.iconSize, height: Constants.eventCell.iconSize)
-                    .clipShape(Circle())
-            }
-            
-            VStack(alignment: .leading) {
-                Text(model.title)
-                    .font(.headline)
-                Text("\(model.dateFormatted) \(model.dayOfWeek)")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-            }
-            
-            Spacer()
-            
-            NavigationLink {
-                EditEventView(viewModel: EditEventViewModel(modelContext: modelContext, event: model))
-                    .environmentObject(viewModel)
-            } label: {
-                HStack(spacing: Constants.eventCell.HStackspacing) {
-                    Text(viewModel.timeLeftString(for: model))
-                        .font(.subheadline)
-                        .foregroundColor(.primary)
-                }
-                .frame(maxWidth: .infinity, alignment: .trailing)
-            }
-            .buttonStyle(PlainButtonStyle())
-            
-            Spacer()
-        }
-        .padding(.vertical, Constants.eventCell.paddingVertical)
-        .background(Color.white)
-        .cornerRadius(Constants.eventCell.cornerRadius)
-        .shadow(radius: Constants.eventCell.shadowRadius)
     }
 }
