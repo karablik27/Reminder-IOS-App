@@ -1,5 +1,4 @@
 import SwiftUI
-import SwiftUI
 import Foundation
 
 
@@ -50,7 +49,6 @@ struct WelcomeScreenData {
             static let textFont = Font.system(size: 17)
         }
         
-        // Slide 4
         enum Slide4 {
             static let icon1OffsetX: CGFloat = -100
             static let icon1OffsetY: CGFloat = 150
@@ -62,15 +60,13 @@ struct WelcomeScreenData {
             static let titleOffsetX: CGFloat = 0
             static let titleOffsetY: CGFloat = -85
             
-            static let text1OffsetX: CGFloat = -90
-            static let text1OffsetY: CGFloat = 40
-            
-            static let text2OffsetX: CGFloat = -95
-            static let text2OffsetY: CGFloat = 250
+            static let text1OffsetY: CGFloat = 56
+            static let text2OffsetY: CGFloat = 280
             
             static let titleFont = Font.system(size: 35, weight: .bold)
             static let textFont = Font.system(size: 17)
         }
+
     }
 
     static let slides = [
@@ -185,14 +181,14 @@ struct WelcomeScreenData {
             slideTexts: [
                 SlideText(
                     text: "Search symbol",
-                    offset: CGSize(width: Constants.Slide4.text1OffsetX, height: Constants.Slide4.text1OffsetY),
+                    offset: CGSize(width: Constants.Slide4.icon1OffsetX, height: Constants.Slide4.text1OffsetY),
                     font: Constants.Slide4.textFont,
                     color: .primary,
                     alignment: .center
                 ),
                 SlideText(
                     text: "Sort symbol",
-                    offset: CGSize(width: Constants.Slide4.text2OffsetX, height: Constants.Slide4.text2OffsetY),
+                    offset: CGSize(width: Constants.Slide4.icon2OffsetX, height: Constants.Slide4.text2OffsetY),
                     font: Constants.Slide4.textFont,
                     color: .primary,
                     alignment: .center

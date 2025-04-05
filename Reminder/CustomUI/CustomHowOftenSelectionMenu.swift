@@ -41,7 +41,6 @@ struct HowOftenOptionRowAddEvent: View {
     let isSelected: Bool
     let action: () -> Void
     
-    // Можно задать описание для каждого варианта
     var description: String {
         switch freq {
         case .everyHour:

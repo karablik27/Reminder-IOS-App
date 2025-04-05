@@ -9,42 +9,13 @@ struct SearchView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: SearchConstants.VStackSpacing) {
-                Text("Events")
-                    .font(.system(size: ConstantsMain.Text.titleSize, weight: .bold))
-                    .foregroundColor(.primary)
-                HStack(spacing: SearchConstants.HStackSpacing) {
-                    Button {
-                        withAnimation { isSearchActive = false }
-                    } label: {
-                        Image(systemName: "list.bullet")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: SearchConstants.iconSize, height: SearchConstants.iconSize)
-                            .foregroundColor(.black)
-                    }
-                    TextField("", text: $viewModel.searchText)
-                        .foregroundColor(.black)
-                        .disableAutocorrection(true)
-                        .placeholder(when: viewModel.searchText.isEmpty) {
-                            Text("Search events...")
-                                .foregroundColor(.black)
-                    }
-                    
-                    Button {
-                        withAnimation { isSearchActive = false }
-                    } label: {
-                        Image(systemName: "magnifyingglass")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: SearchConstants.iconSize, height: SearchConstants.iconSize)
-                            .foregroundColor(.black)
-                    }
-                }
-                .padding(.vertical, SearchConstants.paddingVertical)
-                .padding(.horizontal)
-                .background(Colors.GreenTabBar)
-                .cornerRadius(SearchConstants.cornerRadius)
-                .padding(.horizontal)
+                SearchHeaderView(
+                    title: "Events",
+                    searchText: $viewModel.searchText,
+                    placeholder: "Search events...",
+                    leftButtonAction: { withAnimation { isSearchActive = false } },
+                    rightButtonAction: { withAnimation { isSearchActive = false } }
+                )
                 
                 if viewModel.searchResults.isEmpty {
                     Spacer()
@@ -54,17 +25,29 @@ struct SearchView: View {
                 } else {
                     List {
                         ForEach(viewModel.searchResults, id: \.id) { event in
-                            eventCell(model: event)
-                                .frame(height: ConstantsMain.contentSection.frameHeight)
-                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                    Button(role: .destructive) {
-                                        viewModel.deleteEvent(event)
-                                    } label: {
-                                        Label("Delete", systemImage: "trash")
-                                    }
+                            EventCellView(
+                                model: event,
+                                toggleBookmark: { viewModel.toggleBookmark(for: $0) },
+                                timeLeftString: { viewModel.timeLeftString(for: $0) },
+                                editDestination: {
+                                    AnyView(
+                                        EditEventView(
+                                            viewModel: EditEventViewModel(modelContext: modelContext, event: event)
+                                        )
+                                        .environmentObject(viewModel)
+                                    )
                                 }
-                                .listRowSeparator(.hidden)
-                                .listRowBackground(Color.clear)
+                            )
+                            .frame(height: ConstantsMain.contentSection.frameHeight)
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button(role: .destructive) {
+                                    viewModel.deleteEvent(event)
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(Color.clear)
                         }
                     }
                     .listStyle(PlainListStyle())
@@ -77,80 +60,3 @@ struct SearchView: View {
         }
     }
 }
-
-
-// MARK: - Private Subviews for SearchView
-private extension SearchView {
-    func eventCell(model: MainModel) -> some View {
-        HStack {
-            Button {
-                viewModel.toggleBookmark(for: model)
-            } label: {
-                Image(systemName: model.isBookmarked ? "bookmark.fill" : "bookmark")
-                    .font(.system(size: ConstantsMain.eventCell.fontSizeIcon))
-                    .foregroundColor(model.isBookmarked ? .black : .gray)
-            }
-            .buttonStyle(PlainButtonStyle())
-            .padding(.leading, ConstantsMain.eventCell.paddingLeading)
-            .padding(.trailing, ConstantsMain.eventCell.paddingTrailing)
-            
-            if let iconData = model.iconData, let uiImage = UIImage(data: iconData) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .frame(width: ConstantsMain.eventCell.iconSize, height: ConstantsMain.eventCell.iconSize)
-                    .clipShape(Circle())
-            } else {
-                Image(model.icon)
-                    .resizable()
-                    .frame(width: ConstantsMain.eventCell.iconSize, height: ConstantsMain.eventCell.iconSize)
-                    .clipShape(Circle())
-            }
-            
-            VStack(alignment: .leading) {
-                Text(model.title)
-                    .font(.headline)
-                Text("\(model.dateFormatted) \(model.dayOfWeek)")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-            }
-            Spacer()
-            NavigationLink(destination: EditEventView(viewModel: EditEventViewModel(modelContext: modelContext, event: model))
-                                .environmentObject(viewModel)) {
-                HStack(spacing: ConstantsMain.eventCell.HStackspacing) {
-                    Text(viewModel.timeLeftString(for: model))
-                        .font(.subheadline)
-                        .foregroundColor(.primary)
-                }
-                .frame(maxWidth: .infinity, alignment: .trailing)
-            }
-            .buttonStyle(PlainButtonStyle())
-            
-            Spacer()
-        }
-        .padding(.vertical, ConstantsMain.eventCell.paddingVertical)
-        .background(Color.white)
-        .cornerRadius(ConstantsMain.eventCell.cornerRadius)
-        .shadow(radius: ConstantsMain.eventCell.shadowRadius)
-    }
-}
-
-extension View {
-    func placeholder<Content: View>(
-        when shouldShow: Bool,
-        alignment: Alignment = .leading,
-        @ViewBuilder placeholder: () -> Content
-    ) -> some View {
-        ZStack(alignment: alignment) {
-            placeholder().opacity(shouldShow ? 1 : 0)
-            self
-        }
-    }
-}
-
-
-
-
-
-
-
-

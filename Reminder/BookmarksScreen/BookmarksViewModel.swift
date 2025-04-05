@@ -75,6 +75,7 @@ class BookmarksViewModel: ObservableObject {
     
     // MARK: - Deletion Methods
     func deleteEvent(_ event: MainModel) {
+        NotificationManager.cancelNotifications(for: event)
         modelContext.delete(event)
         do {
             try modelContext.save()
@@ -94,6 +95,7 @@ class BookmarksViewModel: ObservableObject {
         do {
             let allBookmarked = try modelContext.fetch(fetchDescriptor)
             for event in allBookmarked {
+                NotificationManager.cancelNotifications(for: event)
                 modelContext.delete(event)
             }
             try modelContext.save()

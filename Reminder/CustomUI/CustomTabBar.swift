@@ -46,10 +46,6 @@ private enum Constants {
         
         static let offsetY: CGFloat = -37
     }
-    
-    enum Colors {
-        static let GreenTabBar = Color(red: 0.8, green: 1, blue: 0.85, opacity: 0.9)
-    }
 }
 
 
@@ -68,7 +64,7 @@ struct CustomTabBar: View {
             
             // 2) Зеленая форма таб-бара с тенью
             TabBarShape()
-                .fill(Constants.Colors.GreenTabBar)
+                .fill(Colors.GreenTabBar)
                 .shadow(
                     color: .black.opacity(Constants.TabBar.shadowOpacity),
                     radius: Constants.TabBar.shadowRadius,

@@ -58,8 +58,10 @@ class BeautifulDatesViewModel: ObservableObject {
     
     // MARK: - Deletion Methods
     func deleteEvent(_ event: MainModel) {
+        NotificationManager.cancelNotifications(for: event)
         modelContext.delete(event)
         do {
+
             try modelContext.save()
             loadBeautifulEvents()
         } catch {
@@ -73,6 +75,7 @@ class BeautifulDatesViewModel: ObservableObject {
             let allEvents = try modelContext.fetch(fetchDescriptor)
             let allBeautiful = allEvents.filter { $0.isBeautiful }
             for event in allBeautiful {
+                NotificationManager.cancelNotifications(for: event)
                 modelContext.delete(event)
             }
             try modelContext.save()

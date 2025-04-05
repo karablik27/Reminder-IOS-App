@@ -8,6 +8,7 @@ struct ReminderApp: App {
             LoadingModel.self,
             WelcomeModel.self,
             MainModel.self,
+            NotificationsModel.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 

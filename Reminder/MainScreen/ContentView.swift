@@ -2,17 +2,20 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
+    let modelContext: ModelContext
     @State private var selectedTab: Int = 0
     @StateObject var mainViewModel: MainViewModel
+    @AppStorage("isFirstLaunch") private var isFirstLaunch: Bool = true
 
     init(modelContext: ModelContext) {
+        self.modelContext = modelContext
         _mainViewModel = StateObject(wrappedValue: MainViewModel(modelContext: modelContext))
     }
 
     var body: some View {
         NavigationStack {
-            ZStack {
+            // Основной контент
+            Group {
                 switch selectedTab {
                 case 0:
                     MainView(modelContext: modelContext)
@@ -26,12 +29,21 @@ struct ContentView: View {
                     MainView(modelContext: modelContext)
                 }
             }
-            .overlay(
+            // ⬇︎ Вставляем таб-бар как safeAreaInset ⬇︎
+            .safeAreaInset(edge: .bottom) {
                 CustomTabBar(selectedTab: $selectedTab)
-                    .padding(.horizontal),
-                alignment: .bottom
-            )
+                    .padding(.horizontal)
+            }
         }
         .environmentObject(mainViewModel)
+        .fullScreenCover(isPresented: Binding(
+            get: { isFirstLaunch },
+            set: { isFirstLaunch = $0 }
+        )) {
+            WelcomeView(modelContext: modelContext, onDismiss: {
+                isFirstLaunch = false
+            })
+        }
+
     }
 }

@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import Combine
 
 class EditEventViewModel: ObservableObject {
     private var modelContext: ModelContext
@@ -17,12 +18,10 @@ class EditEventViewModel: ObservableObject {
     @Published var howOften: ReminderFrequency
     @Published var iconData: Data?
 
-    // Computed property для отображения
     var displayedTitle: String {
         title.isEmpty ? "Event" : title
     }
     
-    // Опциональное изображение
     var eventImage: UIImage? {
         if let data = iconData, let img = UIImage(data: data) {
             return img
@@ -44,7 +43,6 @@ class EditEventViewModel: ObservableObject {
         self.iconData = event.iconData
     }
     
-    /// Сохраняет изменения в событии
     func saveChanges() {
         let finalDate = combineDateAndTime()
         event.title = title
@@ -57,13 +55,17 @@ class EditEventViewModel: ObservableObject {
         event.iconData = iconData
         do {
             try modelContext.save()
+            let fetchDescriptor = FetchDescriptor<NotificationsModel>(predicate: nil)
+            if let notificationSettings = try? modelContext.fetch(fetchDescriptor).first {
+                NotificationManager.scheduleNotifications(for: event, globalPushEnabled: notificationSettings.isPushEnabled)
+            }
         } catch {
             print("Error saving event changes: \(error)")
         }
     }
-    
-    /// Удаляет событие
+
     func deleteEvent() {
+        NotificationManager.cancelNotifications(for: event)
         modelContext.delete(event)
         do {
             try modelContext.save()
@@ -72,7 +74,6 @@ class EditEventViewModel: ObservableObject {
         }
     }
     
-    /// Объединяет дату и время
     private func combineDateAndTime() -> Date {
         let calendar = Calendar.current
         let dateComponents = calendar.dateComponents([.year, .month, .day], from: eventDate)
@@ -86,7 +87,6 @@ class EditEventViewModel: ObservableObject {
         return calendar.date(from: merged) ?? eventDate
     }
     
-    /// Преобразует тип события из MainModel в тип для редактирования
     private static func convertToAddEventType(from mainType: EventTypeMain) -> EventTypeAddEvent {
         switch mainType {
         case .allEvents: return .other
@@ -98,7 +98,6 @@ class EditEventViewModel: ObservableObject {
         }
     }
     
-    /// Преобразует тип редактирования в тип MainModel
     private static func convertToMainEventType(from addType: EventTypeAddEvent) -> EventTypeMain {
         switch addType {
         case .none: return .other
@@ -110,25 +109,17 @@ class EditEventViewModel: ObservableObject {
         }
     }
     
-    /// Возвращает дефолтное имя иконки по типу события
     func defaultIcon(for newType: EventTypeAddEvent) -> String {
         switch newType {
-        case .none:
-            return ""
-        case .holidays:
-            return "holiday_icon"
-        case .birthdays:
-            return "birthday_icon"
-        case .study:
-            return "study_icon"
-        case .movies:
-            return "movie_icon"
-        case .other:
-            return "default_icon"
+        case .none: return ""
+        case .holidays: return "holiday_icon"
+        case .birthdays: return "birthday_icon"
+        case .study: return "study_icon"
+        case .movies: return "movie_icon"
+        case .other: return "default_icon"
         }
     }
     
-    /// Обновляет иконку на основании типа события
     func updateIcon() {
         icon = defaultIcon(for: eventType)
     }

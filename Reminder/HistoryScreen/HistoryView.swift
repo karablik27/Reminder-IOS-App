@@ -19,79 +19,78 @@ struct HistoryView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ZStack(alignment: .bottom) {
-                Colors.background.ignoresSafeArea()
-                VStack(spacing: ConstantsMain.body.VStackspacing) {
-                    HeaderSectionView(title: "History") {
-                        // Настройки (если нужны)
-                    }
-                    .padding(.horizontal)
-                    .padding(.top, ConstantsMain.body.headerSectionPadding)
+        VStack(spacing: ConstantsMain.body.VStackspacing) {
+            HeaderSectionView(title: "History") { }
+                .padding(.horizontal)
+                .padding(.top, ConstantsMain.body.headerSectionPadding)
 
-                    SortSectionView(
-                        selectedType: viewModel.selectedEventType.rawValue,
-                        selectedSortOption: viewModel.selectedSortOption.rawValue,
-                        isTypeExpanded: isTypeExpanded,
-                        isSortExpanded: isSortExpanded,
-                        toggleSortAction: { viewModel.toggleSortDirection() },
-                        typeMenuAction: {
-                            isTypeExpanded.toggle()
-                            showTypeMenu = true
-                        },
-                        sortMenuAction: {
-                            isSortExpanded.toggle()
-                            showSortMenu = true
-                        },
-                        deleteAction: { showDeleteOptions = true },
-                        searchAction: { showSearchView = true }
-                    )
-                    .padding(.horizontal)
+            SortSectionView(
+                selectedType: viewModel.selectedEventType.rawValue,
+                selectedSortOption: viewModel.selectedSortOption.rawValue,
+                isTypeExpanded: isTypeExpanded,
+                isSortExpanded: isSortExpanded,
+                toggleSortAction: { viewModel.toggleSortDirection() },
+                typeMenuAction: {
+                    isTypeExpanded.toggle()
+                    showTypeMenu = true
+                },
+                sortMenuAction: {
+                    isSortExpanded.toggle()
+                    showSortMenu = true
+                },
+                deleteAction: { showDeleteOptions = true },
+                searchAction: { showSearchView = true }
+            )
+            .padding(.horizontal)
 
-                    contentSection
-                }
+            contentSection
+        }
+        .environment(\.modelContext, modelContext)
+        .sheet(isPresented: $showTypeMenu, onDismiss: {
+            isTypeExpanded = false
+            viewModel.loadHistoryEvents()
+        }) {
+            TypeSelectionMenu(isPresented: $showTypeMenu,
+                              selectedType: $viewModel.selectedEventType)
+        }
+        .sheet(isPresented: $showSortMenu, onDismiss: {
+            isSortExpanded = false
+            viewModel.loadHistoryEvents()
+        }) {
+            SortSelectionMenu(isPresented: $showSortMenu,
+                              selectedSort: $viewModel.selectedSortOption)
+        }
+        .fullScreenCover(isPresented: $showSearchView) {
+            HistorySearchScreen(viewModel: viewModel, isSearchActive: $showSearchView)
+                .environment(\.modelContext, modelContext)
+        }
+        .confirmationDialog("Delete History Events", isPresented: $showDeleteOptions, titleVisibility: .visible) {
+            Button("Delete All History Events", role: .destructive) {
+                showDeleteAllAlert = true
             }
-            .environment(\.modelContext, modelContext)
-            .sheet(isPresented: $showTypeMenu, onDismiss: {
-                isTypeExpanded = false
-                viewModel.loadHistoryEvents()
-            }) {
-                TypeSelectionMenu(isPresented: $showTypeMenu, selectedType: $viewModel.selectedEventType)
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("Are you sure you want to delete all history events?")
+        }
+        .alert("Do you want to delete all history events?", isPresented: $showDeleteAllAlert) {
+            Button("Delete", role: .destructive) {
+                viewModel.deleteAllHistoryEvents()
             }
-            .sheet(isPresented: $showSortMenu, onDismiss: {
-                isSortExpanded = false
-                viewModel.loadHistoryEvents()
-            }) {
-                SortSelectionMenu(isPresented: $showSortMenu, selectedSort: $viewModel.selectedSortOption)
-            }
-            .fullScreenCover(isPresented: $showSearchView) {
-                HistorySearchScreen(viewModel: viewModel, isSearchActive: $showSearchView)
-                    .environment(\.modelContext, modelContext)
-            }
-            .confirmationDialog("Delete History Events", isPresented: $showDeleteOptions, titleVisibility: .visible) {
-                Button("Delete All History Events", role: .destructive) {
-                    showDeleteAllAlert = true
-                }
-                Button("Cancel", role: .cancel) { }
-            } message: {
-                Text("Are you sure you want to delete all history events?")
-            }
-            .alert("Do you want to delete all history events?", isPresented: $showDeleteAllAlert) {
-                Button("Delete", role: .destructive) {
-                    viewModel.deleteAllHistoryEvents()
-                }
-                Button("Don't delete", role: .cancel) { }
-            } message: {
-                Text("When all history events are deleted, all data about them will be erased without the possibility of recovery.")
-            }
+            Button("Don't delete", role: .cancel) { }
+        } message: {
+            Text("When all history events are deleted, all data about them will be erased without the possibility of recovery.")
         }
         .onAppear { viewModel.loadHistoryEvents() }
         .environmentObject(viewModel)
+        // Резервирование места снизу для таб-бара:
+        .safeAreaInset(edge: .bottom) {
+            Color.clear.frame(height: ConstantsMain.TabBar.height)
+        }
     }
 
     private var contentSection: some View {
         if viewModel.filteredModels.isEmpty {
-            return AnyView(
+            AnyView(
                 VStack(spacing: ConstantsMain.contentSection.VStackspacing) {
                     Spacer(minLength: ConstantsMain.contentSection.spacer)
                     Text("No history yet")
@@ -102,12 +101,9 @@ struct HistoryView: View {
                         .foregroundColor(.gray)
                     Spacer()
                 }
-                .safeAreaInset(edge: .bottom) {
-                    Color.clear.frame(height: ConstantsMain.TabBar.height)
-                }
             )
         } else {
-            return AnyView(
+            AnyView(
                 List {
                     ForEach(viewModel.filteredModels, id: \.id) { model in
                         GeometryReader { geo in
@@ -138,9 +134,6 @@ struct HistoryView: View {
                     }
                 }
                 .listStyle(PlainListStyle())
-                .safeAreaInset(edge: .bottom) {
-                    Color.clear.frame(height: ConstantsMain.TabBar.height)
-                }
             )
         }
     }

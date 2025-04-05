@@ -67,6 +67,7 @@ class HistoryViewModel: ObservableObject {
     
     // MARK: - Deletion Methods
     func deleteEvent(_ event: MainModel) {
+        NotificationManager.cancelNotifications(for: event)
         modelContext.delete(event)
         do {
             try modelContext.save()
@@ -86,6 +87,7 @@ class HistoryViewModel: ObservableObject {
         do {
             let allFinished = try modelContext.fetch(fetchDescriptor)
             for event in allFinished {
+                NotificationManager.cancelNotifications(for: event)
                 modelContext.delete(event)
             }
             try modelContext.save()

@@ -2,7 +2,6 @@ import SwiftUI
 import SwiftData
 
 struct MainView: View {
-    @State private var selectedTab: Int = ConstantsMain.TabBar.selectedTab
     @StateObject private var viewModel: MainViewModel
     @Environment(\.modelContext) private var modelContext
 
@@ -13,6 +12,7 @@ struct MainView: View {
     @State private var showDeleteOptions = false
     @State private var showDeleteAllAlert = false
     @State private var showSearchView = false
+    @State private var showSettings = false
 
     init(modelContext: ModelContext) {
         _viewModel = StateObject(wrappedValue: MainViewModel(modelContext: modelContext))
@@ -24,7 +24,7 @@ struct MainView: View {
                 Colors.background.ignoresSafeArea()
                 VStack(spacing: ConstantsMain.body.VStackspacing) {
                     HeaderSectionView(title: "Events") {
-                        // Настройки, если нужны
+                        showSettings = true
                     }
                     .padding(.horizontal)
                     .padding(.top, ConstantsMain.body.headerSectionPadding)
@@ -68,6 +68,9 @@ struct MainView: View {
                 SearchView(viewModel: viewModel, isSearchActive: $showSearchView)
                     .environment(\.modelContext, modelContext)
             }
+            .navigationDestination(isPresented: $showSettings) {
+                    SettingsView(viewModel: SettingsViewModel())
+            }
             .confirmationDialog("Delete Events", isPresented: $showDeleteOptions, titleVisibility: .visible) {
                 Button("Delete All Events", role: .destructive) {
                     showDeleteAllAlert = true
@@ -87,6 +90,7 @@ struct MainView: View {
         }
         .onAppear { viewModel.loadEvents() }
         .environmentObject(viewModel)
+        
     }
 
     private var contentSection: some View {

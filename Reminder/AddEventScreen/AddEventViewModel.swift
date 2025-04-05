@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import Combine
 
 class AddEventViewModel: ObservableObject {
     private var modelContext: ModelContext
@@ -95,6 +96,10 @@ class AddEventViewModel: ObservableObject {
         do {
             try modelContext.save()
             print("Event saved successfully!")
+            let fetchDescriptor = FetchDescriptor<NotificationsModel>(predicate: nil)
+            if let notificationSettings = try? modelContext.fetch(fetchDescriptor).first {
+                NotificationManager.scheduleNotifications(for: newEvent, globalPushEnabled: notificationSettings.isPushEnabled)
+            }
             resetForm()
         } catch {
             print("Error saving event: \(error)")

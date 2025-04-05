@@ -70,8 +70,42 @@ class MainViewModel: ObservableObject {
         loadEvents()
     }
     
+    // MARK: - Event Addition with Notification Scheduling
+    func addEvent(title: String,
+                  date: Date,
+                  icon: String,
+                  type: EventTypeMain,
+                  firstRemind: FirstRemind,
+                  howOften: ReminderFrequency,
+                  information: String = "") {
+        let newEvent = MainModel(
+            title: title,
+            date: date,
+            icon: icon,
+            type: type,
+            isBookmarked: false,
+            information: information,
+            firstRemind: firstRemind,
+            howOften: howOften
+        )
+        
+        modelContext.insert(newEvent)
+        do {
+            try modelContext.save()
+            loadEvents()
+            print("Event saved successfully!")
+            let fetchDescriptor = FetchDescriptor<NotificationsModel>(predicate: nil)
+            if let notificationSettings = try? modelContext.fetch(fetchDescriptor).first {
+                NotificationManager.scheduleNotifications(for: newEvent, globalPushEnabled: notificationSettings.isPushEnabled)
+            }
+        } catch {
+            print("Error saving event: \(error)")
+        }
+    }
+    
     // MARK: - Event Deletion
     func deleteEvent(_ event: MainModel) {
+        NotificationManager.cancelNotifications(for: event)
         modelContext.delete(event)
         do {
             try modelContext.save()
@@ -87,6 +121,7 @@ class MainViewModel: ObservableObject {
         do {
             let allEvents = try modelContext.fetch(fetchDescriptor)
             for event in allEvents {
+                NotificationManager.cancelNotifications(for: event)
                 modelContext.delete(event)
             }
             try modelContext.save()
@@ -125,7 +160,7 @@ class MainViewModel: ObservableObject {
         }
     }
     
-    // MARK: - Новое вычисляемое свойство для результатов поиска
+    // MARK: - Вычисляемое свойство для поиска
     var searchResults: [MainModel] {
         let text = searchText.lowercased()
         if text.isEmpty {

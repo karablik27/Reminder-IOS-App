@@ -19,80 +19,79 @@ struct BookmarksView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ZStack(alignment: .bottom) {
-                Colors.background.ignoresSafeArea()
-                VStack(spacing: ConstantsMain.body.VStackspacing) {
-                    HeaderSectionView(title: "Bookmarks") {
-                        // Настройки (если нужны)
-                    }
-                    .padding(.horizontal)
-                    .padding(.top, ConstantsMain.body.headerSectionPadding)
-                    
-                    SortSectionView(
-                        selectedType: viewModel.selectedEventType.rawValue,
-                        selectedSortOption: viewModel.selectedSortOption.rawValue,
-                        isTypeExpanded: isTypeExpanded,
-                        isSortExpanded: isSortExpanded,
-                        toggleSortAction: { viewModel.toggleSortDirection() },
-                        typeMenuAction: {
-                            isTypeExpanded.toggle()
-                            showTypeMenu = true
-                        },
-                        sortMenuAction: {
-                            isSortExpanded.toggle()
-                            showSortMenu = true
-                        },
-                        deleteAction: { showDeleteOptions = true },
-                        searchAction: { showSearchView = true }
-                    )
-                    .padding(.horizontal)
-                    
-                    contentSection
-                }
+        VStack(spacing: ConstantsMain.body.VStackspacing) {
+            HeaderSectionView(title: "Bookmarks") {
+                // Настройки, если нужны
             }
-            .environment(\.modelContext, modelContext)
-            .sheet(isPresented: $showTypeMenu, onDismiss: {
-                isTypeExpanded = false
-                viewModel.loadBookmarks()
-            }) {
-                TypeSelectionMenu(isPresented: $showTypeMenu, selectedType: $viewModel.selectedEventType)
+            .padding(.horizontal)
+            .padding(.top, ConstantsMain.body.headerSectionPadding)
+
+            SortSectionView(
+                selectedType: viewModel.selectedEventType.rawValue,
+                selectedSortOption: viewModel.selectedSortOption.rawValue,
+                isTypeExpanded: isTypeExpanded,
+                isSortExpanded: isSortExpanded,
+                toggleSortAction: { viewModel.toggleSortDirection() },
+                typeMenuAction: {
+                    isTypeExpanded.toggle()
+                    showTypeMenu = true
+                },
+                sortMenuAction: {
+                    isSortExpanded.toggle()
+                    showSortMenu = true
+                },
+                deleteAction: { showDeleteOptions = true },
+                searchAction: { showSearchView = true }
+            )
+            .padding(.horizontal)
+
+            contentSection
+        }
+        .environment(\.modelContext, modelContext)
+        .sheet(isPresented: $showTypeMenu, onDismiss: {
+            isTypeExpanded = false
+            viewModel.loadBookmarks()
+        }) {
+            TypeSelectionMenu(isPresented: $showTypeMenu,
+                              selectedType: $viewModel.selectedEventType)
+        }
+        .sheet(isPresented: $showSortMenu, onDismiss: {
+            isSortExpanded = false
+            viewModel.loadBookmarks()
+        }) {
+            SortSelectionMenu(isPresented: $showSortMenu,
+                              selectedSort: $viewModel.selectedSortOption)
+        }
+        .fullScreenCover(isPresented: $showSearchView) {
+            BookmarksSearchView(viewModel: viewModel, isSearchActive: $showSearchView)
+                .environment(\.modelContext, modelContext)
+        }
+        .confirmationDialog("Delete Bookmarked Events", isPresented: $showDeleteOptions, titleVisibility: .visible) {
+            Button("Delete All Bookmarked Events", role: .destructive) {
+                showDeleteAllAlert = true
             }
-            .sheet(isPresented: $showSortMenu, onDismiss: {
-                isSortExpanded = false
-                viewModel.loadBookmarks()
-            }) {
-                SortSelectionMenu(isPresented: $showSortMenu, selectedSort: $viewModel.selectedSortOption)
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("Are you sure you want to delete all bookmarked events?")
+        }
+        .alert("Do you want to delete all bookmarked events?", isPresented: $showDeleteAllAlert) {
+            Button("Delete", role: .destructive) {
+                viewModel.deleteAllBookmarkedEvents()
             }
-            .fullScreenCover(isPresented: $showSearchView) {
-                BookmarksSearchView(viewModel: viewModel, isSearchActive: $showSearchView)
-                    .environment(\.modelContext, modelContext)
-            }
-            .confirmationDialog("Delete Bookmarked Events", isPresented: $showDeleteOptions, titleVisibility: .visible) {
-                Button("Delete All Bookmarked Events", role: .destructive) {
-                    showDeleteAllAlert = true
-                }
-                Button("Cancel", role: .cancel) { }
-            } message: {
-                Text("Are you sure you want to delete all bookmarked events?")
-            }
-            .alert("Do you want to delete all bookmarked events?", isPresented: $showDeleteAllAlert) {
-                Button("Delete", role: .destructive) {
-                    viewModel.deleteAllBookmarkedEvents()
-                }
-                Button("Don't delete", role: .cancel) { }
-            } message: {
-                Text("When all bookmarked events are deleted, all data about them will be erased without the possibility of recovery.")
-            }
+            Button("Don't delete", role: .cancel) { }
+        } message: {
+            Text("When all bookmarked events are deleted, all data about them will be erased without the possibility of recovery.")
         }
         .onAppear { viewModel.loadBookmarks() }
         .environmentObject(viewModel)
+        .safeAreaInset(edge: .bottom) {
+            Color.clear.frame(height: ConstantsMain.TabBar.height)
+        }
     }
-    
-    // MARK: - Content Section
+
     private var contentSection: some View {
         if viewModel.filteredModels.isEmpty {
-            return AnyView(
+            AnyView(
                 VStack(spacing: ConstantsMain.contentSection.VStackspacing) {
                     Spacer(minLength: ConstantsMain.contentSection.spacer)
                     Text("No bookmarks yet")
@@ -103,12 +102,9 @@ struct BookmarksView: View {
                         .foregroundColor(.gray)
                     Spacer()
                 }
-                .safeAreaInset(edge: .bottom) {
-                    Color.clear.frame(height: ConstantsMain.TabBar.height)
-                }
             )
         } else {
-            return AnyView(
+            AnyView(
                 List {
                     ForEach(viewModel.filteredModels, id: \.id) { model in
                         GeometryReader { geo in
@@ -139,9 +135,6 @@ struct BookmarksView: View {
                     }
                 }
                 .listStyle(PlainListStyle())
-                .safeAreaInset(edge: .bottom) {
-                    Color.clear.frame(height: ConstantsMain.TabBar.height)
-                }
             )
         }
     }

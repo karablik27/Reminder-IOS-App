@@ -22,8 +22,3 @@ struct OpacityModifier: ViewModifier {
     }
 }
 
-extension View {
-    func adjustableOpacity(tabBarHeight: CGFloat = ConstantsMain.TabBar.height, margin: CGFloat = 8) -> some View {
-        self.modifier(OpacityModifier(tabBarHeight: tabBarHeight, margin: margin))
-    }
-}
