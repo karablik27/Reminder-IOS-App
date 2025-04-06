@@ -16,7 +16,6 @@ private enum Constants {
         static let initialOpacity: Double = 0.0
         static let duration: Double = 0.5
         static let finalOpacity: Double = 1.0
-        
     }
 }
 
@@ -53,9 +52,8 @@ struct LoadingView: View {
                         .animation(.easeIn(duration: Constants.Animation.duration), value: logoOpacity)
                         .offset(y: Constants.Image.offsetY)
                     
-
                     if viewModel.loadingModel.isFirst {
-                        Text("Welcome")
+                        Text("Welcome".localized)
                             .font(.system(size: ConstantsMain.Text.titleSize, weight: .bold))
                             .padding()
                             .animation(.easeIn(duration: Constants.Animation.duration), value: logoOpacity)
@@ -69,9 +67,17 @@ struct LoadingView: View {
             }
         }
         .onAppear {
+            // Загрузка сохранённого языка из SwiftData
+            let fetchDescriptor = FetchDescriptor<LocalizationModel>()
+            if let savedLanguage = try? modelContext.fetch(fetchDescriptor).first?.selectedLanguage {
+                Localizer.selectedLanguage = savedLanguage
+            }
+            
             withAnimation(.easeIn(duration: Constants.Animation.duration)) {
                 logoOpacity = Constants.Animation.finalOpacity
             }
+            
+            // Используем задержку для демонстрации анимации
             let delay = isFirstLaunch ? Constants.Animation.finalOpacity : Constants.Animation.duration
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 viewModel.startLoading() {

@@ -183,17 +183,17 @@ extension EditEventView {
                 }
                 .actionSheet(isPresented: $showIconActionSheet) {
                     ActionSheet(
-                        title: Text("Choose icon"),
+                        title: Text("Choose icon".localized),
                         buttons: [
-                            .default(Text("Take Photo"), action: {
+                            .default(Text("Take Photo".localized), action: {
                                 showCamera = true
                                 showImagePicker = true
                             }),
-                            .default(Text("Choose from Gallery"), action: {
+                            .default(Text("Choose from Gallery".localized), action: {
                                 showCamera = false
                                 showImagePicker = true
                             }),
-                            .default(Text("Use default icon"), action: {
+                            .default(Text("Use default icon".localized), action: {
                                 userSelectedImage = nil
                             }),
                             .cancel()
@@ -201,7 +201,7 @@ extension EditEventView {
                     )
                 }
                 
-                Text(viewModel.displayedTitle)
+                Text(viewModel.displayedTitle.localized)
                     .font(.system(size: 24, weight: .bold))
                     .foregroundColor(.primary)
             }
@@ -214,12 +214,12 @@ extension EditEventView {
     // 2) NAME
     private var fieldNameSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("NAME")
+            Text("Name".localized)
                 .font(.subheadline).fontWeight(.semibold)
                 .foregroundColor(.secondary)
                 .textCase(.uppercase)
             
-            TextField("Event title", text: $viewModel.title)
+            TextField("Event title".localized, text: $viewModel.title)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
         }
         .padding(.horizontal, 16)
@@ -228,7 +228,7 @@ extension EditEventView {
     // 3) DATE
     private var dateSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("DATE")
+            Text("Date".localized)
                 .font(.subheadline).fontWeight(.semibold)
                 .foregroundColor(.secondary)
                 .textCase(.uppercase)
@@ -256,7 +256,7 @@ extension EditEventView {
     // 4) TIME
     private var timeSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("TIME")
+            Text("Time".localized)
                 .font(.subheadline).fontWeight(.semibold)
                 .foregroundColor(.secondary)
                 .textCase(.uppercase)
@@ -283,7 +283,7 @@ extension EditEventView {
     // 5) TYPE
     private var typeSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("TYPE")
+            Text("Type".localized)
                 .font(.subheadline).fontWeight(.semibold)
                 .foregroundColor(.secondary)
                 .textCase(.uppercase)
@@ -293,7 +293,7 @@ extension EditEventView {
                 showTypeMenu = true
             } label: {
                 HStack {
-                    Text(viewModel.eventType.rawValue)
+                    Text(viewModel.eventType.displayName)
                         .foregroundColor(.primary)
                     Spacer()
                     Image(systemName: isTypeExpanded ? "chevron.up" : "chevron.down")
@@ -312,12 +312,12 @@ extension EditEventView {
     // 6) INFORMATION
     private var informationSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("INFORMATION")
+            Text("Information".localized)
                 .font(.subheadline).fontWeight(.semibold)
                 .foregroundColor(.secondary)
                 .textCase(.uppercase)
             
-            TextField("Add information", text: $viewModel.information)
+            TextField("Add information".localized, text: $viewModel.information)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
         }
         .padding(.horizontal, 16)
@@ -326,7 +326,7 @@ extension EditEventView {
     // 7) FIRST REMIND
     private var firstRemindButtonSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("FIRST REMIND")
+            Text("First Remind")
                 .font(.subheadline).fontWeight(.semibold)
                 .foregroundColor(.secondary)
                 .textCase(.uppercase)
@@ -335,7 +335,7 @@ extension EditEventView {
                 showRemindMenu = true
             } label: {
                 HStack {
-                    Text(viewModel.firstRemind.rawValue)
+                    Text(viewModel.firstRemind.displayName)
                         .foregroundColor(.primary)
                     Spacer()
                     Image(systemName: isRemindExpanded ? "chevron.up" : "chevron.down")
@@ -354,7 +354,7 @@ extension EditEventView {
     // 8) HOW OFTEN
     private var howOftenButtonSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("HOW OFTEN")
+            Text("Reminder Frequency".localized)
                 .font(.subheadline).fontWeight(.semibold)
                 .foregroundColor(.secondary)
                 .textCase(.uppercase)
@@ -364,7 +364,7 @@ extension EditEventView {
                 showHowOftenMenu = true
             } label: {
                 HStack {
-                    Text(viewModel.howOften.rawValue)
+                    Text(viewModel.howOften.displayName)
                         .foregroundColor(.primary)
                     Spacer()
                     Image(systemName: isHowOftenExpanded ? "chevron.up" : "chevron.down")
@@ -389,7 +389,7 @@ extension EditEventView {
                 mainViewModel.loadEvents()
                 dismiss()
             } label: {
-                Text("DELETE")
+                Text("Delete".localized)
                     .font(.headline)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, minHeight: 50)
@@ -411,7 +411,7 @@ extension EditEventView {
                 mainViewModel.loadEvents()
                 dismiss()
             } label: {
-                Text("SAVE")
+                Text("Save".localized)
                     .font(.headline)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, minHeight: 50)

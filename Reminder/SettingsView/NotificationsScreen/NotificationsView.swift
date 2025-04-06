@@ -36,7 +36,7 @@ struct NotificationsView: View {
                     VStack(spacing: 16) {
                         // Ячейка с переключателем
                         settingsToggleRow(
-                            title: "Push Notifications",
+                            title: "Push Notifications".localized,
                             systemImage: "bell",
                             isOn: $viewModel.settings.isPushEnabled
                         )
@@ -77,7 +77,7 @@ struct NotificationsView: View {
             // Переключатель
             Toggle("", isOn: isOn)
                 .labelsHidden()
-                .toggleStyle(SwitchToggleStyle(tint: Colors.mainGreen))
+                .toggleStyle(SwitchToggleStyle(tint: Color.green))
         }
         .padding()
         .background(Color(.systemGray6))

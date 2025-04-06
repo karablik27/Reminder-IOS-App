@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		90968D472DA1E1AE00A0F230 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 90968D452DA1E1AE00A0F230 /* Localizable.strings */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		9082A6C82D47E56600FE0D23 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,6 +31,8 @@
 		9082A6B52D47E56400FE0D23 /* Reminder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reminder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9082A6C72D47E56600FE0D23 /* ReminderTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReminderTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9082A6D12D47E56600FE0D23 /* ReminderUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReminderUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		90968D462DA1E1AE00A0F230 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		90968D4C2DA1E40A00A0F230 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -88,6 +94,7 @@
 		9082A6AC2D47E56400FE0D23 = {
 			isa = PBXGroup;
 			children = (
+				90968D452DA1E1AE00A0F230 /* Localizable.strings */,
 				9082A6B72D47E56400FE0D23 /* Reminder */,
 				9082A6CA2D47E56600FE0D23 /* ReminderTests */,
 				9082A6D42D47E56600FE0D23 /* ReminderUITests */,
@@ -205,6 +212,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ru,
 			);
 			mainGroup = 9082A6AC2D47E56400FE0D23;
 			minimizedProjectReferenceProxies = 1;
@@ -225,6 +233,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				90968D472DA1E1AE00A0F230 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,6 +289,18 @@
 			targetProxy = 9082A6D22D47E56600FE0D23 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		90968D452DA1E1AE00A0F230 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				90968D462DA1E1AE00A0F230 /* en */,
+				90968D4C2DA1E40A00A0F230 /* ru */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		9082A6D92D47E56600FE0D23 /* Debug */ = {
@@ -341,6 +362,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -397,6 +419,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -415,7 +438,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Reminder/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Нужно для фотографирования иконки события";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Нужно для выбора иконки из галереи";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -450,7 +474,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Reminder/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Нужно для фотографирования иконки события";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Нужно для выбора иконки из галереи";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

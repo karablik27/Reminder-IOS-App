@@ -20,7 +20,7 @@ struct HistoryView: View {
 
     var body: some View {
         VStack(spacing: ConstantsMain.body.VStackspacing) {
-            HeaderSectionView(title: "History") { }
+            HeaderSectionView(title: "History".localized) { }
                 .padding(.horizontal)
                 .padding(.top, ConstantsMain.body.headerSectionPadding)
 
@@ -64,21 +64,21 @@ struct HistoryView: View {
             HistorySearchScreen(viewModel: viewModel, isSearchActive: $showSearchView)
                 .environment(\.modelContext, modelContext)
         }
-        .confirmationDialog("Delete History Events", isPresented: $showDeleteOptions, titleVisibility: .visible) {
-            Button("Delete All History Events", role: .destructive) {
+        .confirmationDialog("Delete History Events".localized, isPresented: $showDeleteOptions, titleVisibility: .visible) {
+            Button("Delete All History Events".localized, role: .destructive) {
                 showDeleteAllAlert = true
             }
-            Button("Cancel", role: .cancel) { }
+            Button("Cancel".localized, role: .cancel) { }
         } message: {
-            Text("Are you sure you want to delete all history events?")
+            Text("Are you sure you want to delete all history events?".localized)
         }
-        .alert("Do you want to delete all history events?", isPresented: $showDeleteAllAlert) {
-            Button("Delete", role: .destructive) {
+        .alert("Do you want to delete all history events?".localized, isPresented: $showDeleteAllAlert) {
+            Button("Delete".localized, role: .destructive) {
                 viewModel.deleteAllHistoryEvents()
             }
-            Button("Don't delete", role: .cancel) { }
+            Button("Don't delete".localized, role: .cancel) { }
         } message: {
-            Text("When all history events are deleted, all data about them will be erased without the possibility of recovery.")
+            Text("When all history events are deleted, all data about them will be erased without the possibility of recovery.".localized)
         }
         .onAppear { viewModel.loadHistoryEvents() }
         .environmentObject(viewModel)
@@ -93,10 +93,10 @@ struct HistoryView: View {
             AnyView(
                 VStack(spacing: ConstantsMain.contentSection.VStackspacing) {
                     Spacer(minLength: ConstantsMain.contentSection.spacer)
-                    Text("No history yet")
+                    Text("No history yet".localized)
                         .font(.title2)
                         .foregroundColor(.gray)
-                    Text("Finished events will appear here")
+                    Text("Finished events will appear here".localized)
                         .font(.subheadline)
                         .foregroundColor(.gray)
                     Spacer()
@@ -126,7 +126,7 @@ struct HistoryView: View {
                             Button(role: .destructive) {
                                 viewModel.deleteEvent(model)
                             } label: {
-                                Label("Delete", systemImage: "trash")
+                                Label("Delete".localized, systemImage: "trash")
                             }
                         }
                         .listRowSeparator(.hidden)

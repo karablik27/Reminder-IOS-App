@@ -24,7 +24,7 @@ struct CustomTypeSelectionMenuAddEvent: View {
             .listStyle(.plain)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Text("Type")
+                    Text("Type".localized)
                             .font(.headline)
                             .foregroundColor(.primary)
                 }
@@ -44,17 +44,17 @@ struct TypeOptionRowAddEvent: View {
     var description: String {
         switch type {
         case .none:
-            return "You need to choose your event type."
+            return "You need to choose your event type.".localized
         case .birthdays:
-            return "You will create a reminder about someone's birthday."
+            return "You will create a reminder about someone's birthday.".localized
         case .holidays:
-            return "You will create a reminder about a holiday."
+            return "You will create a reminder about a holiday.".localized
         case .study:
-            return "You will create a reminder about your studies (deadlines, exams, and more)."
+            return "You will create a reminder about your studies (deadlines, exams, and more).".localized
         case .movies:
-            return "You will create a reminder about movies, cartoons, TV shows, and similar media."
+            return "You will create a reminder about movies, cartoons, TV shows, and similar media.".localized
         case .other:
-            return "You will create a reminder for something that doesn't fit any of the categories above."
+            return "You will create a reminder for something that doesn't fit any of the categories above.".localized
         }
     }
 
@@ -67,7 +67,7 @@ struct TypeOptionRowAddEvent: View {
                     .frame(width: 24, height: 24)
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(type.rawValue)
+                    Text(type.displayName)
                         .font(.body)
                         .fontWeight(.medium)
                         .foregroundColor(.primary)

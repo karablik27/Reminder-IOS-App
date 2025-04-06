@@ -119,6 +119,6 @@ class AddEventViewModel: ObservableObject {
     }
     
     var displayedTitle: String {
-        newTitle.isEmpty ? "Event \(nextEventNumber)" : newTitle
+        newTitle.isEmpty ? "Event".localized + " " + "№ \(nextEventNumber)" : newTitle
     }
 }

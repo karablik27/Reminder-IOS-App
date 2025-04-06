@@ -1,6 +1,5 @@
 import SwiftUI
-import Foundation
-
+import SwiftData
 
 struct WelcomeScreenData {
     // MARK: - Constants
@@ -66,15 +65,15 @@ struct WelcomeScreenData {
             static let titleFont = Font.system(size: 35, weight: .bold)
             static let textFont = Font.system(size: 17)
         }
-
     }
 
     static let slides = [
+        // Slide 1: Welcome
         WelcomeSlide(
             number: 1,
             slideTitles: [
                 SlideTitle(
-                    text: "Reminder",
+                    text: NSLocalizedString("Reminder", comment: "Title for slide 1, e.g. 'Reminder'"),
                     offset: CGSize(width: Constants.Slide1.titleOffsetX, height: Constants.Slide1.titleOffsetY),
                     font: Constants.Slide1.titleFont,
                     color: .black
@@ -82,7 +81,7 @@ struct WelcomeScreenData {
             ],
             slideTexts: [
                 SlideText(
-                    text: "Welcome to a convenient application that helps you remember the main thing.",
+                    text: NSLocalizedString("welcome_text", comment: "Welcome message explaining the app's purpose"),
                     offset: CGSize(width: Constants.Slide1.textOffsetX, height: Constants.Slide1.textOffsetY),
                     font: Constants.Slide1.textFont,
                     color: .primary,
@@ -90,6 +89,7 @@ struct WelcomeScreenData {
                 )
             ]
         ),
+        // Slide 2: Create new reminder
         WelcomeSlide(
             number: 2,
             icons: [
@@ -106,7 +106,7 @@ struct WelcomeScreenData {
             ],
             slideTitles: [
                 SlideTitle(
-                    text: "Create a new reminder",
+                    text: NSLocalizedString("create_reminder", comment: "Title for slide 2, e.g. 'Create a new reminder'"),
                     offset: CGSize(width: Constants.Slide2.titleOffsetX, height: Constants.Slide2.titleOffsetY),
                     font: Constants.Slide2.titleFont,
                     color: .black
@@ -114,21 +114,21 @@ struct WelcomeScreenData {
             ],
             slideTexts: [
                 SlideText(
-                    text: "1. Tap the '+' button to create a new reminder.",
+                    text: NSLocalizedString("create_reminder_step1", comment: "Step 1: Instruction for creating a reminder"),
                     offset: CGSize(width: Constants.Slide2.text1OffsetX, height: Constants.Slide2.text1OffsetY),
                     font: Constants.Slide2.textFont,
                     color: .primary,
                     alignment: .center
                 ),
                 SlideText(
-                    text: "2. Then choose a title, date, and more.",
+                    text: NSLocalizedString("create_reminder_step2", comment: "Step 2: Additional instructions for creating a reminder"),
                     offset: CGSize(width: Constants.Slide2.text2OffsetX, height: Constants.Slide2.text2OffsetY),
                     font: Constants.Slide2.bodyFont,
                     color: .primary,
                     alignment: .center
                 ),
                 SlideText(
-                    text: "3. Save and wait for a reminder!",
+                    text: NSLocalizedString("create_reminder_step3", comment: "Step 3: Final step instruction for creating a reminder"),
                     offset: CGSize(width: Constants.Slide2.text3OffsetX, height: Constants.Slide2.text3OffsetY),
                     font: Constants.Slide2.bodyFont,
                     color: .primary,
@@ -136,11 +136,12 @@ struct WelcomeScreenData {
                 )
             ]
         ),
+        // Slide 3: Notifications
         WelcomeSlide(
             number: 3,
             slideTitles: [
                 SlideTitle(
-                    text: "Notifications",
+                    text: NSLocalizedString("notifications_title", comment: "Title for slide 3, e.g. 'Notifications'"),
                     offset: CGSize(width: Constants.Slide3.titleOffsetX, height: Constants.Slide3.titleOffsetY),
                     font: Constants.Slide3.titleFont,
                     color: .black
@@ -148,7 +149,7 @@ struct WelcomeScreenData {
             ],
             slideTexts: [
                 SlideText(
-                    text: "Click allow to receive notifications about your events and more, or configure later in settings.",
+                    text: NSLocalizedString("notifications_text", comment: "Instruction to allow notifications"),
                     offset: CGSize(width: Constants.Slide3.textOffsetX, height: Constants.Slide3.textOffsetY),
                     font: Constants.Slide3.textFont,
                     color: .primary,
@@ -156,6 +157,7 @@ struct WelcomeScreenData {
                 )
             ]
         ),
+        // Slide 4: Search and Sort
         WelcomeSlide(
             number: 4,
             icons: [
@@ -172,7 +174,7 @@ struct WelcomeScreenData {
             ],
             slideTitles: [
                 SlideTitle(
-                    text: "Search and Sort events",
+                    text: NSLocalizedString("search_sort_title", comment: "Title for slide 4, e.g. 'Search and Sort events'"),
                     offset: CGSize(width: Constants.Slide4.titleOffsetX, height: Constants.Slide4.titleOffsetY),
                     font: Constants.Slide4.titleFont,
                     color: .black
@@ -180,14 +182,14 @@ struct WelcomeScreenData {
             ],
             slideTexts: [
                 SlideText(
-                    text: "Search symbol",
+                    text: NSLocalizedString("search_symbol", comment: "Label for the search symbol"),
                     offset: CGSize(width: Constants.Slide4.icon1OffsetX, height: Constants.Slide4.text1OffsetY),
                     font: Constants.Slide4.textFont,
                     color: .primary,
                     alignment: .center
                 ),
                 SlideText(
-                    text: "Sort symbol",
+                    text: NSLocalizedString("sort_symbol", comment: "Label for the sort symbol"),
                     offset: CGSize(width: Constants.Slide4.icon2OffsetX, height: Constants.Slide4.text2OffsetY),
                     font: Constants.Slide4.textFont,
                     color: .primary,

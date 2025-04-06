@@ -37,7 +37,7 @@ struct CustomFirstRemindSelectionMenuAddEvent: View {
             .listStyle(.plain)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Text("First Remind")
+                    Text("First Remind".localized)
                         .font(.headline)
                         .foregroundColor(.primary)
                 }
@@ -65,7 +65,7 @@ struct RemindOptionRowAddEvent: View {
     let action: () -> Void
     
     var description: String {
-        "You will be reminded \(remind.rawValue)."
+        "You will be reminded".localized + " \(remind.displayName)".localized + "."
     }
 
     var body: some View {
@@ -76,12 +76,12 @@ struct RemindOptionRowAddEvent: View {
                     .frame(width: Constants.ImageFrameWidth, height: Constants.ImageFrameHeight)
                 
                 VStack(alignment: .leading, spacing: Constants.VstackSpacing) {
-                    Text(remind.rawValue)
+                    Text(remind.displayName)
                         .font(.body)
                         .fontWeight(.medium)
                         .foregroundColor(.primary)
                     
-                    Text(description)
+                    Text(description.localized)
                         .font(.subheadline)
                         .foregroundColor(.gray)
                         .fixedSize(horizontal: false, vertical: true)

@@ -60,7 +60,7 @@ struct EventCellView: View {
                 }
                 .buttonStyle(PlainButtonStyle())
             }
-            .frame(width: ConstantsMain.eventCell.timeBlockWidth, alignment: .trailing)
+            .frame(minWidth: 72, alignment: .trailing)
             .padding(.trailing, ConstantsMain.eventCell.paddingTrailing)
         }
         .padding(.vertical, ConstantsMain.eventCell.paddingVertical)

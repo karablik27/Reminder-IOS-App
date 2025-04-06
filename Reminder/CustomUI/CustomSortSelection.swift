@@ -8,9 +8,9 @@ struct SortOptionRow: View {
     var description: String {
         switch option {
         case .byDate:
-            return "You will see events sorted by date."
+            return "You will see events sorted by date.".localized
         case .byName:
-            return "You will see events sorted by name."
+            return "You will see events sorted by name.".localized
         }
     }
     
@@ -22,12 +22,12 @@ struct SortOptionRow: View {
                     .frame(width: 24, height: 24)
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(option.rawValue)
+                    Text(option.displayName)
                         .font(.body)
                         .fontWeight(.medium)
                         .foregroundColor(.primary)
                     
-                    Text(description)
+                    Text(description.localized)
                         .font(.subheadline)
                         .foregroundColor(.gray)
                         .fixedSize(horizontal: false, vertical: true)
@@ -64,7 +64,7 @@ struct SortSelectionMenu: View {
             .listStyle(.plain)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Text("Sort")
+                    Text("Sort".localized)
                         .font(.headline)
                         .foregroundColor(.primary)
                 }

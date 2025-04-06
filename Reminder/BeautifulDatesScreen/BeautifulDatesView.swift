@@ -19,7 +19,7 @@ struct BeautifulDatesView: View {
 
     var body: some View {
         VStack(spacing: ConstantsMain.body.VStackspacing) {
-            HeaderSectionView(title: "Beautiful Dates") {
+            HeaderSectionView(title: "Beautiful Dates".localized) {
             }
             .padding(.horizontal)
             .padding(.top, ConstantsMain.body.headerSectionPadding)
@@ -64,21 +64,21 @@ struct BeautifulDatesView: View {
             BeautifulDatesSearchView(viewModel: viewModel, isSearchActive: $showSearchView)
                 .environment(\.modelContext, modelContext)
         }
-        .confirmationDialog("Delete Beautiful Events", isPresented: $showDeleteOptions, titleVisibility: .visible) {
-            Button("Delete All Beautiful Events", role: .destructive) {
+        .confirmationDialog("Delete Beautiful Events".localized, isPresented: $showDeleteOptions, titleVisibility: .visible) {
+            Button("Delete All Beautiful Events".localized, role: .destructive) {
                 showDeleteAllAlert = true
             }
-            Button("Cancel", role: .cancel) { }
+            Button("Cancel".localized, role: .cancel) { }
         } message: {
-            Text("Are you sure you want to delete all beautiful events?")
+            Text("Are you sure you want to delete all beautiful events?".localized)
         }
         .alert("Delete Beautiful Events", isPresented: $showDeleteAllAlert) {
             Button("Delete", role: .destructive) {
                 viewModel.deleteAllBeautifulEvents()
             }
-            Button("Don't delete", role: .cancel) { }
+            Button("Don't delete".localized, role: .cancel) { }
         } message: {
-            Text("When all beautiful events are deleted, they cannot be recovered.")
+            Text("When all beautiful events are deleted, they cannot be recovered.".localized)
         }
         .onAppear { viewModel.loadBeautifulEvents() }
         .environmentObject(viewModel)
@@ -92,10 +92,10 @@ struct BeautifulDatesView: View {
             AnyView(
                 VStack(spacing: ConstantsMain.contentSection.VStackspacing) {
                     Spacer(minLength: ConstantsMain.contentSection.spacer)
-                    Text("No beautiful events yet")
+                    Text("No beautiful events yet".localized)
                         .font(.title2)
                         .foregroundColor(.gray)
-                    Text("Beautiful events will appear here")
+                    Text("Beautiful events will appear here".localized)
                         .font(.subheadline)
                         .foregroundColor(.gray)
                     Spacer()
@@ -127,7 +127,7 @@ struct BeautifulDatesView: View {
                             Button(role: .destructive) {
                                 viewModel.deleteEvent(model)
                             } label: {
-                                Label("Delete", systemImage: "trash")
+                                Label("Delete".localized, systemImage: "trash")
                             }
                         }
                         .listRowSeparator(.hidden)

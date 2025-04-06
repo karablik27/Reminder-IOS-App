@@ -32,7 +32,6 @@ private enum Constants {
         static let sortOffsetY: CGFloat = -160
         static let maxTextWidth: CGFloat = 196
     }
-
 }
 
 struct WelcomeView: View {
@@ -82,7 +81,7 @@ struct WelcomeView: View {
                         }
                         
                         ForEach(slide.slideTitles) { slideTitle in
-                            Text(slideTitle.text)
+                            Text(slideTitle.text.localized)
                                 .font(slideTitle.font)
                                 .foregroundColor(slideTitle.color)
                                 .offset(slideTitle.offset)
@@ -90,18 +89,17 @@ struct WelcomeView: View {
                         }
                         
                         ForEach(slide.slideTexts) { slideText in
-                            Text(slideText.text)
+                            Text(slideText.text.localized)
                                 .font(slideText.font)
                                 .foregroundColor(slideText.color)
                                 .offset(slideText.offset)
                                 .multilineTextAlignment(slideText.alignment)
                         }
                         
-                        
                         Spacer()
                         
                         if slide.number == 4 {
-                            Text("Search: Allows you to find reminders using keywords in the title, description, or other attributes.")
+                            Text("search_description".localized)
                                 .font(.system(size: Constants.Search.fontSize))
                                 .foregroundColor(.primary)
                                 .multilineTextAlignment(.leading)
@@ -110,7 +108,7 @@ struct WelcomeView: View {
                                 .padding(.horizontal, Constants.Search.horizontalPadding)
                                 .offset(x: Constants.Search.offsetX, y: Constants.Search.offsetY)
                             
-                            Text("Sort: Helps you organize your reminders by date, name, or other parameters.")
+                            Text("sort_description".localized)
                                 .font(.system(size: Constants.Search.fontSize))
                                 .foregroundColor(.primary)
                                 .multilineTextAlignment(.leading)
@@ -122,17 +120,17 @@ struct WelcomeView: View {
                         
                         VStack {
                             if index < viewModel.slides.count - 1 {
-                                Button("Next") {
+                                Button("Next".localized) {
                                     withAnimation {
                                         viewModel.nextPage()
                                     }
                                 }
                                 .frame(width: Constants.Button.width, height: Constants.Button.height)
                                 .background(Colors.mainGreen)
-                                .foregroundColor(.white)
+                                .foregroundColor(.black)
                                 .cornerRadius(Constants.Button.cornerRadius)
                             } else {
-                                Button("Get Started!") {
+                                Button("Get Started!".localized) {
                                     completeWelcome()
                                 }
                                 .frame(width: Constants.Button.width, height: Constants.Button.height)

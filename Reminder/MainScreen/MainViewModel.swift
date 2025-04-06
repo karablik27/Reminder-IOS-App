@@ -145,13 +145,13 @@ class MainViewModel: ObservableObject {
     func timeLeftString(for event: MainModel) -> String {
         let now = currentDate
         if event.date <= now {
-            return "Finish"
+            return "Finish".localized
         }
         
         let diff = event.date.timeIntervalSince(now)
         let days = Int(diff / 86400)
         if days >= 1 {
-            return "\(days) days"
+            return "\(days)" + "days".localized
         } else {
             let hours = Int(diff / 3600)
             let minutes = Int((diff.truncatingRemainder(dividingBy: 3600)) / 60)

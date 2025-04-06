@@ -1,0 +1,171 @@
+"Settings" = "Настройки";
+"Language" = "Язык";
+"Notifications" = "Уведомления";
+"Rate in App Store" = "Оценить в App Store";
+"Factory Reset" = "Сброс до заводских настроек";
+
+"Events" = "События";
+"Delete Events" = "Удаление событий";
+"Delete All Events" = "Удалить все события";
+"Cancel" = "Отмена";
+"Are you sure you want to delete all events?" = "Вы уверены, что хотите удалить все события?";
+"Do you want to delete all events?" = "Вы действительно хотите удалить все события?";
+"Delete" = "Удалить";
+"Don't delete" = "Не удалять";
+"When all events are deleted, all data about them will be erased without the possibility of recovery." = "После удаления все данные о событиях будут утеряны без возможности восстановления.";
+"No events yet" = "Событий пока нет";
+"Add your first event using the + button" = "Добавьте первое событие, нажав на кнопку +";
+
+// FirstRemind
+"1 hour before" = "За 1 час";
+"2 hour before" = "За 2 часа";
+"3 hour before" = "За 3 часа";
+"4 hour before" = "За 4 часа";
+"5 hour before" = "За 5 часов";
+"6 hour before" = "За 6 часов";
+"7 hour before" = "За 7 часов";
+"8 hour before" = "За 8 часов";
+"9 hour before" = "За 9 часов";
+"10 hour before" = "За 10 часов";
+"11 hour before" = "За 11 часов";
+"12 hour before" = "За 12 часов";
+"13 hour before" = "За 13 часов";
+"14 hour before" = "За 14 часов";
+"15 hour before" = "За 15 часов";
+"16 hour before" = "За 16 часов";
+"17 hour before" = "За 17 часов";
+"1 day before" = "За 1 день";
+"1 week before" = "За 1 неделю";
+
+// ReminderFrequency
+"Every 1 hour" = "Каждый час";
+"Every 1 day" = "Каждый день";
+"Every 1 week" = "Каждую неделю";
+
+// EventTypeMain
+"All events" = "Все события";
+"Holidays" = "Праздники";
+"Birthdays" = "Дни рождения";
+"Study" = "Учёба";
+"Movies" = "Фильмы";
+"Other" = "Другое";
+
+// EventTypeAddEvent
+"None" = "Без категории";
+
+// SortOption
+"By date" = "По дате";
+"By name" = "По названию";
+
+
+"You need to choose your event type." = "Вам нужно выбрать тип события.";
+"You will create a reminder about someone's birthday." = "Вы создадите напоминание о чьём-то дне рождения.";
+"You will create a reminder about a holiday." = "Вы создадите напоминание о празднике.";
+"You will create a reminder about your studies (deadlines, exams, and more)." = "Вы создадите напоминание об учёбе (дедлайны, экзамены и т.д.).";
+"You will create a reminder about movies, cartoons, TV shows, and similar media." = "Вы создадите напоминание о фильмах, мультфильмах, сериалах и другой медиа.";
+"You will create a reminder for something that doesn't fit any of the categories above." = "Вы создадите напоминание о чём-то, что не подходит ни к одной из вышеперечисленных категорий.";
+
+"Type" = "Тип";
+"Sort" = "Сортировка";
+"Time" = "Время";
+"Date" = "Дата";
+"Done" = "Готово";
+"Month" = "Месяц";
+"Year" = "Год";
+"Mon" = "Пн";
+"Tue" = "Вт";
+"Wed" = "Ср";
+"Thu" = "Чт";
+"Fri" = "Пт";
+"Sat" = "Сб";
+"Sun" = "Вс";
+
+
+"You will see all events, that you have." = "Вы увидите все события, которые у вас есть.";
+"You will see all birthday events, that you have." = "Вы увидите все дни рождения, которые у вас есть.";
+"You will see all holidays events, that you have." = "Вы увидите все праздники, которые у вас есть.";
+"You will see all study events, that you have." = "Вы увидите все учебные события, которые у вас есть.";
+"You will see all movie events, that you have." = "Вы увидите все события, связанные с фильмами, которые у вас есть.";
+"You will see all other events, that you have." = "Вы увидите все прочие события, которые у вас есть.";
+
+"Reminder Frequency" = "Частота напоминаний";
+"Remind every 1 hour." = "Напоминать каждый час.";
+"Remind every 1 day." = "Напоминать каждый день.";
+"Remind every 1 week." = "Напоминать каждую неделю.";
+
+"You will see events sorted by date." = "Вы увидите события, отсортированные по дате.";
+"You will see events sorted by name." = "Вы увидите события, отсортированные по названию.";
+
+"First Remind" = "Первое напоминание";
+"You will be reminded" = "Вы получите напоминание";
+
+"History" = "История";
+"Delete History Events" = "Удаление завершённых событий";
+"Delete All History Events" = "Удалить все завершённые события";
+"Cancel" = "Отмена";
+"Are you sure you want to delete all history events?" = "Вы уверены, что хотите удалить все завершённые события?";
+"Do you want to delete all history events?" = "Вы действительно хотите удалить все завершённые события?";
+"When all history events are deleted, all data about them will be erased without the possibility of recovery." = "После удаления всех завершённых событий данные о них будут безвозвратно утеряны.";
+"No history yet" = "Завершённых событий пока нет";
+"Finished events will appear here" = "Завершённые события будут отображаться здесь";
+
+"Beautiful Dates" = "Красивые даты";
+"Delete Beautiful Events" = "Удалить красивые события";
+"Delete All Beautiful Events" = "Удалить все красивые события";
+"Are you sure you want to delete all beautiful events?" = "Вы уверены, что хотите удалить все красивые события?";
+"Cancel" = "Отмена";
+"When all beautiful events are deleted, they cannot be recovered." = "После удаления всех красивых событий восстановить их невозможно.";
+"No beautiful events yet" = "Пока нет красивых событий";
+"Beautiful events will appear here" = "Здесь будут отображаться красивые события";
+
+"Bookmarks" = "Закладки";
+"Delete Bookmarked Events" = "Удаление событий из закладок";
+"Delete All Bookmarked Events" = "Удалить все закладки";
+"Are you sure you want to delete all bookmarked events?" = "Вы уверены, что хотите удалить все закладки?";
+"Do you want to delete all bookmarked events?" = "Вы действительно хотите удалить все закладки?";
+"When all bookmarked events are deleted, all data about them will be erased without the possibility of recovery." = "После удаления всех закладок все данные о них будут безвозвратно утрачены.";
+"No bookmarks yet" = "Закладок пока нет";
+"Bookmark your first event on the main screen" = "Добавьте первую закладку на главном экране";
+
+"Finish" = "Завершено";
+"days" = "дней";
+
+"Choose icon" = "Выберите иконку";
+"Take Photo" = "Снять фото";
+"Choose from Gallery" = "Выбрать из галереи";
+"Use default icon" = "Использовать иконку по умолчанию";
+
+
+"Name" = "ИМЯ";
+"Event title" = "Название события";
+
+"Time" = "Время";
+"Information" = "Информация";
+"Add information" = "Добавить информацию";
+
+"First remind" = "Первое напоминание";
+"Reminder Frequency" = "Частота напоминаний";
+
+"Create" = "Создать";
+"Event" = "Событие";
+"Save" = "Сохранить";
+"Push Notifications" = "Push Уведомления";
+
+"Welcome" = "Добро пожаловать";
+
+"welcome_text" = "Добро пожаловать в удобное приложение, которое помогает запомнить самое главное.";
+"create_reminder" = "Создайте новое напоминание";
+"create_reminder_step1" = "1. Нажмите кнопку '+' для создания нового напоминания.";
+"create_reminder_step2" = "2. Затем выберите название, дату и другие параметры.";
+"create_reminder_step3" = "3. Сохраните и дождитесь напоминания!";
+"notifications_title" = "Уведомления";
+"notifications_text" = "Нажмите 'Разрешить', чтобы получать уведомления о событиях, или настройте позже в настройках.";
+"search_sort_title" = "Поиск и сортировка событий";
+"search_symbol" = "Символ поиска";
+"sort_symbol" = "Символ сортировки";
+
+"language_option" = "Язык";
+"Next" = "Далее";
+"Get Started!" = "Начать!";
+"search_description" = "Поиск: позволяет находить напоминания по ключевым словам в названии, описании или других атрибутах.";
+"sort_description" = "Сортировка: помогает организовать напоминания по дате, названию или другим параметрам.";

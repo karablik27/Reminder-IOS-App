@@ -4,6 +4,7 @@ import SwiftData
 struct AddEventView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var viewModel: AddEventViewModel
+    
 
     // Состояния для выбора иконки и показа шитов
     @State private var showIconActionSheet = false
@@ -21,6 +22,7 @@ struct AddEventView: View {
     
     @State private var showHowOftenMenu = false
     @State private var isHowOftenExpanded = false
+    
 
     var body: some View {
         ZStack {
@@ -136,22 +138,22 @@ extension AddEventView {
                     }
                 }
                 .actionSheet(isPresented: $showIconActionSheet) {
-                    ActionSheet(title: Text("Choose icon"), buttons: [
-                        .default(Text("Take Photo"), action: {
+                    ActionSheet(title: Text("Choose icon".localized), buttons: [
+                        .default(Text("Take Photo".localized), action: {
                             showCamera = true
                             showImagePicker = true
                         }),
-                        .default(Text("Choose from Gallery"), action: {
+                        .default(Text("Choose from Gallery".localized), action: {
                             showCamera = false
                             showImagePicker = true
                         }),
-                        .default(Text("Use default icon"), action: {
+                        .default(Text("Use default icon".localized), action: {
                             userSelectedImage = nil
                         }),
                         .cancel()
                     ])
                 }
-                Text(viewModel.displayedTitle)
+                Text(viewModel.displayedTitle.localized)
                     .font(.system(size: 24, weight: .bold))
                     .foregroundColor(.primary)
             }
@@ -163,11 +165,11 @@ extension AddEventView {
     
     private var fieldNameSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("NAME")
+            Text("Name".localized)
                 .font(.subheadline).fontWeight(.semibold)
                 .foregroundColor(.secondary)
                 .textCase(.uppercase)
-            TextField("Event title", text: $viewModel.newTitle)
+            TextField("Event title".localized, text: $viewModel.newTitle)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
         }
         .padding(.horizontal, 16)
@@ -175,7 +177,7 @@ extension AddEventView {
     
     private var dateSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("DATE")
+            Text("Date".localized)
                 .font(.subheadline).fontWeight(.semibold)
                 .foregroundColor(.secondary)
                 .textCase(.uppercase)
@@ -199,7 +201,7 @@ extension AddEventView {
     
     private var timeSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("TIME")
+            Text("Time".localized)
                 .font(.subheadline).fontWeight(.semibold)
                 .foregroundColor(.secondary)
                 .textCase(.uppercase)
@@ -223,7 +225,7 @@ extension AddEventView {
     
     private var typeSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("TYPE")
+            Text("Type".localized)
                 .font(.subheadline).fontWeight(.semibold)
                 .foregroundColor(.secondary)
                 .textCase(.uppercase)
@@ -232,7 +234,7 @@ extension AddEventView {
                 showTypeMenu = true
             } label: {
                 HStack {
-                    Text(viewModel.newType.rawValue)
+                    Text(viewModel.newType.displayName)
                         .foregroundColor(.primary)
                     Spacer()
                     Image(systemName: isTypeExpanded ? "chevron.up" : "chevron.down")
@@ -248,11 +250,11 @@ extension AddEventView {
     
     private var informationSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("INFORMATION")
+            Text("Information".localized)
                 .font(.subheadline).fontWeight(.semibold)
                 .foregroundColor(.secondary)
                 .textCase(.uppercase)
-            TextField("Add information", text: $viewModel.newInformation)
+            TextField("Add information".localized, text: $viewModel.newInformation)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
         }
         .padding(.horizontal, 16)
@@ -260,7 +262,7 @@ extension AddEventView {
     
     private var firstRemindButtonSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("FIRST REMIND")
+            Text("First remind".localized)
                 .font(.subheadline).fontWeight(.semibold)
                 .foregroundColor(.secondary)
                 .textCase(.uppercase)
@@ -269,7 +271,7 @@ extension AddEventView {
                 showRemindMenu = true
             } label: {
                 HStack {
-                    Text(viewModel.newFirstRemind.rawValue)
+                    Text(viewModel.newFirstRemind.displayName)
                         .foregroundColor(.primary)
                     Spacer()
                     Image(systemName: isRemindExpanded ? "chevron.up" : "chevron.down")
@@ -285,7 +287,7 @@ extension AddEventView {
     
     private var howOftenButtonSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("HOW OFTEN")
+            Text("Reminder Frequency".localized)
                 .font(.subheadline).fontWeight(.semibold)
                 .foregroundColor(.secondary)
                 .textCase(.uppercase)
@@ -294,7 +296,7 @@ extension AddEventView {
                 showHowOftenMenu = true
             } label: {
                 HStack {
-                    Text(viewModel.newHowOften.rawValue)
+                    Text(viewModel.newHowOften.displayName)
                         .foregroundColor(.primary)
                     Spacer()
                     Image(systemName: isHowOftenExpanded ? "chevron.up" : "chevron.down")
@@ -319,9 +321,9 @@ extension AddEventView {
             viewModel.addEvent()
             dismiss()
         } label: {
-            Text("CREATE")
+            Text("Create".localized)
                 .font(.headline)
-                .foregroundColor(.white)
+                .foregroundColor(.black)
                 .frame(maxWidth: .infinity, minHeight: 50)
                 .background((viewModel.newTitle.isEmpty || viewModel.newType == .none)
                             ? Colors.createButtonDisabledColor

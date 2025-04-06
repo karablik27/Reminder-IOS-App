@@ -24,7 +24,7 @@ struct CustomHowOftenSelectionMenuAddEvent: View {
             .listStyle(.plain)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Text("How Often")
+                    Text("Reminder Frequency".localized)
                         .font(.headline)
                         .foregroundColor(.primary)
                 }
@@ -44,11 +44,11 @@ struct HowOftenOptionRowAddEvent: View {
     var description: String {
         switch freq {
         case .everyHour:
-            return "Repeat every 1 hour."
+            return "Remind every 1 hour.".localized
         case .everyDay:
-            return "Repeat every 1 day."
+            return "Remind every 1 day.".localized
         case .everyWeek:
-            return "Repeat every 1 week."
+            return "Remind every 1 week.".localized
         }
     }
 
@@ -60,12 +60,12 @@ struct HowOftenOptionRowAddEvent: View {
                     .frame(width: 24, height: 24)
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(freq.rawValue)
+                    Text(freq.displayName)
                         .font(.body)
                         .fontWeight(.medium)
                         .foregroundColor(.primary)
                     
-                    Text(description)
+                    Text(description.localized)
                         .font(.subheadline)
                         .foregroundColor(.gray)
                         .fixedSize(horizontal: false, vertical: true)

@@ -24,7 +24,7 @@ struct TypeSelectionMenu: View {
             .listStyle(.plain)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Text("Type")
+                    Text("Type".localized)
                             .font(.headline)
                             .foregroundColor(.primary)
                 }
@@ -44,17 +44,17 @@ struct TypeOptionRow: View {
     var description: String {
         switch type {
         case .allEvents:
-            return "You will see all events, that you have."
+            return "You will see all events, that you have.".localized
         case .birthdays:
-            return "You will see all birthday events, that you have."
+            return "You will see all birthday events, that you have.".localized
         case .holidays:
-            return "You will see all holidays events, that you have."
+            return "You will see all holidays events, that you have.".localized
         case .study:
-            return "You will see all study events, that you have."
+            return "You will see all study events, that you have.".localized
         case .movies:
-            return "You will see all movie events, that you have."
+            return "You will see all movie events, that you have.".localized
         case .other:
-            return "You will see all other events, that you have."
+            return "You will see all other events, that you have.".localized
         }
     }
     
@@ -66,7 +66,7 @@ struct TypeOptionRow: View {
                     .frame(width: 24, height: 24)
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(type.rawValue)
+                    Text(type.displayName)
                         .font(.body)
                         .fontWeight(.medium)
                         .foregroundColor(.primary)

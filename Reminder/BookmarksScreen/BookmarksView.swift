@@ -20,7 +20,7 @@ struct BookmarksView: View {
 
     var body: some View {
         VStack(spacing: ConstantsMain.body.VStackspacing) {
-            HeaderSectionView(title: "Bookmarks") {
+            HeaderSectionView(title: "Bookmarks".localized) {
                 // Настройки, если нужны
             }
             .padding(.horizontal)
@@ -66,21 +66,21 @@ struct BookmarksView: View {
             BookmarksSearchView(viewModel: viewModel, isSearchActive: $showSearchView)
                 .environment(\.modelContext, modelContext)
         }
-        .confirmationDialog("Delete Bookmarked Events", isPresented: $showDeleteOptions, titleVisibility: .visible) {
-            Button("Delete All Bookmarked Events", role: .destructive) {
+        .confirmationDialog("Delete Bookmarked Events".localized, isPresented: $showDeleteOptions, titleVisibility: .visible) {
+            Button("Delete All Bookmarked Events".localized, role: .destructive) {
                 showDeleteAllAlert = true
             }
-            Button("Cancel", role: .cancel) { }
+            Button("Cancel".localized, role: .cancel) { }
         } message: {
-            Text("Are you sure you want to delete all bookmarked events?")
+            Text("Are you sure you want to delete all bookmarked events?".localized)
         }
-        .alert("Do you want to delete all bookmarked events?", isPresented: $showDeleteAllAlert) {
-            Button("Delete", role: .destructive) {
+        .alert("Do you want to delete all bookmarked events?".localized, isPresented: $showDeleteAllAlert) {
+            Button("Delete".localized, role: .destructive) {
                 viewModel.deleteAllBookmarkedEvents()
             }
-            Button("Don't delete", role: .cancel) { }
+            Button("Don't delete".localized, role: .cancel) { }
         } message: {
-            Text("When all bookmarked events are deleted, all data about them will be erased without the possibility of recovery.")
+            Text("When all bookmarked events are deleted, all data about them will be erased without the possibility of recovery.".localized)
         }
         .onAppear { viewModel.loadBookmarks() }
         .environmentObject(viewModel)
@@ -94,10 +94,10 @@ struct BookmarksView: View {
             AnyView(
                 VStack(spacing: ConstantsMain.contentSection.VStackspacing) {
                     Spacer(minLength: ConstantsMain.contentSection.spacer)
-                    Text("No bookmarks yet")
+                    Text("No bookmarks yet".localized)
                         .font(.title2)
                         .foregroundColor(.gray)
-                    Text("Bookmark your first event on the main screen")
+                    Text("Bookmark your first event on the main screen".localized)
                         .font(.subheadline)
                         .foregroundColor(.gray)
                     Spacer()
@@ -127,7 +127,7 @@ struct BookmarksView: View {
                             Button(role: .destructive) {
                                 viewModel.deleteEvent(model)
                             } label: {
-                                Label("Delete", systemImage: "trash")
+                                Label("Delete".localized, systemImage: "trash")
                             }
                         }
                         .listRowSeparator(.hidden)

@@ -25,7 +25,7 @@ struct SortSectionView: View {
 
             Button(action: typeMenuAction) {
                 HStack {
-                    Text(selectedType)
+                    Text(selectedType.localized)
                         .foregroundColor(.primary)
                     Image(systemName: isTypeExpanded ? "chevron.up" : "chevron.down")
                         .foregroundColor(.primary)
@@ -38,7 +38,7 @@ struct SortSectionView: View {
 
             Button(action: sortMenuAction) {
                 HStack {
-                    Text(selectedSortOption)
+                    Text(selectedSortOption.localized)
                         .foregroundColor(.primary)
                     Image(systemName: isSortExpanded ? "chevron.up" : "chevron.down")
                         .foregroundColor(.primary)

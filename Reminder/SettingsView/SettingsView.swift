@@ -9,7 +9,7 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Шапка (верхняя панель)
+                // Верхняя панель с локализованным заголовком
                 HStack {
                     Button {
                         dismiss()
@@ -18,7 +18,7 @@ struct SettingsView: View {
                             .font(.system(size: 18, weight: .bold))
                             .foregroundColor(.black)
                     }
-                    Text("Settings")
+                    Text("Settings".localized)
                         .font(.system(size: 24, weight: .bold))
                         .foregroundColor(.black)
                         .frame(maxWidth: .infinity, alignment: .trailing)
@@ -31,38 +31,31 @@ struct SettingsView: View {
                 ScrollView {
                     VStack(spacing: 16) {
                         
-                        // Ячейка с переходом (NavigationLink)
+                        // Ячейка с переходом на уведомления
                         NavigationLink(destination: NotificationsView(modelContext: modelContext)) {
                             settingsRow(
-                                title: "Notifications",
+                                title: "Notifications".localized,
                                 systemImage: "bell"
                             )
                         }
                         
-                        // Ячейка с действием для языка
-                        Button {
-                            print("Open Language screen")
-                        } label: {
+                        // Ячейка с переходом на выбор языка
+                        NavigationLink(destination: LocalizationView(modelContext: modelContext)) {
                             settingsRow(
-                                title: "Language",
+                                title: "Language".localized,
                                 systemImage: "globe"
                             )
                         }
+
                         .buttonStyle(.plain)
                         
-                        // Ячейка с переключателем Dark Mode
-                        settingsToggleRow(
-                            title: "Dark Mode",
-                            systemImage: "moon.stars.fill",
-                            isOn: $viewModel.isDarkMode
-                        )
                         
                         // Ячейка "Rate in App Store"
                         Button {
                             viewModel.rateInAppStore()
                         } label: {
                             settingsRow(
-                                title: "Rate in App Store",
+                                title: "Rate in App Store".localized,
                                 systemImage: "star"
                             )
                         }
@@ -73,7 +66,7 @@ struct SettingsView: View {
                             viewModel.factoryReset()
                         } label: {
                             settingsRow(
-                                title: "Factory Reset",
+                                title: "Factory Reset".localized,
                                 systemImage: "exclamationmark.arrow.circlepath",
                                 foregroundColor: .red
                             )
@@ -98,7 +91,7 @@ struct SettingsView: View {
         foregroundColor: Color = .black
     ) -> some View {
         HStack(spacing: 12) {
-            // Кружок с иконкой
+            // Иконка в белом круге
             ZStack {
                 Circle()
                     .fill(Color.white)
@@ -108,7 +101,7 @@ struct SettingsView: View {
                     .foregroundColor(.gray)
             }
             
-            // Заголовок
+            // Заголовок ячейки
             Text(title)
                 .font(.headline)
                 .foregroundColor(foregroundColor)
@@ -133,7 +126,7 @@ struct SettingsView: View {
         isOn: Binding<Bool>
     ) -> some View {
         HStack(spacing: 12) {
-            // Кружок с иконкой
+            // Иконка в белом круге
             ZStack {
                 Circle()
                     .fill(Color.white)
@@ -143,7 +136,7 @@ struct SettingsView: View {
                     .foregroundColor(.gray)
             }
             
-            // Заголовок
+            // Заголовок ячейки
             Text(title)
                 .font(.headline)
                 .foregroundColor(.black)

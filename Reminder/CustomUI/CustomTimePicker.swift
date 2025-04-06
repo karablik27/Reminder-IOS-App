@@ -24,7 +24,7 @@ struct CustomTimePickerView: View {
             
             // Заголовок
             VStack(alignment: .leading, spacing: Constants.zero) {
-                Text("Time")
+                Text("Time".localized)
                     .padding(.top, Constants.titleTopPadding)
                     .padding(.leading, Constants.titleLeadingPadding)
                     .font(.headline)
@@ -51,7 +51,7 @@ struct CustomTimePickerView: View {
             Button {
                 dismiss()
             } label: {
-                Text("Done")
+                Text("Done".localized)
                     .font(.headline)
                     .frame(maxWidth: .infinity,
                            minHeight: Constants.doneButtonMinHeight)

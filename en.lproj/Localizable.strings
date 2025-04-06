@@ -1,0 +1,180 @@
+"Settings" = "Settings";
+"Language" = "Language";
+"Notifications" = "Notifications";
+"Rate in App Store" = "Rate in App Store";
+"Factory Reset" = "Factory Reset";
+
+"Events" = "Events";
+"Delete Events" = "Delete Events";
+"Delete All Events" = "Delete All Events";
+"Cancel" = "Cancel";
+"Are you sure you want to delete all events?" = "Are you sure you want to delete all events?";
+"Do you want to delete all events?" = "Do you want to delete all events?";
+"Delete" = "Delete";
+"Don't delete" = "Don't delete";
+"When all events are deleted, all data about them will be erased without the possibility of recovery." = "When all events are deleted, all data about them will be erased without the possibility of recovery.";
+"No events yet" = "No events yet";
+"Add your first event using the + button" = "Add your first event using the + button";
+
+
+// FirstRemind
+"1 hour before" = "1 hour before";
+"2 hour before" = "2 hours before";
+"3 hour before" = "3 hours before";
+"4 hour before" = "4 hours before";
+"5 hour before" = "5 hours before";
+"6 hour before" = "6 hours before";
+"7 hour before" = "7 hours before";
+"8 hour before" = "8 hours before";
+"9 hour before" = "9 hours before";
+"10 hour before" = "10 hours before";
+"11 hour before" = "11 hours before";
+"12 hour before" = "12 hours before";
+"13 hour before" = "13 hours before";
+"14 hour before" = "14 hours before";
+"15 hour before" = "15 hours before";
+"16 hour before" = "16 hours before";
+"17 hour before" = "17 hours before";
+"1 day before" = "1 day before";
+"1 week before" = "1 week before";
+
+// ReminderFrequency
+"Every 1 hour" = "Every 1 hour";
+"Every 1 day" = "Every 1 day";
+"Every 1 week" = "Every 1 week";
+
+// EventTypeMain
+"All events" = "All events";
+"Holidays" = "Holidays";
+"Birthdays" = "Birthdays";
+"Study" = "Study";
+"Movies" = "Movies";
+"Other" = "Other";
+
+// EventTypeAddEvent
+"None" = "None";
+
+// SortOption
+"By date" = "By date";
+"By name" = "By name";
+
+
+"You need to choose your event type." = "You need to choose your event type.";
+"You will create a reminder about someone's birthday." = "You will create a reminder about someone's birthday.";
+"You will create a reminder about a holiday." = "You will create a reminder about a holiday.";
+"You will create a reminder about your studies (deadlines, exams, and more)." = "You will create a reminder about your studies (deadlines, exams, and more).";
+"You will create a reminder about movies, cartoons, TV shows, and similar media." = "You will create a reminder about movies, cartoons, TV shows, and similar media.";
+"You will create a reminder for something that doesn't fit any of the categories above." = "You will create a reminder for something that doesn't fit any of the categories above.";
+
+
+"Type" = "Type";
+"Sort" = "Sort";
+"Time" = "Time";
+"Date" = "Date";
+"Done" = "Done";
+"Month" = "Month";
+"Year" = "Year";
+"Mon" = "Mon";
+"Tue" = "Tue";
+"Wed" = "Wed";
+"Thu" = "Thu";
+"Fri" = "Fri";
+"Sat" = "Sat";
+"Sun" = "Sun";
+
+
+"You will see all events, that you have." = "You will see all events, that you have.";
+"You will see all birthday events, that you have." = "You will see all birthday events, that you have.";
+"You will see all holidays events, that you have." = "You will see all holidays events, that you have.";
+"You will see all study events, that you have." = "You will see all study events, that you have.";
+"You will see all movie events, that you have." = "You will see all movie events, that you have.";
+"You will see all other events, that you have." = "You will see all other events, that you have.";
+
+"Reminder Frequency" = "Reminder Frequency";
+"Remind every 1 hour." = "Remind every 1 hour.";
+"Remind every 1 day." = "Remind every 1 day.";
+"Remind every 1 week." = "Remind every 1 week.";
+
+"You will see events sorted by date." = "You will see events sorted by date.";
+"You will see events sorted by name." = "You will see events sorted by name.";
+
+"First Remind" = "First Remind";
+"You will be reminded" = "You will be reminded";
+
+"History" = "History";
+"Delete History Events" = "Delete History Events";
+"Delete All History Events" = "Delete All History Events";
+"Cancel" = "Cancel";
+"Are you sure you want to delete all history events?" = "Are you sure you want to delete all history events?";
+"Do you want to delete all history events?" = "Do you want to delete all history events?";
+"Delete" = "Delete";
+"Don't delete" = "Don't delete";
+"When all history events are deleted, all data about them will be erased without the possibility of recovery." = "When all history events are deleted, all data about them will be erased without the possibility of recovery.";
+"No history yet" = "No history yet";
+"Finished events will appear here" = "Finished events will appear here";
+
+"Beautiful Dates" = "Beautiful Dates";
+"Delete Beautiful Events" = "Delete Beautiful Events";
+"Delete All Beautiful Events" = "Delete All Beautiful Events";
+"Are you sure you want to delete all beautiful events?" = "Are you sure you want to delete all beautiful events?";
+"Cancel" = "Cancel";
+"Delete" = "Delete";
+"Don't delete" = "Don't delete";
+"When all beautiful events are deleted, they cannot be recovered." = "When all beautiful events are deleted, they cannot be recovered.";
+"No beautiful events yet" = "No beautiful events yet";
+"Beautiful events will appear here" = "Beautiful events will appear here";
+
+"Bookmarks" = "Bookmarks";
+"Delete Bookmarked Events" = "Delete Bookmarked Events";
+"Delete All Bookmarked Events" = "Delete All Bookmarked Events";
+"Are you sure you want to delete all bookmarked events?" = "Are you sure you want to delete all bookmarked events?";
+"Do you want to delete all bookmarked events?" = "Do you want to delete all bookmarked events?";
+"Delete" = "Delete";
+"Don't delete" = "Don't delete";
+"When all bookmarked events are deleted, all data about them will be erased without the possibility of recovery." = "When all bookmarked events are deleted, all data about them will be erased without the possibility of recovery.";
+"No bookmarks yet" = "No bookmarks yet";
+"Bookmark your first event on the main screen" = "Bookmark your first event on the main screen";
+
+"Finish" = "Finish";
+"%days" = "days";
+
+"Choose icon" = "Choose icon";
+"Take Photo" = "Take Photo";
+"Choose from Gallery" = "Choose from Gallery";
+"Use default icon" = "Use default icon";
+
+
+"Name" = "Name";
+"Event title" = "Event title";
+
+"Time" = "Time";
+"Information" = "Information";
+"Add information" = "Add information";
+
+"First remind" = "First remind";
+"Reminder Frequency" = "Reminder Frequency";
+
+"Create" = "Create";
+"Event" = "Event";
+"Save" = "Save";
+"Push Notifications" = "Push Notifications";
+
+"Welcome" = "Welcome";
+
+"Reminder" = "Reminder";
+"welcome_text" = "Welcome to a convenient application that helps you remember the main thing.";
+"create_reminder" = "Create a new reminder";
+"create_reminder_step1" = "1. Tap the '+' button to create a new reminder.";
+"create_reminder_step2" = "2. Then choose a title, date, and more.";
+"create_reminder_step3" = "3. Save and wait for a reminder!";
+"notifications_title" = "Notifications";
+"notifications_text" = "Click allow to receive notifications about your events and more, or configure later in settings.";
+"search_sort_title" = "Search and Sort events";
+"search_symbol" = "Search symbol";
+"sort_symbol" = "Sort symbol";
+
+"language_option" = "Language";
+"Next" = "Next";
+"Get Started!" = "Get Started!";
+"search_description" = "Search: Allows you to find reminders using keywords in the title, description, or other attributes.";
+"sort_description" = "Sort: Helps you organize your reminders by date, name, or other parameters.";
