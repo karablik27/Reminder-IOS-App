@@ -13,6 +13,7 @@ struct HistoryView: View {
     @State private var showDeleteOptions = false
     @State private var showDeleteAllAlert = false
     @State private var showSearchView = false
+    @State private var showSettings = false
 
     init(modelContext: ModelContext) {
         _viewModel = StateObject(wrappedValue: HistoryViewModel(modelContext: modelContext))
@@ -20,7 +21,9 @@ struct HistoryView: View {
 
     var body: some View {
         VStack(spacing: ConstantsMain.body.VStackspacing) {
-            HeaderSectionView(title: "History".localized) { }
+            HeaderSectionView(title: "History".localized) {
+                showSettings = true
+            }
                 .padding(.horizontal)
                 .padding(.top, ConstantsMain.body.headerSectionPadding)
 
@@ -63,6 +66,9 @@ struct HistoryView: View {
         .fullScreenCover(isPresented: $showSearchView) {
             HistorySearchScreen(viewModel: viewModel, isSearchActive: $showSearchView)
                 .environment(\.modelContext, modelContext)
+        }
+        .navigationDestination(isPresented: $showSettings) {
+            SettingsView(viewModel: SettingsViewModel(modelContext: modelContext))
         }
         .confirmationDialog("Delete History Events".localized, isPresented: $showDeleteOptions, titleVisibility: .visible) {
             Button("Delete All History Events".localized, role: .destructive) {

@@ -32,6 +32,27 @@ final class NotificationsViewModel: ObservableObject {
         settings.isPushEnabled = newValue
         settings.isManuallySet = true
         try? context.save()
+        
+        if !newValue {
+            // При отключении отменяем все запланированные уведомления.
+            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+            print("All scheduled notifications cancelled.")
+        } else {
+            // При включении уведомлений повторно планируем их для активных событий.
+            let now = Date()
+            let fetchDescriptor = FetchDescriptor<MainModel>(predicate: #Predicate { (event: MainModel) in
+                event.date > now
+            })
+            if let events = try? context.fetch(fetchDescriptor) {
+                for event in events {
+                    NotificationManager.scheduleNotifications(for: event, globalPushEnabled: true)
+                }
+                print("Push notifications enabled - rescheduling notifications for \(events.count) active events.")
+            } else {
+                print("No active events found for rescheduling notifications.")
+            }
+        }
         print("Push notifications: \(newValue ? "enabled" : "disabled")")
     }
+
 }

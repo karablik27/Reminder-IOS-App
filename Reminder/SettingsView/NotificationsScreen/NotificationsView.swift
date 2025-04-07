@@ -10,6 +10,16 @@ struct NotificationsView: View {
         _viewModel = StateObject(wrappedValue: NotificationsViewModel(context: modelContext))
     }
     
+    // Вычисляемая привязка для переключателя, вызывающая togglePush при изменении значения
+    var pushBinding: Binding<Bool> {
+        Binding(
+            get: { viewModel.settings.isPushEnabled },
+            set: { newValue in
+                viewModel.togglePush(newValue, context: modelContext)
+            }
+        )
+    }
+    
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -38,7 +48,7 @@ struct NotificationsView: View {
                         settingsToggleRow(
                             title: "Push Notifications".localized,
                             systemImage: "bell",
-                            isOn: $viewModel.settings.isPushEnabled
+                            isOn: pushBinding
                         )
                     }
                     .padding(.vertical, 16)
@@ -74,7 +84,7 @@ struct NotificationsView: View {
             
             Spacer()
             
-            // Переключатель
+            // Переключатель с вычисляемой привязкой
             Toggle("", isOn: isOn)
                 .labelsHidden()
                 .toggleStyle(SwitchToggleStyle(tint: Color.green))

@@ -1,8 +1,11 @@
 import SwiftUI
 import SwiftData
 
+// MARK: - ReminderApp Entry Point
 @main
 struct ReminderApp: App {
+
+    // MARK: - Model Container
     let sharedModelContainer: ModelContainer = {
         let schema = Schema([
             LoadingModel.self,
@@ -20,6 +23,7 @@ struct ReminderApp: App {
         }
     }()
 
+    // MARK: - Scene
     var body: some Scene {
         WindowGroup {
             LoadingView()

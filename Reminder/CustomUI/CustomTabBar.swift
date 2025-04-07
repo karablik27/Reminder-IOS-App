@@ -1,7 +1,8 @@
 import SwiftUI
 import SwiftData
 
-// MARK: - Shape для фона таб-бара с вырезом (notch) в верхней центральной части
+// MARK: - CustomTabBarShape
+/// A shape for the tab bar background with a notch cutout at the top center.
 struct TabBarShape: Shape {
     func path(in rect: CGRect) -> Path {
         let cornerRadius = Constants.TabBar.cornerRadius
@@ -9,10 +10,10 @@ struct TabBarShape: Shape {
         let notchWidth = notchRadius * 2
         let centerX = rect.midX
         
-        // Основной скруглённый прямоугольник
+        // Main rounded rectangle path.
         let mainPath = Path(roundedRect: rect, cornerRadius: cornerRadius)
         
-        // Дуга (полукруг), которую вычтем из основного прямоугольника
+        // Notch path (semicircular arc) to be subtracted.
         var notchPath = Path()
         notchPath.addArc(
             center: CGPoint(x: centerX, y: rect.minY),
@@ -22,47 +23,54 @@ struct TabBarShape: Shape {
             clockwise: false
         )
         
-        // Возвращаем разность: (скруглённый прямоугольник) - (дуга)
+        // Return the main path minus the notch.
         return mainPath.subtracting(notchPath)
     }
 }
 
-// MARK: - Константы
+// MARK: - Constants
 private enum Constants {
+    // MARK: TabBar Constants
     enum TabBar {
-        /// Высота таб-бара (без выреза)
+        /// Height of the tab bar (without the notch).
         static let height: CGFloat = 90
-        /// Размер иконок
+        /// Icon size in the tab bar.
         static let iconSize: CGFloat = 28
-        /// Радиус выреза (notch)
+        /// Notch radius (half the width of the notch).
         static let notchRadius: CGFloat = 35
-        /// Размер кнопки "plus" – NavigationLink
+        /// Size of the "plus" button (navigation link) circle.
         static let linkCircleSize: CGFloat = 44
-        /// Скругление таб-бара
+        /// Corner radius for the tab bar.
         static let cornerRadius: CGFloat = 56
-        /// Параметры тени
+        /// Shadow radius for the green tab bar.
         static let shadowRadius: CGFloat = 12
+        /// Shadow opacity for the green tab bar.
         static let shadowOpacity: Double = 0.15
-        
+        /// Vertical offset for the "plus" button.
         static let offsetY: CGFloat = -37
     }
+    
+    // MARK: Layout Constants
+    /// Horizontal padding used in the tab bar icons row.
+    static let horizontalPadding: CGFloat = 32
 }
 
-
+// MARK: - CustomTabBar
+/// A custom tab bar view with a notch cutout in the center and a central "plus" button.
 struct CustomTabBar: View {
     @Binding var selectedTab: Int
     @Environment(\.modelContext) private var modelContext
 
     var body: some View {
         ZStack {
-            // 1) Базовая белая форма
+            // 1) Base white shape.
             TabBarShape()
                 .fill(Color.white)
                 .frame(height: Constants.TabBar.height)
                 .padding(.horizontal)
                 .zIndex(0)
             
-            // 2) Зеленая форма таб-бара с тенью
+            // 2) Green tab bar shape with shadow.
             TabBarShape()
                 .fill(Colors.GreenTabBar)
                 .shadow(
@@ -73,26 +81,26 @@ struct CustomTabBar: View {
                 .frame(height: Constants.TabBar.height)
                 .zIndex(1)
             
-            // 3) Иконки таб-бара
+            // 3) Tab bar icons.
             HStack {
-                // Вкладка "Events"
+                // "Events" tab.
                 TabBarButton(image: "list.bullet", index: 0, selectedTab: $selectedTab)
-                
+                // Second tab.
                 TabBarButton(image: "sparkles", index: 1, selectedTab: $selectedTab)
                 
-                // Отступ для кнопки "plus"
+                // Spacer for "plus" button.
                 Spacer(minLength: Constants.TabBar.notchRadius * 2)
                 
+                // "Bookmarks" tab.
                 TabBarButton(image: "bookmark", index: 2, selectedTab: $selectedTab)
-                // Дополнительные вкладки
+                // "Clock" tab.
                 TabBarButton(image: "clock", index: 3, selectedTab: $selectedTab)
-                
             }
-            .padding(.horizontal, 32)
+            .padding(.horizontal, Constants.horizontalPadding)
             .frame(height: Constants.TabBar.height)
             .zIndex(2)
             
-            // 4) Кнопка "plus" в центре выреза
+            // 4) Plus button in the center notch.
             NavigationLink(destination: AddEventView(viewModel: AddEventViewModel(modelContext: modelContext))) {
                 ZStack {
                     Circle()
@@ -108,16 +116,16 @@ struct CustomTabBar: View {
                         .foregroundColor(.black)
                 }
             }
-            .buttonStyle(PlainButtonStyle()) // Добавляем стиль кнопки
+            .buttonStyle(PlainButtonStyle())
             .offset(y: Constants.TabBar.offsetY)
             .zIndex(3)
-
         }
         .frame(maxWidth: .infinity)
     }
 }
 
-// Пример кнопки для таб-бара:
+// MARK: - TabBarButton
+/// A button used within the custom tab bar to select the desired tab.
 struct TabBarButton: View {
     let image: String
     let index: Int
@@ -134,4 +142,3 @@ struct TabBarButton: View {
         }
     }
 }
-

@@ -1,10 +1,14 @@
 import SwiftUI
 import SwiftData
 
+// MARK: - BeautifulDatesView
 struct BeautifulDatesView: View {
+
+    // MARK: - Dependencies
     @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel: BeautifulDatesViewModel
 
+    // MARK: - UI State
     @State private var showTypeMenu = false
     @State private var showSortMenu = false
     @State private var isTypeExpanded = false
@@ -12,18 +16,24 @@ struct BeautifulDatesView: View {
     @State private var showDeleteOptions = false
     @State private var showDeleteAllAlert = false
     @State private var showSearchView = false
+    @State private var showSettings = false
 
+    // MARK: - Init
     init(modelContext: ModelContext) {
         _viewModel = StateObject(wrappedValue: BeautifulDatesViewModel(modelContext: modelContext))
     }
 
+    // MARK: - Body
     var body: some View {
         VStack(spacing: ConstantsMain.body.VStackspacing) {
+            // MARK: Header
             HeaderSectionView(title: "Beautiful Dates".localized) {
+                showSettings = true
             }
             .padding(.horizontal)
             .padding(.top, ConstantsMain.body.headerSectionPadding)
 
+            // MARK: Sort Section
             SortSectionView(
                 selectedType: viewModel.selectedEventType.rawValue,
                 selectedSortOption: viewModel.selectedSortOption.rawValue,
@@ -43,6 +53,7 @@ struct BeautifulDatesView: View {
             )
             .padding(.horizontal)
 
+            // MARK: Content
             contentSection
         }
         .environment(\.modelContext, modelContext)
@@ -63,6 +74,9 @@ struct BeautifulDatesView: View {
         .fullScreenCover(isPresented: $showSearchView) {
             BeautifulDatesSearchView(viewModel: viewModel, isSearchActive: $showSearchView)
                 .environment(\.modelContext, modelContext)
+        }
+        .navigationDestination(isPresented: $showSettings) {
+            SettingsView(viewModel: SettingsViewModel(modelContext: modelContext))
         }
         .confirmationDialog("Delete Beautiful Events".localized, isPresented: $showDeleteOptions, titleVisibility: .visible) {
             Button("Delete All Beautiful Events".localized, role: .destructive) {
@@ -87,6 +101,7 @@ struct BeautifulDatesView: View {
         }
     }
 
+    // MARK: - Content Section
     private var contentSection: some View {
         if viewModel.filteredModels.isEmpty {
             AnyView(
@@ -119,7 +134,7 @@ struct BeautifulDatesView: View {
                                     )
                                 }
                             )
-                            .adjustableOpacity(tabBarHeight: ConstantsMain.TabBar.height, margin: 8)
+                            .adjustableOpacity(tabBarHeight: ConstantsMain.TabBar.height, margin: ConstantsMain.contentSection.margin)
                             .contentShape(Rectangle())
                         }
                         .frame(height: ConstantsMain.contentSection.frameHeight)

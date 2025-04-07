@@ -3,55 +3,88 @@ import UserNotifications
 
 struct NotificationManager {
     
-    /// Планирует серию уведомлений для события, основываясь на выбранных параметрах и глобальном флаге push-уведомлений.
+    /// Планирует серию reminder‑уведомлений и финальное уведомление о завершении события.
     static func scheduleNotifications(for event: MainModel, globalPushEnabled: Bool) {
-        // Если глобально уведомления выключены — ничего не планировать.
         guard globalPushEnabled else {
             print("Global push notifications are disabled. Skipping scheduling for event: \(event.title)")
             return
         }
         
-        // Сначала отменяем предыдущие уведомления для этого события
+        // Отменяем все ранее запланированные уведомления для данного события.
         cancelNotifications(for: event)
         
         let center = UNUserNotificationCenter.current()
+        let firstInterval = firstRemindInterval(for: event.firstRemind)
+        let frequency = reminderFrequencyInterval(for: event.howOften)
         
-        let firstRemindInterval = firstRemindInterval(for: event.firstRemind)
-        let frequencyInterval = reminderFrequencyInterval(for: event.howOften)
+        let scheduledStartDate = event.date.addingTimeInterval(-firstInterval)
+        let now = Date()
         
-        let firstNotificationDate = event.date.addingTimeInterval(-firstRemindInterval)
+        // Определяем, что reminder‑уведомления планируем до момента event.date - 59 секунд,
+        // чтобы не было пересечения с финальным уведомлением.
+        let finalReminderCutoff = event.date.addingTimeInterval(-59)
+        var notificationDate = scheduledStartDate > now
+            ? scheduledStartDate
+            : now.addingTimeInterval(frequency)
         
-        guard firstNotificationDate > Date() else {
-            print("First notification time is in the past. Skipping scheduling.")
-            return
+        // Планируем reminder‑уведомления до finalReminderCutoff.
+        if notificationDate < finalReminderCutoff {
+            var index = 0
+            while notificationDate < finalReminderCutoff {
+                let content = UNMutableNotificationContent()
+                content.title = "Reminder"
+                let messages = [
+                    "Don't miss the event:".localized + " \(event.title)!",
+                    "Your event".localized + " \(event.title) " + "is coming soon!".localized,
+                    "Get ready for".localized + " \(event.title)!",
+                    "\(event.title) " + "is just around the corner!".localized,
+                    "Reminder:".localized + " \(event.title) " + "is approaching fast!".localized
+                ]
+                content.body = messages.randomElement() ?? "Reminder: \(event.title) is coming up!"
+                content.sound = .default
+                
+                let triggerDateComponents = Calendar.current.dateComponents(
+                    [.year, .month, .day, .hour, .minute, .second],
+                    from: notificationDate
+                )
+                let trigger = UNCalendarNotificationTrigger(dateMatching: triggerDateComponents, repeats: false)
+                
+                let identifier = "\(event.id.uuidString)_\(index)"
+                let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+                
+                center.add(request) { error in
+                    if let error = error {
+                        print("Error scheduling reminder for event \(event.title): \(error)")
+                    }
+                }
+                
+                notificationDate = notificationDate.addingTimeInterval(frequency)
+                index += 1
+            }
+        } else {
+            print("No time available to schedule reminder notifications for event: \(event.title)")
         }
         
-        var notificationDate = firstNotificationDate
-        var index = 0
-        while notificationDate < event.date {
-            let content = UNMutableNotificationContent()
-            content.title = "Reminder"
-            content.body = "Upcoming event: \(event.title) is approaching."
-            content.sound = .default
-            
-            let triggerDateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: notificationDate)
-            let trigger = UNCalendarNotificationTrigger(dateMatching: triggerDateComponents, repeats: false)
-            
-            let identifier = "\(event.id.uuidString)_\(index)"
-            let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
-            
-            center.add(request) { error in
-                if let error = error {
-                    print("Error scheduling notification: \(error)")
-                }
+        // Планируем финальное уведомление о завершении события.
+        let finalContent = UNMutableNotificationContent()
+        finalContent.title = "Event Ended"
+        finalContent.body = "The event \(event.title) has ended!"
+        finalContent.sound = .default
+        
+        let finalIdentifier = "\(event.id.uuidString)_final"
+        // Вычисляем задержку: время до event.date плюс 1 секунда.
+        let delay = event.date.timeIntervalSince(now) + 1
+        let finalTrigger = UNTimeIntervalNotificationTrigger(timeInterval: delay > 1 ? delay : 1, repeats: false)
+        
+        let finalRequest = UNNotificationRequest(identifier: finalIdentifier, content: finalContent, trigger: finalTrigger)
+        center.add(finalRequest) { error in
+            if let error = error {
+                print("Error scheduling final notification for event \(event.title): \(error)")
             }
-            
-            notificationDate = notificationDate.addingTimeInterval(frequencyInterval)
-            index += 1
         }
     }
     
-    /// Отменяет все запланированные уведомления для указанного события
+    /// Отменяет все запланированные уведомления для данного события.
     static func cancelNotifications(for event: MainModel) {
         let center = UNUserNotificationCenter.current()
         let identifierPrefix = event.id.uuidString
@@ -63,8 +96,14 @@ struct NotificationManager {
         }
     }
     
+    // MARK: - Вспомогательные методы
+    
     private static func firstRemindInterval(for firstRemind: FirstRemind) -> TimeInterval {
         switch firstRemind {
+        case .fiveMinutesBefore: return 300
+        case .fifthteenMinutesBefore: return 900
+        case .thirtyMinutesBefore: return 1800
+        case .fortyfiveMinutesBefore: return 2700
         case .oneHourBefore: return 3600
         case .twoHourBefore: return 7200
         case .threeHourBefore: return 10800
@@ -89,6 +128,7 @@ struct NotificationManager {
     
     private static func reminderFrequencyInterval(for frequency: ReminderFrequency) -> TimeInterval {
         switch frequency {
+        case .everyFiveSeconds: return 60
         case .everyHour: return 3600
         case .everyDay: return 86400
         case .everyWeek: return 604800

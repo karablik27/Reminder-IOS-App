@@ -1,14 +1,19 @@
 import SwiftUI
 import SwiftData
 
+// MARK: - BookmarksSearchView
 struct BookmarksSearchView: View {
+
+    // MARK: - Properties
     @ObservedObject var viewModel: BookmarksViewModel
     @Binding var isSearchActive: Bool
     @Environment(\.modelContext) private var modelContext
 
+    // MARK: - Body
     var body: some View {
         NavigationStack {
             VStack(spacing: SearchConstants.VStackSpacing) {
+                // MARK: - Search Header
                 SearchHeaderView(
                     title: "Bookmarks",
                     searchText: $viewModel.searchText,
@@ -16,7 +21,8 @@ struct BookmarksSearchView: View {
                     leftButtonAction: { withAnimation { isSearchActive = false } },
                     rightButtonAction: { withAnimation { isSearchActive = false } }
                 )
-                
+
+                // MARK: - Empty State or Results
                 if viewModel.searchResults.isEmpty {
                     Spacer()
                     Text("No bookmarks found")

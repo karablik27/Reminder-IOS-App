@@ -2,9 +2,8 @@ import SwiftUI
 import SwiftData
 import Combine
 
-
 class BeautifulDatesViewModel: ObservableObject {
-
+    
     // MARK: - Published Properties
     @Published var selectedEventType: EventTypeMain = .allEvents
     @Published var selectedSortOption: SortOption = .byDate
@@ -61,7 +60,6 @@ class BeautifulDatesViewModel: ObservableObject {
         NotificationManager.cancelNotifications(for: event)
         modelContext.delete(event)
         do {
-
             try modelContext.save()
             loadBeautifulEvents()
         } catch {

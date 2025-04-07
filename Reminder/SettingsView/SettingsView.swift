@@ -6,10 +6,12 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
 
+    @State private var showResetConfirmation: Bool = false
+    
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Верхняя панель с локализованным заголовком
+                // Верхняя панель с зелёным фоном
                 HStack {
                     Button {
                         dismiss()
@@ -30,8 +32,7 @@ struct SettingsView: View {
                 // Основное содержимое
                 ScrollView {
                     VStack(spacing: 16) {
-                        
-                        // Ячейка с переходом на уведомления
+                        // Ячейка с переходом к уведомлениям
                         NavigationLink(destination: NotificationsView(modelContext: modelContext)) {
                             settingsRow(
                                 title: "Notifications".localized,
@@ -39,7 +40,7 @@ struct SettingsView: View {
                             )
                         }
                         
-                        // Ячейка с переходом на выбор языка
+                        // Ячейка с выбором языка
                         NavigationLink(destination: LocalizationView(modelContext: modelContext)) {
                             settingsRow(
                                 title: "Language".localized,
@@ -47,23 +48,25 @@ struct SettingsView: View {
                             )
                         }
 
-                        .buttonStyle(.plain)
                         
-                        
-                        // Ячейка "Rate in App Store"
-                        Button {
-                            viewModel.rateInAppStore()
-                        } label: {
+                        // Новая ячейка FAQ с переходом на экран FAQView
+                        NavigationLink(destination: FAQView()) {
                             settingsRow(
-                                title: "Rate in App Store".localized,
-                                systemImage: "star"
+                                title: "FAQ".localized,
+                                systemImage: "questionmark.circle"
                             )
                         }
-                        .buttonStyle(.plain)
                         
-                        // Ячейка "Factory Reset"
+                        NavigationLink(destination: ExtraInfoView()) {
+                                settingsRow(
+                                    title: "Extra",
+                                    systemImage: "gearshape.2"
+                                )
+                            }
+                        
+                        // Ячейка "Factory Reset" с подтверждением
                         Button {
-                            viewModel.factoryReset()
+                            showResetConfirmation = true
                         } label: {
                             settingsRow(
                                 title: "Factory Reset".localized,
@@ -72,7 +75,12 @@ struct SettingsView: View {
                             )
                         }
                         .buttonStyle(.plain)
-                        
+                        .confirmationDialog("Are you sure you want to factory reset?", isPresented: $showResetConfirmation, titleVisibility: .visible) {
+                            Button("Factory Reset", role: .destructive) {
+                                viewModel.factoryReset()
+                            }
+                            Button("Cancel", role: .cancel) { }
+                        }
                     }
                     .padding(.vertical, 16)
                     .padding(.horizontal, 8)
@@ -84,7 +92,6 @@ struct SettingsView: View {
         .navigationViewStyle(StackNavigationViewStyle())
     }
     
-    // Универсальная ячейка без подзаголовка: иконка в белом круге, заголовок и стрелка
     private func settingsRow(
         title: String,
         systemImage: String,
@@ -112,41 +119,6 @@ struct SettingsView: View {
             Image(systemName: "chevron.right")
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(.gray)
-        }
-        .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(20)
-        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-    }
-    
-    // Ячейка с переключателем без подзаголовка
-    private func settingsToggleRow(
-        title: String,
-        systemImage: String,
-        isOn: Binding<Bool>
-    ) -> some View {
-        HStack(spacing: 12) {
-            // Иконка в белом круге
-            ZStack {
-                Circle()
-                    .fill(Color.white)
-                    .frame(width: 40, height: 40)
-                Image(systemName: systemImage)
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.gray)
-            }
-            
-            // Заголовок ячейки
-            Text(title)
-                .font(.headline)
-                .foregroundColor(.black)
-            
-            Spacer()
-            
-            // Переключатель
-            Toggle("", isOn: isOn)
-                .labelsHidden()
-                .toggleStyle(SwitchToggleStyle(tint: Colors.mainGreen))
         }
         .padding()
         .background(Color(.systemGray6))

@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "2025-03-25 15.18.57.png",
+      "filename" : "movie 2.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "2025-03-25 15.18.57 1.png",
+      "filename" : "movie 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "2025-03-25 15.18.57 2.png",
+      "filename" : "movie.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

@@ -69,7 +69,7 @@ struct MainView: View {
                     .environment(\.modelContext, modelContext)
             }
             .navigationDestination(isPresented: $showSettings) {
-                    SettingsView(viewModel: SettingsViewModel())
+                SettingsView(viewModel: SettingsViewModel(modelContext: modelContext))
             }
             .confirmationDialog("Delete Events".localized, isPresented: $showDeleteOptions, titleVisibility: .visible) {
                 Button("Delete All Events".localized, role: .destructive) {

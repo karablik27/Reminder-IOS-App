@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "подарок-Photoroom.png",
+      "filename" : "birthdays.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "подарок-Photoroom 1.png",
+      "filename" : "birthdays 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "подарок-Photoroom 2.png",
+      "filename" : "birthdays 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

@@ -119,13 +119,29 @@ class HistoryViewModel: ObservableObject {
         timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] now in
-                self?.currentDate = now
+                guard let self = self else { return }
+                self.currentDate = now
+                self.loadHistoryEvents()
             }
     }
     
     // MARK: - Time Calculation
     func timeLeftString(for event: MainModel) -> String {
-        return "Finish"
+        let now = currentDate
+        if event.date <= now {
+            return "Finish".localized
+        }
+        
+        let diff = event.date.timeIntervalSince(now)
+        let days = Int(diff / 86400)
+        if days >= 1 {
+            return "\(days)" + "days".localized
+        } else {
+            let hours = Int(diff / 3600)
+            let minutes = Int((diff.truncatingRemainder(dividingBy: 3600)) / 60)
+            let seconds = Int(diff.truncatingRemainder(dividingBy: 60))
+            return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+        }
     }
     
     // MARK: - Deinitializer

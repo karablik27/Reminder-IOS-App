@@ -25,8 +25,9 @@ enum ConstantsMain {
     }
     
     enum contentSection {
-        static let VStackspacing: CGFloat = 8
         static let spacer: CGFloat = 0
+        static let margin: CGFloat = 8
+        static let VStackspacing: CGFloat = 8
         static let frameHeight: CGFloat = 104
     }
     

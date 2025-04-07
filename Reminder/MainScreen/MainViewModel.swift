@@ -24,9 +24,11 @@ class MainViewModel: ObservableObject {
         startTimer()
     }
 
-    // MARK: - Event Loading
+    // MARK: - Event Loading (теперь загружаются только предстоящие события)
     func loadEvents() {
         print("Loading events...")
+        let now = Date()
+        
         var sortDescriptors: [SortDescriptor<MainModel>] = []
         switch selectedSortOption {
         case .byDate:
@@ -35,23 +37,28 @@ class MainViewModel: ObservableObject {
             sortDescriptors = [SortDescriptor(\.title, order: isAscending ? .forward : .reverse)]
         }
         
-        let fetchDescriptor = FetchDescriptor<MainModel>(sortBy: sortDescriptors)
+        // Фетчим только события, которые ещё не закончились (событие больше текущей даты)
+        let fetchDescriptor = FetchDescriptor<MainModel>(
+            predicate: #Predicate { (event: MainModel) in
+                event.date > now
+            },
+            sortBy: sortDescriptors
+        )
+        
         do {
-            let allEvents = try modelContext.fetch(fetchDescriptor)
-            print("Fetched \(allEvents.count) events from modelContext.")
+            let upcomingEvents = try modelContext.fetch(fetchDescriptor)
+            print("Fetched \(upcomingEvents.count) upcoming events.")
             if selectedEventType == .allEvents {
-                filteredModels = allEvents
-                print("No filter applied. Showing all events.")
+                filteredModels = upcomingEvents
             } else {
-                filteredModels = allEvents.filter { $0.type == selectedEventType }
-                print("Filtered by type \(selectedEventType.rawValue). Showing \(filteredModels.count) events.")
+                filteredModels = upcomingEvents.filter { $0.type == selectedEventType }
             }
         } catch {
             print("Error fetching events: \(error)")
             filteredModels = []
         }
     }
-    
+
     // MARK: - Bookmark Handling
     func toggleBookmark(for event: MainModel) {
         event.isBookmarked.toggle()
@@ -62,7 +69,7 @@ class MainViewModel: ObservableObject {
             print("Error saving bookmark status: \(error)")
         }
     }
-
+    
     // MARK: - Sorting Methods
     func toggleSortDirection() {
         isAscending.toggle()
@@ -132,12 +139,14 @@ class MainViewModel: ObservableObject {
         }
     }
     
-    // MARK: - Timer Management
+    // MARK: - Timer Management (обновление каждые 1 секунду)
     private func startTimer() {
         timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] now in
-                self?.currentDate = now
+                guard let self = self else { return }
+                self.currentDate = now
+                self.loadEvents()
             }
     }
     

@@ -39,6 +39,7 @@
 "1 week before" = "1 week before";
 
 // ReminderFrequency
+"Every 1 minute" = "Every 1 minute";
 "Every 1 hour" = "Every 1 hour";
 "Every 1 day" = "Every 1 day";
 "Every 1 week" = "Every 1 week";
@@ -91,6 +92,7 @@
 "You will see all other events, that you have." = "You will see all other events, that you have.";
 
 "Reminder Frequency" = "Reminder Frequency";
+"Remind every 1 minute." = "Remind every 1 minute.";
 "Remind every 1 hour." = "Remind every 1 hour.";
 "Remind every 1 day." = "Remind every 1 day.";
 "Remind every 1 week." = "Remind every 1 week.";
@@ -178,3 +180,67 @@
 "Get Started!" = "Get Started!";
 "search_description" = "Search: Allows you to find reminders using keywords in the title, description, or other attributes.";
 "sort_description" = "Sort: Helps you organize your reminders by date, name, or other parameters.";
+
+"You will create a reminder about a special anniversary." = "You will create a reminder about a special anniversary.";
+"You will create a reminder about a trip or vacation." = "You will create a reminder about a trip or vacation.";
+"You will create a reminder about a concert, festival, or live event." = "You will create a reminder about a concert, festival, or live event.";
+"You will create a reminder to track your goals or deadlines." = "You will create a reminder to track your goals or deadlines.";
+"You will create a reminder about health-related things (e.g. appointments)." = "You will create a reminder about health-related things (e.g. appointments).";
+"You will create a reminder about a meeting or important appointment." = "You will create a reminder about a meeting or important appointment.";
+"You will create a general reminder for something important." = "You will create a general reminder for something important.";
+"You will create a reminder about work tasks or projects." = "You will create a reminder about work tasks or projects.";
+"You will create a reminder about shopping or sales." = "You will create a reminder about shopping or sales.";
+"You will create a reminder about romantic moments or dates." = "You will create a reminder about romantic moments or dates.";
+"You will create a reminder about something happening for the first time." = "You will create a reminder about something happening for the first time.";
+"You will create a reminder for a dream or wish you'd like to remember." = "You will create a reminder for a dream or wish you'd like to remember.";
+"You will create a reminder about a memorable or meaningful moment." = "You will create a reminder about a memorable or meaningful moment.";
+
+"You will see all anniversary events that you have." = "You will see all anniversary events that you have.";
+"You will see all travel and trip events that you have." = "You will see all travel and trip events that you have.";
+"You will see all concert or festival events that you have." = "You will see all concert or festival events that you have.";
+"You will see all goal-related or deadline events that you have." = "You will see all goal-related or deadline events that you have.";
+"You will see all health-related events like appointments that you have." = "You will see all health-related events like appointments that you have.";
+"You will see all meeting or appointment events that you have." = "You will see all meeting or appointment events that you have.";
+"You will see all general reminder events that you have." = "You will see all general reminder events that you have.";
+"You will see all work-related events that you have." = "You will see all work-related events that you have.";
+"You will see all shopping or sale events that you have." = "You will see all shopping or sale events that you have.";
+"You will see all romantic events or dates that you have." = "You will see all romantic events or dates that you have.";
+"You will see all first-time experiences you've saved." = "You will see all first-time experiences you've saved.";
+"You will see all wish or dream events that you have." = "You will see all wish or dream events that you have.";
+"You will see all memorable or meaningful events that you have." = "You will see all memorable or meaningful events that you have.";
+
+"Anniversary" = "Anniversary";
+"Travel" = "Travel";
+"Concerts" = "Concerts";
+"Goals" = "Goals";
+"Health" = "Health";
+"Meetings" = "Meetings";
+"Reminders" = "Reminders";
+"Work" = "Work";
+"Shopping" = "Shopping";
+"Romantic" = "Romantic";
+"FirstTime" = "FirstTime";
+"WishDate" = "WishDate";
+"Memorable" = "Memorable";
+
+"You will see all events that you have." = "You will see all events that you have.";
+"You will see all birthday events that you have." = "You will see all birthday events that you have.";
+"You will see all holiday events that you have." = "You will see all holiday events that you have.";
+"You will see all study-related events that you have." = "You will see all study-related events that you have.";
+"You will see all movie, cartoon, and TV show events that you have." = "You will see all movie, cartoon, and TV show events that you have.";
+"You will see all other events that don't fit into a specific category." = "You will see all other events that don't fit into a specific category.";
+
+"Notifications" = "Notifications";
+
+"Don't miss the event:" = "Don't miss the event:";
+"Your event" = "Your event";
+"is coming soon!" = "is coming soon!";
+"Get ready for" = "Get ready for";
+"is just around the corner!" = "is just around the corner!";
+"Reminder:" = "Reminder:";
+"is approaching fast!" = "is approaching fast!";
+"is coming up!" = "is coming up!";
+
+"Beautiful Dates" = "Beautiful Dates";
+"Search beautiful events..." = "Search beautiful events...";
+"No beautiful events found" = "No beautiful events found";

@@ -48,6 +48,7 @@ struct LoadingView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: Constants.Image.width, height: Constants.Image.height)
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
                         .opacity(logoOpacity)
                         .animation(.easeIn(duration: Constants.Animation.duration), value: logoOpacity)
                         .offset(y: Constants.Image.offsetY)
@@ -67,7 +68,6 @@ struct LoadingView: View {
             }
         }
         .onAppear {
-            // Загрузка сохранённого языка из SwiftData
             let fetchDescriptor = FetchDescriptor<LocalizationModel>()
             if let savedLanguage = try? modelContext.fetch(fetchDescriptor).first?.selectedLanguage {
                 Localizer.selectedLanguage = savedLanguage
@@ -77,7 +77,6 @@ struct LoadingView: View {
                 logoOpacity = Constants.Animation.finalOpacity
             }
             
-            // Используем задержку для демонстрации анимации
             let delay = isFirstLaunch ? Constants.Animation.finalOpacity : Constants.Animation.duration
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 viewModel.startLoading() {

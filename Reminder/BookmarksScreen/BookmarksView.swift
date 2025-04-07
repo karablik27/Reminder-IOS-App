@@ -1,31 +1,39 @@
 import SwiftUI
 import SwiftData
 
+// MARK: - BookmarksView
 struct BookmarksView: View {
+
+    // MARK: - Dependencies
     @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel: BookmarksViewModel
 
+    // MARK: - UI State
     @State private var showTypeMenu = false
     @State private var showSortMenu = false
     @State private var isTypeExpanded = false
     @State private var isSortExpanded = false
-
     @State private var showDeleteOptions = false
     @State private var showDeleteAllAlert = false
     @State private var showSearchView = false
+    @State private var showSettings = false
 
+    // MARK: - Init
     init(modelContext: ModelContext) {
         _viewModel = StateObject(wrappedValue: BookmarksViewModel(modelContext: modelContext))
     }
 
+    // MARK: - Body
     var body: some View {
         VStack(spacing: ConstantsMain.body.VStackspacing) {
+            // MARK: Header
             HeaderSectionView(title: "Bookmarks".localized) {
-                // Настройки, если нужны
+                showSettings = true
             }
             .padding(.horizontal)
             .padding(.top, ConstantsMain.body.headerSectionPadding)
 
+            // MARK: Sort Section
             SortSectionView(
                 selectedType: viewModel.selectedEventType.rawValue,
                 selectedSortOption: viewModel.selectedSortOption.rawValue,
@@ -45,6 +53,7 @@ struct BookmarksView: View {
             )
             .padding(.horizontal)
 
+            // MARK: Content Section
             contentSection
         }
         .environment(\.modelContext, modelContext)
@@ -65,6 +74,9 @@ struct BookmarksView: View {
         .fullScreenCover(isPresented: $showSearchView) {
             BookmarksSearchView(viewModel: viewModel, isSearchActive: $showSearchView)
                 .environment(\.modelContext, modelContext)
+        }
+        .navigationDestination(isPresented: $showSettings) {
+            SettingsView(viewModel: SettingsViewModel(modelContext: modelContext))
         }
         .confirmationDialog("Delete Bookmarked Events".localized, isPresented: $showDeleteOptions, titleVisibility: .visible) {
             Button("Delete All Bookmarked Events".localized, role: .destructive) {
@@ -89,6 +101,7 @@ struct BookmarksView: View {
         }
     }
 
+    // MARK: - Content Section
     private var contentSection: some View {
         if viewModel.filteredModels.isEmpty {
             AnyView(
@@ -119,7 +132,7 @@ struct BookmarksView: View {
                                     )
                                 }
                             )
-                            .adjustableOpacity(tabBarHeight: ConstantsMain.TabBar.height, margin: 8)
+                            .adjustableOpacity(tabBarHeight: ConstantsMain.TabBar.height, margin: ConstantsMain.contentSection.margin)
                             .contentShape(Rectangle())
                         }
                         .frame(height: ConstantsMain.contentSection.frameHeight)

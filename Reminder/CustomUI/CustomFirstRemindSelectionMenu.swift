@@ -1,23 +1,30 @@
 import SwiftUI
 
+// MARK: - Constants
+private enum Constants {
+    static let listRowInsetsTop: CGFloat = 8
+    static let listRowInsetsLeading: CGFloat = 16
+    static let listRowInsetsBottom: CGFloat = 8
+    static let listRowInsetsTrailing: CGFloat = 16
+
+    static let presentationDetentsHeight: CGFloat = 304
+    static let presentationCornerRadius: CGFloat = 24
+
+    static let HstackSpacing: CGFloat = 12
+    static let ImageFrameWidth: CGFloat = 24
+    static let ImageFrameHeight: CGFloat = 24
+    static let VstackSpacing: CGFloat = 4
+}
+
+// MARK: - CustomFirstRemindSelectionMenuAddEvent
 struct CustomFirstRemindSelectionMenuAddEvent: View {
-    
-    private enum Constants {
-        
-        static let listRowInsetsTop: CGFloat = 8
-        static let listRowInsetsLeading: CGFloat = 16
-        static let listRowInsetsBottom: CGFloat = 8
-        static let listRowInsetsTrailing: CGFloat = 16
-        
-        static let presentationDetentsHeight: CGFloat = 304
-        static let presentationCornerRadius: CGFloat = 24
-        
-    }
-    
+
+    // MARK: - Bindings & Environment
     @Binding var isPresented: Bool
     @Binding var selectedRemind: FirstRemind
     @Environment(\.dismiss) private var dismiss
-    
+
+    // MARK: - Body
     var body: some View {
         NavigationView {
             List {
@@ -30,7 +37,11 @@ struct CustomFirstRemindSelectionMenuAddEvent: View {
                             dismiss()
                         }
                     )
-                    .listRowInsets(EdgeInsets(top: Constants.listRowInsetsTop, leading: Constants.listRowInsetsLeading, bottom: Constants.listRowInsetsBottom, trailing: Constants.listRowInsetsTrailing))
+                    .listRowInsets(EdgeInsets(
+                        top: Constants.listRowInsetsTop,
+                        leading: Constants.listRowInsetsLeading,
+                        bottom: Constants.listRowInsetsBottom,
+                        trailing: Constants.listRowInsetsTrailing))
                     .listRowSeparator(.visible)
                 }
             }
@@ -43,50 +54,49 @@ struct CustomFirstRemindSelectionMenuAddEvent: View {
                 }
             }
         }
-        .presentationDetents([.height(Constants.presentationDetentsHeight), .medium, .large])
+        .presentationDetents([
+            .height(Constants.presentationDetentsHeight),
+            .medium,
+            .large
+        ])
         .presentationDragIndicator(.visible)
         .presentationCornerRadius(Constants.presentationCornerRadius)
     }
 }
 
+// MARK: - RemindOptionRowAddEvent
 struct RemindOptionRowAddEvent: View {
-    
-    private enum Constants {
-        static let HstackSpacing: CGFloat = 12
-        
-        static let ImageFrameWidth: CGFloat = 24
-        static let ImageFrameHeight: CGFloat = 24
-        
-        static let VstackSpacing: CGFloat = 4
-    }
-    
+
+    // MARK: - Properties
     let remind: FirstRemind
     let isSelected: Bool
     let action: () -> Void
-    
+
+    // MARK: - Computed
     var description: String {
         "You will be reminded".localized + " \(remind.displayName)".localized + "."
     }
 
+    // MARK: - Body
     var body: some View {
         Button(action: action) {
             HStack(alignment: .top, spacing: Constants.HstackSpacing) {
                 Image(systemName: isSelected ? "star.fill" : "star")
                     .foregroundColor(isSelected ? .black : .gray)
                     .frame(width: Constants.ImageFrameWidth, height: Constants.ImageFrameHeight)
-                
+
                 VStack(alignment: .leading, spacing: Constants.VstackSpacing) {
                     Text(remind.displayName)
                         .font(.body)
                         .fontWeight(.medium)
                         .foregroundColor(.primary)
-                    
+
                     Text(description.localized)
                         .font(.subheadline)
                         .foregroundColor(.gray)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                
+
                 Spacer()
             }
             .contentShape(Rectangle())

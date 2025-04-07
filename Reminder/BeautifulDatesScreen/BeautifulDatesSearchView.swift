@@ -1,25 +1,31 @@
 import SwiftUI
 import SwiftData
 
+// MARK: - BeautifulDatesSearchView
 struct BeautifulDatesSearchView: View {
+    
+    // MARK: - Properties
     @ObservedObject var viewModel: BeautifulDatesViewModel
     @Binding var isSearchActive: Bool
     @Environment(\.modelContext) private var modelContext
 
+    // MARK: - Body
     var body: some View {
         NavigationStack {
             VStack(spacing: SearchConstants.VStackSpacing) {
+                // MARK: - Search Header
                 SearchHeaderView(
-                    title: "Beautiful Dates",
+                    title: "Beautiful Dates".localized,
                     searchText: $viewModel.searchText,
-                    placeholder: "Search beautiful events...",
+                    placeholder: "Search beautiful events...".localized,
                     leftButtonAction: { withAnimation { isSearchActive = false } },
                     rightButtonAction: { withAnimation { isSearchActive = false } }
                 )
-                
+
+                // MARK: - Empty State or Results
                 if viewModel.searchResults.isEmpty {
                     Spacer()
-                    Text("No beautiful events found")
+                    Text("No beautiful events found".localized)
                         .foregroundColor(.gray)
                     Spacer()
                 } else {
@@ -43,7 +49,7 @@ struct BeautifulDatesSearchView: View {
                                 Button(role: .destructive) {
                                     viewModel.deleteEvent(event)
                                 } label: {
-                                    Label("Delete", systemImage: "trash")
+                                    Label("Delete".localized, systemImage: "trash")
                                 }
                             }
                             .listRowSeparator(.hidden)

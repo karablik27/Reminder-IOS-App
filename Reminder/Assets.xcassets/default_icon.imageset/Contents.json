@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Логотип.png",
+      "filename" : "иконка.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Логотип 1.png",
+      "filename" : "иконка 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Логотип 2.png",
+      "filename" : "иконка 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

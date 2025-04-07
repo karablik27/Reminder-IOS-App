@@ -38,6 +38,7 @@
 "1 week before" = "За 1 неделю";
 
 // ReminderFrequency
+"Every 1 minute" = "Каждую минуту";
 "Every 1 hour" = "Каждый час";
 "Every 1 day" = "Каждый день";
 "Every 1 week" = "Каждую неделю";
@@ -89,6 +90,7 @@
 "You will see all other events, that you have." = "Вы увидите все прочие события, которые у вас есть.";
 
 "Reminder Frequency" = "Частота напоминаний";
+"Remind every 1 minute." = "Напоминать каждую минуту.";
 "Remind every 1 hour." = "Напоминать каждый час.";
 "Remind every 1 day." = "Напоминать каждый день.";
 "Remind every 1 week." = "Напоминать каждую неделю.";
@@ -169,3 +171,64 @@
 "Get Started!" = "Начать!";
 "search_description" = "Поиск: позволяет находить напоминания по ключевым словам в названии, описании или других атрибутах.";
 "sort_description" = "Сортировка: помогает организовать напоминания по дате, названию или другим параметрам.";
+
+"You will create a reminder about a special anniversary." = "Вы создадите напоминание о важной годовщине.";
+"You will create a reminder about a trip or vacation." = "Вы создадите напоминание о поездке или путешествии.";
+"You will create a reminder about a concert, festival, or live event." = "Вы создадите напоминание о концерте, фестивале или другом мероприятии.";
+"You will create a reminder to track your goals or deadlines." = "Вы создадите напоминание для отслеживания целей или дедлайнов.";
+"You will create a reminder about health-related things (e.g. appointments)." = "Вы создадите напоминание, связанное со здоровьем (например, визит к врачу).";
+"You will create a reminder about a meeting or important appointment." = "Вы создадите напоминание о встрече или важной записи.";
+"You will create a general reminder for something important." = "Вы создадите общее напоминание о чём-то важном.";
+"You will create a reminder about work tasks or projects." = "Вы создадите напоминание о рабочих задачах или проектах.";
+"You will create a reminder about shopping or sales." = "Вы создадите напоминание о покупках или распродажах.";
+"You will create a reminder about romantic moments or dates." = "Вы создадите напоминание о романтическом моменте или свидании.";
+"You will create a reminder about something happening for the first time." = "Вы создадите напоминание о чём-то, что происходит впервые.";
+"You will create a reminder for a dream or wish you'd like to remember." = "Вы создадите напоминание о мечте или желании, которое хотите запомнить.";
+"You will create a reminder about a memorable or meaningful moment." = "Вы создадите напоминание о запоминающемся или значимом моменте.";
+
+"You will see all anniversary events that you have." = "Вы увидите все события, связанные с годовщинами.";
+"You will see all travel and trip events that you have." = "Вы увидите все события, связанные с поездками и путешествиями.";
+"You will see all concert or festival events that you have." = "Вы увидите все события, связанные с концертами или фестивалями.";
+"You will see all goal-related or deadline events that you have." = "Вы увидите все события, связанные с целями или дедлайнами.";
+"You will see all health-related events like appointments that you have." = "Вы увидите все события, связанные со здоровьем, например, приёмы у врача.";
+"You will see all meeting or appointment events that you have." = "Вы увидите все события, связанные со встречами или записями.";
+"You will see all general reminder events that you have." = "Вы увидите все общие напоминания.";
+"You will see all work-related events that you have." = "Вы увидите все события, связанные с работой.";
+"You will see all shopping or sale events that you have." = "Вы увидите все события, связанные с покупками или распродажами.";
+"You will see all romantic events or dates that you have." = "Вы увидите все романтические события или свидания.";
+"You will see all first-time experiences you've saved." = "Вы увидите все события, связанные с первым опытом.";
+"You will see all wish or dream events that you have." = "Вы увидите все события, связанные с желаниями или мечтами.";
+"You will see all memorable or meaningful events that you have." = "Вы увидите все запоминающиеся или значимые события.";
+"You will see all events that you have." = "Вы увидите все ваши события.";
+"You will see all birthday events that you have." = "Вы увидите все события, связанные с днями рождения.";
+"You will see all holiday events that you have." = "Вы увидите все праздничные события.";
+"You will see all study-related events that you have." = "Вы увидите все события, связанные с учёбой.";
+"You will see all movie, cartoon, and TV show events that you have." = "Вы увидите все события, связанные с фильмами, мультфильмами и сериалами.";
+"You will see all other events that don't fit into a specific category." = "Вы увидите все прочие события, которые не относятся к определённой категории.";
+
+"Anniversary" = "Годовщины";
+"Travel" = "Путешествия";
+"Concerts" = "Концерты";
+"Goals" = "Цели";
+"Health" = "Здоровье";
+"Meetings" = "Встречи";
+"Reminders" = "Напоминания";
+"Work" = "Работа";
+"Shopping" = "Покупки";
+"Romantic" = "Романтика";
+"FirstTime" = "Впервые";
+"WishDate" = "Желания";
+"Memorable" = "Памятное";
+
+"Don't miss the event:" = "Не пропустите событие:";
+"Your event" = "Ваше событие";
+"is coming soon!" = "скоро наступит!";
+"Get ready for" = "Приготовьтесь к";
+"is just around the corner!" = "уже не за горами!";
+"Reminder:" = "Напоминание:";
+"is approaching fast!" = "быстро приближается!";
+"is coming up!" = "скоро наступит!";
+
+"Beautiful Dates" = "Красивые даты";
+"Search beautiful events..." = "Ищите красивые события...";
+"No beautiful events found" = "Красивые события не найдены";
