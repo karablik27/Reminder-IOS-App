@@ -10,6 +10,7 @@ private enum ExtraScreenConstants {
     static let iconCircleSize: CGFloat = 40
     static let iconForegroundColor: Color = .gray
     static let titleFontSize: CGFloat = 18
+    static let valueFontSize: CGFloat = 18
     static let rowBackgroundColor: Color = Color(.systemGray6)
     static let rowShadow: Color = Color.black.opacity(0.1)
     static let rowShadowRadius: CGFloat = 4
@@ -22,34 +23,35 @@ struct ExtraInfoView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: ExtraScreenConstants.spacing) {
-                TopHeaderView(title: "Extra") {
-                    dismiss()
-                }
-
+                TopHeaderView(title: "Extra".localized, onBack: { dismiss() })
+                
                 ScrollView {
                     VStack(spacing: ExtraScreenConstants.spacing) {
                         settingsRow(
-                            title: "App Version: \(viewModel.appVersion)",
+                            label: "App Version:".localized,
+                            value: viewModel.appVersion,
                             systemImage: "info.circle"
                         )
                         settingsRow(
-                            title: "Memory Usage: \(viewModel.memoryUsage)",
+                            label: "Memory Usage:".localized,
+                            value: viewModel.memoryUsage,
                             systemImage: "memorychip"
                         )
                     }
                     .padding(.horizontal, ExtraScreenConstants.horizontalPadding)
                     .padding(.vertical, ExtraScreenConstants.verticalPadding)
                 }
-
+                
                 Spacer()
             }
             .navigationBarBackButtonHidden(true)
             .background(Color.white.ignoresSafeArea())
         }
     }
-
+    
     private func settingsRow(
-        title: String,
+        label: String,
+        value: String,
         systemImage: String,
         foregroundColor: Color = .black
     ) -> some View {
@@ -63,14 +65,16 @@ struct ExtraInfoView: View {
                     .font(.system(size: ExtraScreenConstants.iconSize, weight: .semibold))
                     .foregroundColor(ExtraScreenConstants.iconForegroundColor)
             }
-
-            Text(title)
+            
+            Text(label)
                 .font(.system(size: ExtraScreenConstants.titleFontSize, weight: .semibold))
                 .foregroundColor(foregroundColor)
-
+            
             Spacer()
-
-           
+            
+            Text(value)
+                .font(.system(size: ExtraScreenConstants.valueFontSize, weight: .regular))
+                .foregroundColor(foregroundColor)
         }
         .padding()
         .background(ExtraScreenConstants.rowBackgroundColor)

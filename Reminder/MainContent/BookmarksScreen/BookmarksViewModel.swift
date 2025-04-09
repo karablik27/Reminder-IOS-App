@@ -9,7 +9,7 @@ class BookmarksViewModel: ObservableObject {
     @Published var selectedEventType: EventTypeMain = .allEvents
     @Published var selectedSortOption: SortOption = .byDate
     @Published var isAscending = true
-    @Published var filteredModels: [MainModel] = []
+    @Published var filteredModels: [EventsModel] = []
     @Published var currentDate: Date = Date()
     @Published var searchText: String = ""
     
@@ -26,9 +26,7 @@ class BookmarksViewModel: ObservableObject {
     
     // MARK: - Data Loading
     func loadBookmarks() {
-        print("Loading bookmarked events...")
-        
-        var sortDescriptors: [SortDescriptor<MainModel>] = []
+        var sortDescriptors: [SortDescriptor<EventsModel>] = []
         switch selectedSortOption {
         case .byDate:
             sortDescriptors = [SortDescriptor(\.date, order: isAscending ? .forward : .reverse)]
@@ -36,7 +34,7 @@ class BookmarksViewModel: ObservableObject {
             sortDescriptors = [SortDescriptor(\.title, order: isAscending ? .forward : .reverse)]
         }
         
-        let fetchDescriptor = FetchDescriptor<MainModel>(
+        let fetchDescriptor = FetchDescriptor<EventsModel>(
             predicate: #Predicate { event in
                 event.isBookmarked == true
             },
@@ -50,7 +48,6 @@ class BookmarksViewModel: ObservableObject {
             } else {
                 filteredModels = bookmarked.filter { $0.type == selectedEventType }
             }
-            print("Fetched \(filteredModels.count) bookmarked events.")
         } catch {
             print("Error fetching bookmarked events: \(error)")
             filteredModels = []
@@ -69,45 +66,23 @@ class BookmarksViewModel: ObservableObject {
     // MARK: - Sorting Methods
     func toggleSortDirection() {
         isAscending.toggle()
-        print("Bookmarks sort toggled to \(isAscending ? "ascending" : "descending")")
         loadBookmarks()
     }
     
     // MARK: - Deletion Methods
-    func deleteEvent(_ event: MainModel) {
+    func deleteEvent(_ event: EventsModel) {
         NotificationManager.cancelNotifications(for: event)
         modelContext.delete(event)
         do {
             try modelContext.save()
             loadBookmarks()
-            print("Bookmarked event deleted.")
         } catch {
             print("Error deleting bookmarked event: \(error)")
         }
     }
     
-    func deleteAllBookmarkedEvents() {
-        let fetchDescriptor = FetchDescriptor<MainModel>(
-            predicate: #Predicate { event in
-                event.isBookmarked == true
-            }
-        )
-        do {
-            let allBookmarked = try modelContext.fetch(fetchDescriptor)
-            for event in allBookmarked {
-                NotificationManager.cancelNotifications(for: event)
-                modelContext.delete(event)
-            }
-            try modelContext.save()
-            loadBookmarks()
-            print("All bookmarked events deleted.")
-        } catch {
-            print("Error deleting all bookmarked events: \(error)")
-        }
-    }
-    
     // MARK: - Bookmark Handling
-    func toggleBookmark(for event: MainModel) {
+    func toggleBookmark(for event: EventsModel) {
         event.isBookmarked.toggle()
         do {
             try modelContext.save()
@@ -118,25 +93,42 @@ class BookmarksViewModel: ObservableObject {
     }
     
     // MARK: - Time Calculation
-    func timeLeftString(for event: MainModel) -> String {
-        let now = currentDate
-        if event.date <= now {
-            return "Finish"
-        }
+    func localizedDaysString(_ count: Int) -> String {
+        let languageCode = Locale.current.language.languageCode?.identifier ?? "en"
         
-        let diff = event.date.timeIntervalSince(now)
-        let days = Int(diff / 86400)
-        if days >= 1 {
-            return "\(days) days"
+        if languageCode == "ru" {
+            let mod10 = count % 10
+            let mod100 = count % 100
+            if mod10 == 1 && mod100 != 11 {
+                return "\(count) день"
+            } else if (2...4).contains(mod10) && !(12...14).contains(mod100) {
+                return "\(count) дня"
+            } else {
+                return "\(count) дней"
+            }
         } else {
-            let hours = Int(diff / 3600)
-            let minutes = Int((diff.truncatingRemainder(dividingBy: 3600)) / 60)
-            let seconds = Int(diff.truncatingRemainder(dividingBy: 60))
-            return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+            return count == 1 ? "1 day" : "\(count) days"
         }
     }
+
+    func timeLeftString(for event: EventsModel) -> String {
+        let calendar = Calendar.current
+        let startOfToday = calendar.startOfDay(for: currentDate)
+        let startOfEventDay = calendar.startOfDay(for: event.date)
+        
+        guard let dayCount = calendar.dateComponents([.day], from: startOfToday, to: startOfEventDay).day else {
+            return "Finish".localized
+        }
+        
+        if dayCount <= 0 {
+            return "Finish".localized
+        }
+        
+        // Возвращаем строку с правильно локализованной формой дня
+        return localizedDaysString(dayCount)
+    }
     
-    var searchResults: [MainModel] {
+    var searchResults: [EventsModel] {
         let text = searchText.lowercased()
         if text.isEmpty {
             return filteredModels

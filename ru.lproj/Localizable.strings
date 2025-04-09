@@ -17,6 +17,10 @@
 "Add your first event using the + button" = "Добавьте первое событие, нажав на кнопку +";
 
 // FirstRemind
+"5 minutes before" = "За 5 минут";
+"15 minutes before" = "За 15 минут";
+"30 minutes before" = "За 30 минут";
+"45 minutes before" = "За 45 минут";
 "1 hour before" = "За 1 час";
 "2 hour before" = "За 2 часа";
 "3 hour before" = "За 3 часа";
@@ -155,22 +159,22 @@
 
 "Welcome" = "Добро пожаловать";
 
-"welcome_text" = "Добро пожаловать в удобное приложение, которое помогает запомнить самое главное.";
-"create_reminder" = "Создайте новое напоминание";
-"create_reminder_step1" = "1. Нажмите кнопку '+' для создания нового напоминания.";
-"create_reminder_step2" = "2. Затем выберите название, дату и другие параметры.";
-"create_reminder_step3" = "3. Сохраните и дождитесь напоминания!";
-"notifications_title" = "Уведомления";
-"notifications_text" = "Нажмите 'Разрешить', чтобы получать уведомления о событиях, или настройте позже в настройках.";
-"search_sort_title" = "Поиск и сортировка событий";
-"search_symbol" = "Символ поиска";
-"sort_symbol" = "Символ сортировки";
+"Welcome to a convenient application that helps you remember the main thing." = "Добро пожаловать в удобное приложение, которое помогает запомнить самое главное.";
+"Create a new reminder" = "Создайте новое напоминание";
+"1. Tap the '+' button to create a new reminder." = "1. Нажмите кнопку '+' для создания нового напоминания.";
+"2. Then choose a title, date, and more." = "2. Затем выберите название, дату и другие параметры.";
+"3. Save and wait for a reminder!" = "3. Сохраните и дождитесь напоминания!";
+"Notifications" = "Уведомления";
+"Click allow to receive notifications about your events and more, or configure later in settings." = "Нажмите 'Разрешить', чтобы получать уведомления о событиях, или настройте позже в настройках.";
+"Search and Sort events" = "Поиск и сортировка событий";
+"Search symbol" = "Символ поиска";
+"Sort symbol" = "Символ сортировки";
 
 "language_option" = "Язык";
 "Next" = "Далее";
 "Get Started!" = "Начать!";
-"search_description" = "Поиск: позволяет находить напоминания по ключевым словам в названии, описании или других атрибутах.";
-"sort_description" = "Сортировка: помогает организовать напоминания по дате, названию или другим параметрам.";
+"Search: Allows you to find reminders using keywords in the title, description, or other attributes." = "Поиск: позволяет находить напоминания по ключевым словам в названии, описании или других атрибутах.";
+"Sort: Helps you organize your reminders by date, name, or other parameters." = "Сортировка: помогает организовать напоминания по дате, названию или другим параметрам.";
 
 "You will create a reminder about a special anniversary." = "Вы создадите напоминание о важной годовщине.";
 "You will create a reminder about a trip or vacation." = "Вы создадите напоминание о поездке или путешествии.";
@@ -232,3 +236,48 @@
 "Beautiful Dates" = "Красивые даты";
 "Search beautiful events..." = "Ищите красивые события...";
 "No beautiful events found" = "Красивые события не найдены";
+
+"Beautiful date: " = "Красивая дата: ";
+"Palindrome" = "Палиндром";
+"All digits are identical" = "Все цифры одинаковы";
+"Repeating pairs" = "Повторяющиеся пары";
+"29 February" = "29 февраля";
+"Day equals Month" = "День равен месяцу";
+"Day equals last two digits" = "День равен последним двум цифрам года";
+"Month equals last two digits" = "Месяц равен последним двум цифрам года";
+"Day + Month equals last two digits" = "День + Месяц равны последним двум цифрам года";
+"Perfect match" = "Идеальное совпадение";
+"Day and Month form a palindrome" = "День и месяц образуют палиндром";
+"Arithmetic progression" = "Арифметическая прогрессия";
+"Geometric progression" = "Геометрическая прогрессия";
+"Product of Day and Month equals last two digits" = "Произведение Дня и Месяца равно последним двум цифрам года";
+"Day and Month are perfect squares" = "День и Месяц — идеальные квадраты";
+"Mirrored structure with year" = "Отзеркаленная структура с годом";
+
+"Photos" = "Фотографии";
+"Details" = "Детали";
+"Select" = "Выбрать";
+"Show More" = "Показать больше";
+"Show Less" = "Показать меньше";
+"Delete Selected" = "Удалить выбранное";
+"Search history..." = "Поиск в истории...";
+"No history events found" = "История событий не найдена";
+"Search events..." = "Поиск событий...";
+"No events found" = "События не найдены";
+"Search bookmarks..." = "Поиск закладок...";
+" days" = " дней";
+" day" = " день";
+"FAQ" = "Вопросы и ответы";
+"Extra" = "Дополнительно";
+"Show Welcome" = "Показать приветствие";
+"Factory Reset " = "Сброс настроек ";
+"Are you sure you want to factory reset?" = "Вы уверены, что хотите сбросить настройки?";
+"Cancel " = "Отмена ";
+"Q: What are beautiful dates?" = "В: Что такое красивые даты?";
+"A: Beautiful dates are dates that meet certain aesthetic and symbolic criteria making them memorable." = "О: Красивые даты – это даты, отвечающие определённым эстетическим и символическим критериям, делающим их запоминающимися.";
+"Q: How is a beautiful date determined?" = "В: Как определяется красивая дата?";
+"A: It is determined based on built-in criteria such as palindromes, repeating digits, symmetry, and other rules." = "О: Она определяется на основе встроенных критериев, таких как палиндромы, повторяющиеся цифры, симметрия и другие правила.";
+"Q: Where can I use beautiful dates?" = "В: Где можно использовать красивые даты?";
+"A: They can be used for planning events, celebrations, or personal occasions to add a unique touch." = "О: Их можно использовать для планирования мероприятий, праздников или личных случаев, чтобы добавить уникальности.";
+"App Version:" = "Версия приложения:";
+"Memory Usage:" = "Использование памяти:";

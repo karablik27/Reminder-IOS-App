@@ -2,7 +2,9 @@ import SwiftUI
 import SwiftData
 import UserNotifications
 
+// MARK: - Constants
 private enum Constants {
+    
     enum Layout {
         static let vStackSpacing: CGFloat = 16
         static let zStackHeight: CGFloat = 96
@@ -26,147 +28,88 @@ private enum Constants {
     enum Search {
         static let fontSize: CGFloat = 16
         static let horizontalPadding: CGFloat = 16
-        static let offsetX: CGFloat = 80
-
-        static let offsetY: CGFloat = -320
-        static let sortOffsetY: CGFloat = -160
-        static let maxTextWidth: CGFloat = 196
+        static let offsetX: CGFloat = 104
+        static let offsetY: CGFloat = -328
+        static let sortOffsetY: CGFloat = -196
+        static let maxTextWidth: CGFloat = 192
+    }
+    
+    enum Padding {
+        static let bottom: CGFloat = 16
+        static let dotsTop: CGFloat = 16
+    }
+    
+    enum Image {
+        static let offsetYTrue: CGFloat = -64
+        static let offsetYFalse: CGFloat = 0
+    }
+    
+    enum slideText {
+        static let offsetXTrue: CGFloat = 120
+        static let offsetXFalse: CGFloat = -80
+        static let offsetYTrue: CGFloat = 40
     }
 }
 
+// MARK: - WelcomeView
 struct WelcomeView: View {
     let onDismiss: () -> Void
     let modelContext: ModelContext
-    @StateObject private var viewModel: WelcomeViewModel
-    @Environment(\.dismiss) private var dismiss
-    @State private var showNotificationAlert = false
-    @State private var notificationPermissionGranted = false
-    @State private var showMainView = false
-    @AppStorage("isFirstLaunch") private var isFirstLaunch: Bool = true
     
-    // MARK: - Initialization
+    @Environment(\.dismiss) private var dismiss
+    @AppStorage("isFirstLaunch") private var isFirstLaunch: Bool = true
+    @StateObject private var viewModel: WelcomeViewModel
+    
     init(modelContext: ModelContext, onDismiss: @escaping () -> Void) {
         self.modelContext = modelContext
         self.onDismiss = onDismiss
         _viewModel = StateObject(wrappedValue: WelcomeViewModel(modelContext: modelContext))
     }
-    
-    // MARK: - Body
+
     var body: some View {
-        if showMainView {
-            MainView(modelContext: modelContext)
+        if viewModel.showMainView {
+            EventsView(modelContext: modelContext)
         } else {
             welcomeContent
         }
     }
-    
+
+    // MARK: - Subviews
     private var welcomeContent: some View {
         ZStack {
             TabView(selection: $viewModel.currentPage) {
-                ForEach(viewModel.slides.indices, id: \.self) { index in
-                    let slide = viewModel.slides[index]
-                    
-                    VStack(spacing: Constants.Layout.vStackSpacing) {
-                        if !slide.icons.isEmpty {
-                            ZStack {
-                                ForEach(slide.icons) { icon in
-                                    Image(systemName: icon.iconName)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: icon.size.width, height: icon.size.height)
-                                        .offset(icon.offset)
-                                }
+                ForEach(0..<viewModel.slides.count, id: \.self) { index in
+                    WelcomeSlideView(
+                        slide: viewModel.slides[index],
+                        index: index,
+                        totalSlides: viewModel.slides.count,
+                        currentPage: viewModel.currentPage,
+                        onNext: {
+                            withAnimation {
+                                viewModel.nextPage()
                             }
-                            .frame(height: Constants.Layout.zStackHeight)
+                        },
+                        onComplete: {
+                            viewModel.completeWelcome({ dismiss() }, isFirstLaunch: $isFirstLaunch)
+                            onDismiss()
                         }
-                        
-                        ForEach(slide.slideTitles) { slideTitle in
-                            Text(slideTitle.text.localized)
-                                .font(slideTitle.font)
-                                .foregroundColor(slideTitle.color)
-                                .offset(slideTitle.offset)
-                                .multilineTextAlignment(.center)
-                        }
-                        
-                        ForEach(slide.slideTexts) { slideText in
-                            Text(slideText.text.localized)
-                                .font(slideText.font)
-                                .foregroundColor(slideText.color)
-                                .offset(slideText.offset)
-                                .multilineTextAlignment(slideText.alignment)
-                        }
-                        
-                        Spacer()
-                        
-                        if slide.number == 4 {
-                            Text("search_description".localized)
-                                .font(.system(size: Constants.Search.fontSize))
-                                .foregroundColor(.primary)
-                                .multilineTextAlignment(.leading)
-                                .frame(maxWidth: Constants.Search.maxTextWidth, alignment: .leading)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .padding(.horizontal, Constants.Search.horizontalPadding)
-                                .offset(x: Constants.Search.offsetX, y: Constants.Search.offsetY)
-                            
-                            Text("sort_description".localized)
-                                .font(.system(size: Constants.Search.fontSize))
-                                .foregroundColor(.primary)
-                                .multilineTextAlignment(.leading)
-                                .frame(maxWidth: Constants.Search.maxTextWidth, alignment: .leading)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .padding(.horizontal, Constants.Search.horizontalPadding)
-                                .offset(x: Constants.Search.offsetX, y: Constants.Search.sortOffsetY)
-                        }
-                        
-                        VStack {
-                            if index < viewModel.slides.count - 1 {
-                                Button("Next".localized) {
-                                    withAnimation {
-                                        viewModel.nextPage()
-                                    }
-                                }
-                                .frame(width: Constants.Button.width, height: Constants.Button.height)
-                                .background(Colors.mainGreen)
-                                .foregroundColor(.black)
-                                .cornerRadius(Constants.Button.cornerRadius)
-                            } else {
-                                Button("Get Started!".localized) {
-                                    completeWelcome()
-                                }
-                                .frame(width: Constants.Button.width, height: Constants.Button.height)
-                                .background(Colors.mainGreen)
-                                .foregroundColor(.white)
-                                .cornerRadius(Constants.Button.cornerRadius)
-                            }
-                            
-                            HStack(spacing: Constants.Dots.spacing) {
-                                ForEach(viewModel.slides.indices, id: \.self) { i in
-                                    Circle()
-                                        .fill(i == viewModel.currentPage ? Colors.mainGreen : Color.gray)
-                                        .frame(width: Constants.Dots.size, height: Constants.Dots.size)
-                                }
-                            }
-                            .padding(.top, 16)
-                        }
-                        .padding(.bottom, 16)
-                    }
+                    )
                     .tag(index)
                 }
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             .onChange(of: viewModel.currentPage) { newPage, _ in
-                let slide = viewModel.slides[newPage]
-                if slide.number == 2 {
-                    requestNotificationPermission()
+                if viewModel.slides[newPage].number == 2 {
+                    viewModel.requestNotificationPermission()
                 }
             }
-            
             VStack {
                 HStack {
                     Spacer()
-                    Button(action: {
-                        completeWelcome()
-                    }) {
+                    Button {
+                        viewModel.completeWelcome({ dismiss() }, isFirstLaunch: $isFirstLaunch)
+                        onDismiss()
+                    } label: {
                         Image(systemName: "chevron.right.2")
                             .foregroundColor(.black)
                             .font(.system(size: Constants.CloseButton.fontSize))
@@ -176,24 +119,108 @@ struct WelcomeView: View {
                 Spacer()
             }
         }
+        .navigationBarBackButtonHidden(true)
     }
-    
-    // MARK: - Helper Methods
-    private func completeWelcome() {
-        withAnimation(.easeInOut(duration: 0.5)) {
-            isFirstLaunch = false
-        }
-        dismiss()
-        onDismiss()
-    }
-    
-    private func requestNotificationPermission() {
-        let center = UNUserNotificationCenter.current()
-        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            DispatchQueue.main.async {
-                notificationPermissionGranted = granted
-                showNotificationAlert = true
+}
+
+
+// MARK: - WelcomeSlideView
+struct WelcomeSlideView: View {
+    let slide: WelcomeSlide
+    let index: Int
+    let totalSlides: Int
+    let currentPage: Int
+    let onNext: () -> Void
+    let onComplete: () -> Void
+
+    var body: some View {
+        VStack(spacing: Constants.Layout.vStackSpacing) {
+            if !slide.icons.isEmpty {
+                ZStack {
+                    ForEach(slide.icons) { icon in
+                        Image(systemName: icon.iconName)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: icon.size.width, height: icon.size.height)
+                            .offset(
+                                x: icon.offset.width,
+                                y: icon.offset.height + ((slide.number == 2 && Localizer.selectedLanguage == "en") ? Constants.Image.offsetYTrue : Constants.Image.offsetYFalse)
+                            )
+                    }
+                }
+                .frame(height: Constants.Layout.zStackHeight)
             }
+
+            // Title texts
+            ForEach(slide.slideTitles) { slideTitle in
+                Text(slideTitle.text.localized)
+                    .font(slideTitle.font)
+                    .foregroundColor(slideTitle.color)
+                    .offset(slideTitle.offset)
+                    .multilineTextAlignment(.center)
+            }
+
+            // Body texts
+            ForEach(slide.slideTexts) { slideText in
+                if slide.number == 4 {
+                    Text(slideText.text.localized)
+                        .font(slideText.font)
+                        .foregroundColor(slideText.color)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .lineLimit(nil)
+                        .frame(maxWidth: Constants.Search.maxTextWidth, alignment: .leading)
+                        .padding(.horizontal, Constants.Search.horizontalPadding)
+                        .offset(
+                            x: (slideText.text.contains("Search: Allows you to find reminders using keywords in the title, description, or other attributes.") ||
+                                slideText.text.contains("Sort: Helps you organize your reminders by date, name, or other parameters.") ||
+                                slideText.text.contains("Сортировка: помогает организовать напоминания по дате, названию или другим параметрам.") ||
+                                slideText.text.contains("Поиск: позволяет находить напоминания по ключевым словам в названии, описании или других атрибутах.")) ? Constants.slideText.offsetXTrue : Constants.slideText.offsetXFalse,
+                            y: Localizer.selectedLanguage == "ru" ? slideText.offset.height - Constants.slideText.offsetYTrue : slideText.offset.height
+                        )
+                        .multilineTextAlignment(.leading)
+                } else {
+                    Text(slideText.text.localized)
+                        .font(slideText.font)
+                        .foregroundColor(slideText.color)
+                        .offset(slideText.offset)
+                        .multilineTextAlignment(slideText.alignment)
+                }
+            }
+
+
+            
+            Spacer()
+
+            // Navigation buttons and dots
+            VStack {
+                if index < totalSlides - 1 {
+                    Button("Next".localized) {
+                        onNext()
+                    }
+                    .frame(width: Constants.Button.width, height: Constants.Button.height)
+                    .background(Colors.mainGreen)
+                    .foregroundColor(.black)
+                    .cornerRadius(Constants.Button.cornerRadius)
+                } else {
+                    Button("Get Started!".localized) {
+                        onComplete()
+                    }
+                    .frame(width: Constants.Button.width, height: Constants.Button.height)
+                    .background(Colors.mainGreen)
+                    .foregroundColor(.black)
+                    .cornerRadius(Constants.Button.cornerRadius)
+                }
+
+                HStack(spacing: Constants.Dots.spacing) {
+                    ForEach(0..<totalSlides, id: \.self) { i in
+                        Circle()
+                            .fill(i == currentPage ? Colors.mainGreen : Color.gray)
+                            .frame(width: Constants.Dots.size, height: Constants.Dots.size)
+                    }
+                }
+                .padding(.top, Constants.Padding.dotsTop)
+            }
+            .padding(.bottom, Constants.Padding.bottom)
         }
     }
 }

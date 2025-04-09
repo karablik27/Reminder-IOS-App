@@ -1,17 +1,27 @@
 import Foundation
 import SwiftData
+import SwiftUI
 
+// MARK: - Merged WelcomeModel
 @Model
-final class WelcomeModel {
+final class WelcomeModel: Identifiable {
+    var id = UUID()
+    
+    // MARK: - Dynamic Properties
     var currentSlideIndex: Int
     var hasSeenWelcome: Bool
-    var timestamp: Date
     
-    init(currentSlideIndex: Int = 0, hasSeenWelcome: Bool = false, timestamp: Date = Date()) {
+    // MARK: - Computed Static Content
+    var slides: [WelcomeSlide] {
+        return WelcomeScreenData.slides
+    }
+    
+    // MARK: - Initialization
+    init(
+        currentSlideIndex: Int = 0,
+        hasSeenWelcome: Bool = false
+    ) {
         self.currentSlideIndex = currentSlideIndex
         self.hasSeenWelcome = hasSeenWelcome
-        self.timestamp = timestamp
     }
 }
-
-

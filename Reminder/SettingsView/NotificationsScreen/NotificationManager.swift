@@ -4,7 +4,7 @@ import UserNotifications
 struct NotificationManager {
     
     /// Планирует серию reminder‑уведомлений и финальное уведомление о завершении события.
-    static func scheduleNotifications(for event: MainModel, globalPushEnabled: Bool) {
+    static func scheduleNotifications(for event: EventsModel, globalPushEnabled: Bool) {
         guard globalPushEnabled else {
             print("Global push notifications are disabled. Skipping scheduling for event: \(event.title)")
             return
@@ -85,7 +85,7 @@ struct NotificationManager {
     }
     
     /// Отменяет все запланированные уведомления для данного события.
-    static func cancelNotifications(for event: MainModel) {
+    static func cancelNotifications(for event: EventsModel) {
         let center = UNUserNotificationCenter.current()
         let identifierPrefix = event.id.uuidString
         center.getPendingNotificationRequests { requests in

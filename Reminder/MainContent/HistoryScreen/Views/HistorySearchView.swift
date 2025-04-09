@@ -1,11 +1,12 @@
 import SwiftUI
 import SwiftData
 
-// MARK: - BookmarksSearchView
-struct BookmarksSearchView: View {
+// MARK: - HistorySearchView
+struct HistorySearchView: View {
 
     // MARK: - Properties
-    @ObservedObject var viewModel: BookmarksViewModel
+    @State private var selectedTab: Int = ConstantsMain.TabBar.selectedTab
+    @ObservedObject var viewModel: HistoryViewModel
     @Binding var isSearchActive: Bool
     @Environment(\.modelContext) private var modelContext
 
@@ -13,22 +14,24 @@ struct BookmarksSearchView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: SearchConstants.VStackSpacing) {
+
                 // MARK: - Search Header
                 SearchHeaderView(
-                    title: "Bookmarks",
+                    title: "History".localized,
                     searchText: $viewModel.searchText,
-                    placeholder: "Search bookmarks...",
-                    leftButtonAction: { withAnimation { isSearchActive = false } },
-                    rightButtonAction: { withAnimation { isSearchActive = false } }
+                    placeholder: "Search history...".localized,
+                    dismissAction: { withAnimation { isSearchActive = false } }
                 )
 
-                // MARK: - Empty State or Results
+                // MARK: - Search Results
                 if viewModel.searchResults.isEmpty {
+                    // MARK: - Empty State
                     Spacer()
-                    Text("No bookmarks found")
+                    Text("No history events found".localized)
                         .foregroundColor(.gray)
                     Spacer()
                 } else {
+                    // MARK: - Results List
                     List {
                         ForEach(viewModel.searchResults, id: \.id) { event in
                             EventCellView(
@@ -37,10 +40,8 @@ struct BookmarksSearchView: View {
                                 timeLeftString: { viewModel.timeLeftString(for: $0) },
                                 editDestination: {
                                     AnyView(
-                                        EditEventView(
-                                            viewModel: EditEventViewModel(modelContext: modelContext, event: event)
-                                        )
-                                        .environmentObject(viewModel)
+                                        EditEventView(viewModel: EditEventViewModel(modelContext: modelContext, event: event))
+                                            .environmentObject(viewModel)
                                     )
                                 }
                             )
@@ -49,7 +50,7 @@ struct BookmarksSearchView: View {
                                 Button(role: .destructive) {
                                     viewModel.deleteEvent(event)
                                 } label: {
-                                    Label("Delete", systemImage: "trash")
+                                    Label("Delete".localized, systemImage: "trash")
                                 }
                             }
                             .listRowSeparator(.hidden)
@@ -58,6 +59,7 @@ struct BookmarksSearchView: View {
                     }
                     .listStyle(PlainListStyle())
                 }
+
                 Spacer()
             }
             .navigationBarHidden(true)

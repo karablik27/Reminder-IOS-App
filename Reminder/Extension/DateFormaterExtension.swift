@@ -1,5 +1,6 @@
 import Foundation
 
+// MARK: - DateFormatter Extension
 extension DateFormatter {
     static let beautyFormatter: DateFormatter = {
         let formatter = DateFormatter()

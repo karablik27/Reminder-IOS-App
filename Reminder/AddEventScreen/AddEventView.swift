@@ -1,39 +1,11 @@
 import SwiftUI
 import SwiftData
 
-// MARK: - Constants
-private struct Constants {
-    static let zeroSpacing: CGFloat = 0
-    static let imageCompressionQuality: CGFloat = 1.0
-    static let iconSize: CGFloat = 80
-    static let iconStrokeWidth: CGFloat = 2
-    static let defaultCameraIconSize: CGFloat = 40
-
-    static let titleFontSize: CGFloat = 24
-    static let navBarIconSize: CGFloat = 18
-    static let navBarVerticalPadding: CGFloat = 8
-    static let horizontalPadding: CGFloat = 16
-    static let topPadding: CGFloat = 8
-    static let spacing: CGFloat = 8
-    static let sectionSpacing: CGFloat = 16
-    static let bottomSpacerMinLength: CGFloat = 40
-
-    static let buttonPadding: CGFloat = 12
-    static let cornerRadius: CGFloat = 8
-    static let createButtonMinHeight: CGFloat = 50
-    static let createButtonCornerRadius: CGFloat = 16
-
-    static let calendarSheetHeight: CGFloat = 656
-
-    static let borderColorOpacity: Double = 0.4
-    static let borderLineWidth: CGFloat = 1
-}
-
-// MARK: - AddEventView
 struct AddEventView: View {
-    @Environment(\..dismiss) private var dismiss
+    @Environment(\.dismiss) private var dismiss
     @ObservedObject var viewModel: AddEventViewModel
 
+    // MARK: - UI State
     @State private var showIconActionSheet = false
     @State private var showImagePicker = false
     @State private var showCamera = false
@@ -50,45 +22,71 @@ struct AddEventView: View {
     @State private var showHowOftenMenu = false
     @State private var isHowOftenExpanded = false
 
-    // MARK: - Body
     var body: some View {
         ZStack {
             Color.white.ignoresSafeArea()
-            VStack(spacing: Constants.zeroSpacing) {
+            VStack(spacing: CommonConstants.zeroSpacing) {
+                // MARK: Navigation Bar Section
                 HStack {
                     Button { dismiss() } label: {
                         Image(systemName: "chevron.left")
-                            .font(.system(size: Constants.navBarIconSize, weight: .bold))
+                            .font(.system(size: CommonConstants.navBarIconSize, weight: .bold))
                             .foregroundColor(.black)
                     }
                     Spacer()
                 }
                 .padding(.horizontal)
-                .padding(.vertical, Constants.navBarVerticalPadding)
-
+                .padding(.vertical, CommonConstants.verticalPadding)
+                
+                // MARK: Scrollable Content
                 ScrollView(.vertical, showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
-                        iconAndTitleSection
-                        fieldNameSection
-                        dateSection
-                        timeSection
-                        typeSection
-                        informationSection
-                        firstRemindButtonSection
-                        howOftenButtonSection
+                    VStack(alignment: .leading, spacing: CommonConstants.sectionSpacing) {
+                        IconAndTitleSection(userSelectedImage: userSelectedImage,
+                                              eventType: viewModel.newType,
+                                              defaultIcon: viewModel.defaultIcon(for:),
+                                              displayedTitle: viewModel.displayedTitle,
+                                              onIconTap: { showIconActionSheet = true })
+                        FieldNameSection(label: "Name",
+                                         placeholder: "Event title",
+                                         text: $viewModel.newTitle)
+                        LabeledButtonSection(label: "Date",
+                                             text: viewModel.newEventDate.formatted(date: .numeric, time: .omitted),
+                                             icon: "calendar",
+                                             action: { showCalendarSheet = true })
+                        LabeledButtonSection(label: "Time",
+                                             text: viewModel.newEventTime.formatted(date: .omitted, time: .shortened),
+                                             icon: "clock",
+                                             action: { showTimePicker = true })
+                        LabeledButtonSection(label: "Type",
+                                             text: viewModel.newType.displayName,
+                                             icon: isTypeExpanded ? "chevron.up" : "chevron.down",
+                                             action: { isTypeExpanded.toggle(); showTypeMenu = true })
+                        LabeledButtonSection(label: "First remind",
+                                             text: viewModel.newFirstRemind.displayName,
+                                             icon: isRemindExpanded ? "chevron.up" : "chevron.down",
+                                             action: { isRemindExpanded.toggle(); showRemindMenu = true })
+                        LabeledButtonSection(label: "Reminder Frequency",
+                                             text: viewModel.newHowOften.displayName,
+                                             icon: isHowOftenExpanded ? "chevron.up" : "chevron.down",
+                                             action: { isHowOftenExpanded.toggle(); showHowOftenMenu = true })
+                        LabeledNavigationLinkSection(label: "Information",
+                                                     text: "Information".localized,
+                                                     icon: "chevron.right",
+                                                     destination: { EventInformationView(viewModel: viewModel) } )
                         createButton
-                        Spacer(minLength: Constants.bottomSpacerMinLength)
+                        Spacer(minLength: CommonConstants.bottomSpacerMinLength)
                     }
-                    .padding(.bottom, Constants.spacing)
+                    .padding(.bottom, CommonConstants.spacing)
                 }
             }
         }
         .navigationBarBackButtonHidden(true)
+        // MARK: - Sheets
         .sheet(isPresented: $showCalendarSheet) {
             CustomCalendarView(selectedDate: $viewModel.newEventDate)
-                .presentationDetents([.height(Constants.calendarSheetHeight), .large])
+                .presentationDetents([.height(CommonConstants.calendarSheetHeight), .large])
                 .presentationDragIndicator(.visible)
-                .presentationCornerRadius(25)
+                .presentationCornerRadius(CommonConstants.presentationCornerRadius)
         }
         .sheet(isPresented: $showTypeMenu, onDismiss: {
             isTypeExpanded = false
@@ -115,12 +113,13 @@ struct AddEventView: View {
         .sheet(isPresented: $showTimePicker) {
             CustomTimePickerView(selectedTime: $viewModel.newEventTime)
         }
+        // MARK: - Lifecycle
         .onAppear {
             viewModel.updateNextEventNumber()
         }
         .onChange(of: userSelectedImage) { newImage, _ in
             if let newImage = newImage {
-                viewModel.newIconData = newImage.jpegData(compressionQuality: Constants.imageCompressionQuality)
+                viewModel.newIconData = newImage.jpegData(compressionQuality: CommonConstants.imageCompressionQuality)
             } else {
                 viewModel.newIconData = nil
             }
@@ -128,157 +127,12 @@ struct AddEventView: View {
     }
 }
 
-// MARK: - UI Components
 extension AddEventView {
-
-    // MARK: - Icon and Title Section
-    private var iconAndTitleSection: some View {
-        HStack {
-            Spacer()
-            HStack(spacing: Constants.spacing * 2) {
-                Button {
-                    showIconActionSheet = true
-                } label: {
-                    ZStack {
-                        Circle()
-                            .stroke(Color.black, lineWidth: Constants.iconStrokeWidth)
-                            .frame(width: Constants.iconSize, height: Constants.iconSize)
-                        if let userImage = userSelectedImage {
-                            Image(uiImage: userImage)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: Constants.iconSize, height: Constants.iconSize)
-                                .clipShape(Circle())
-                        } else if viewModel.newType != .none {
-                            Image(viewModel.defaultIcon(for: viewModel.newType))
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: Constants.iconSize, height: Constants.iconSize)
-                                .clipShape(Circle())
-                        } else {
-                            Image(systemName: "camera")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: Constants.defaultCameraIconSize, height: Constants.defaultCameraIconSize)
-                                .foregroundColor(.gray)
-                        }
-                    }
-                }
-                .actionSheet(isPresented: $showIconActionSheet) {
-                    ActionSheet(title: Text("Choose icon".localized), buttons: [
-                        .default(Text("Take Photo".localized), action: {
-                            showCamera = true
-                            showImagePicker = true
-                        }),
-                        .default(Text("Choose from Gallery".localized), action: {
-                            showCamera = false
-                            showImagePicker = true
-                        }),
-                        .default(Text("Use default icon".localized), action: {
-                            userSelectedImage = nil
-                        }),
-                        .cancel()
-                    ])
-                }
-                Text(viewModel.displayedTitle.localized)
-                    .font(.system(size: Constants.titleFontSize, weight: .bold))
-                    .foregroundColor(.primary)
-            }
-            Spacer()
-        }
-        .padding(.top, Constants.topPadding)
-        .padding(.horizontal, Constants.horizontalPadding)
-    }
-
-    // MARK: - Reusable Text Field
-    private func labeledTextField(label: String, text: Binding<String>, placeholder: String) -> some View {
-        VStack(alignment: .leading, spacing: Constants.spacing) {
-            Text(label.localized)
-                .font(.subheadline).fontWeight(.semibold)
-                .foregroundColor(.secondary)
-                .textCase(.uppercase)
-            TextField(placeholder.localized, text: text)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-        }
-        .padding(.horizontal, Constants.horizontalPadding)
-    }
-
-    // MARK: - Field Name Section
-    private var fieldNameSection: some View {
-        labeledTextField(label: "Name", text: $viewModel.newTitle, placeholder: "Event title")
-    }
-
-    // MARK: - Reusable Button Section
-    private func labeledButtonSection(label: String, text: String, icon: String, action: @escaping () -> Void) -> some View {
-        VStack(alignment: .leading, spacing: Constants.spacing) {
-            Text(label.localized)
-                .font(.subheadline).fontWeight(.semibold)
-                .foregroundColor(.secondary)
-                .textCase(.uppercase)
-            Button(action: action) {
-                HStack {
-                    Text(text)
-                        .foregroundColor(.primary)
-                    Spacer()
-                    Image(systemName: icon)
-                        .foregroundColor(.black)
-                }
-                .padding(Constants.buttonPadding)
-                .overlay(RoundedRectangle(cornerRadius: Constants.cornerRadius)
-                    .stroke(Color.gray.opacity(Constants.borderColorOpacity), lineWidth: Constants.borderLineWidth))
-            }
-        }
-        .padding(.horizontal, Constants.horizontalPadding)
-    }
-
-    // MARK: - Date Section
-    private var dateSection: some View {
-        labeledButtonSection(label: "Date", text: viewModel.newEventDate.formatted(date: .numeric, time: .omitted), icon: "calendar") {
-            showCalendarSheet = true
-        }
-    }
-
-    // MARK: - Time Section
-    private var timeSection: some View {
-        labeledButtonSection(label: "Time", text: viewModel.newEventTime.formatted(date: .omitted, time: .shortened), icon: "clock") {
-            showTimePicker = true
-        }
-    }
-
-    // MARK: - Type Section
-    private var typeSection: some View {
-        labeledButtonSection(label: "Type", text: viewModel.newType.displayName, icon: isTypeExpanded ? "chevron.up" : "chevron.down") {
-            isTypeExpanded.toggle()
-            showTypeMenu = true
-        }
-    }
-
-    // MARK: - Information Section
-    private var informationSection: some View {
-        labeledTextField(label: "Information", text: $viewModel.newInformation, placeholder: "Add information")
-    }
-
-    // MARK: - First Remind Section
-    private var firstRemindButtonSection: some View {
-        labeledButtonSection(label: "First remind", text: viewModel.newFirstRemind.displayName, icon: isRemindExpanded ? "chevron.up" : "chevron.down") {
-            isRemindExpanded.toggle()
-            showRemindMenu = true
-        }
-    }
-
-    // MARK: - How Often Section
-    private var howOftenButtonSection: some View {
-        labeledButtonSection(label: "Reminder Frequency", text: viewModel.newHowOften.displayName, icon: isHowOftenExpanded ? "chevron.up" : "chevron.down") {
-            isHowOftenExpanded.toggle()
-            showHowOftenMenu = true
-        }
-    }
-
-    // MARK: - Create Button
+    // Кнопка создания события
     private var createButton: some View {
         Button {
             if let userImage = userSelectedImage {
-                viewModel.newIconData = userImage.jpegData(compressionQuality: Constants.imageCompressionQuality)
+                viewModel.newIconData = userImage.jpegData(compressionQuality: CommonConstants.imageCompressionQuality)
             } else {
                 viewModel.newIconData = nil
                 viewModel.newIcon = viewModel.defaultIcon(for: viewModel.newType)
@@ -289,14 +143,14 @@ extension AddEventView {
             Text("Create".localized)
                 .font(.headline)
                 .foregroundColor(.black)
-                .frame(maxWidth: .infinity, minHeight: Constants.createButtonMinHeight)
+                .frame(maxWidth: .infinity, minHeight: CommonConstants.createButtonMinHeight)
                 .background((viewModel.newTitle.isEmpty || viewModel.newType == .none)
                             ? Colors.createButtonDisabledColor
                             : Colors.mainGreen)
-                .cornerRadius(Constants.createButtonCornerRadius)
+                .cornerRadius(CommonConstants.createButtonCornerRadius)
         }
-        .padding(.horizontal, Constants.horizontalPadding)
-        .padding(.vertical, Constants.spacing)
+        .padding(.horizontal, CommonConstants.horizontalPadding)
+        .padding(.vertical, CommonConstants.spacing)
         .disabled(viewModel.newTitle.isEmpty || viewModel.newType == .none)
     }
 }

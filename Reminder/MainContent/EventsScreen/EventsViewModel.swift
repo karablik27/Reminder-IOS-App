@@ -2,34 +2,33 @@ import SwiftUI
 import SwiftData
 import Combine
 
-class MainViewModel: ObservableObject {
+class EventsViewModel: ObservableObject {
+    
     // MARK: - Published Properties
     @Published var selectedTab: Int = 0
     @Published var searchText: String = ""
     @Published var selectedEventType: EventTypeMain = .allEvents
     @Published var selectedSortOption: SortOption = .byDate
     @Published var isAscending = true
-    @Published var filteredModels: [MainModel] = []
+    @Published var filteredModels: [EventsModel] = []
     @Published var currentDate: Date = Date()
-
+    
     // MARK: - Private Properties
     private var modelContext: ModelContext
     private var timerCancellable: AnyCancellable?
-
-    // MARK: - Initializer
+    
+    // MARK: - Initialization
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
-        print("MainViewModel initialized with modelContext: \(modelContext)")
         loadEvents()
         startTimer()
     }
-
-    // MARK: - Event Loading (теперь загружаются только предстоящие события)
+    
+    // MARK: - Event Loading (Upcoming Events Only)
     func loadEvents() {
-        print("Loading events...")
         let now = Date()
         
-        var sortDescriptors: [SortDescriptor<MainModel>] = []
+        var sortDescriptors: [SortDescriptor<EventsModel>] = []
         switch selectedSortOption {
         case .byDate:
             sortDescriptors = [SortDescriptor(\.date, order: isAscending ? .forward : .reverse)]
@@ -37,9 +36,8 @@ class MainViewModel: ObservableObject {
             sortDescriptors = [SortDescriptor(\.title, order: isAscending ? .forward : .reverse)]
         }
         
-        // Фетчим только события, которые ещё не закончились (событие больше текущей даты)
-        let fetchDescriptor = FetchDescriptor<MainModel>(
-            predicate: #Predicate { (event: MainModel) in
+        let fetchDescriptor = FetchDescriptor<EventsModel>(
+            predicate: #Predicate { (event: EventsModel) in
                 event.date > now
             },
             sortBy: sortDescriptors
@@ -47,7 +45,6 @@ class MainViewModel: ObservableObject {
         
         do {
             let upcomingEvents = try modelContext.fetch(fetchDescriptor)
-            print("Fetched \(upcomingEvents.count) upcoming events.")
             if selectedEventType == .allEvents {
                 filteredModels = upcomingEvents
             } else {
@@ -58,9 +55,9 @@ class MainViewModel: ObservableObject {
             filteredModels = []
         }
     }
-
+    
     // MARK: - Bookmark Handling
-    func toggleBookmark(for event: MainModel) {
+    func toggleBookmark(for event: EventsModel) {
         event.isBookmarked.toggle()
         do {
             try modelContext.save()
@@ -70,22 +67,22 @@ class MainViewModel: ObservableObject {
         }
     }
     
-    // MARK: - Sorting Methods
+    // MARK: - Sorting
     func toggleSortDirection() {
         isAscending.toggle()
-        print("Sort direction toggled to \(isAscending ? "ascending" : "descending")")
         loadEvents()
     }
     
-    // MARK: - Event Addition with Notification Scheduling
+    // MARK: - Event Addition + Notification Scheduling
     func addEvent(title: String,
                   date: Date,
                   icon: String,
                   type: EventTypeMain,
                   firstRemind: FirstRemind,
                   howOften: ReminderFrequency,
-                  information: String = "") {
-        let newEvent = MainModel(
+                  information: String = "",
+                  photos: [UIImage] = []) {
+        let newEvent = EventsModel(
             title: title,
             date: date,
             icon: icon,
@@ -96,11 +93,14 @@ class MainViewModel: ObservableObject {
             howOften: howOften
         )
         
+        if !photos.isEmpty {
+            newEvent.photos = photos.compactMap { $0.jpegData(compressionQuality: 1.0) }
+        }
+        
         modelContext.insert(newEvent)
         do {
             try modelContext.save()
             loadEvents()
-            print("Event saved successfully!")
             let fetchDescriptor = FetchDescriptor<NotificationsModel>(predicate: nil)
             if let notificationSettings = try? modelContext.fetch(fetchDescriptor).first {
                 NotificationManager.scheduleNotifications(for: newEvent, globalPushEnabled: notificationSettings.isPushEnabled)
@@ -111,35 +111,18 @@ class MainViewModel: ObservableObject {
     }
     
     // MARK: - Event Deletion
-    func deleteEvent(_ event: MainModel) {
+    func deleteEvent(_ event: EventsModel) {
         NotificationManager.cancelNotifications(for: event)
         modelContext.delete(event)
         do {
             try modelContext.save()
             loadEvents()
-            print("Event successfully deleted")
         } catch {
             print("Error deleting event: \(error)")
         }
     }
     
-    func deleteAllEvents() {
-        let fetchDescriptor = FetchDescriptor<MainModel>()
-        do {
-            let allEvents = try modelContext.fetch(fetchDescriptor)
-            for event in allEvents {
-                NotificationManager.cancelNotifications(for: event)
-                modelContext.delete(event)
-            }
-            try modelContext.save()
-            loadEvents()
-            print("All events successfully deleted.")
-        } catch {
-            print("Error deleting all events: \(error)")
-        }
-    }
-    
-    // MARK: - Timer Management (обновление каждые 1 секунду)
+    // MARK: - Timer (Updates Every Second)
     private func startTimer() {
         timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
@@ -151,26 +134,44 @@ class MainViewModel: ObservableObject {
     }
     
     // MARK: - Time Left Calculation
-    func timeLeftString(for event: MainModel) -> String {
-        let now = currentDate
-        if event.date <= now {
+    func localizedDaysString(_ count: Int) -> String {
+        let languageCode = Locale.current.language.languageCode?.identifier ?? "en"
+        
+        if languageCode == "ru" {
+            let mod10 = count % 10
+            let mod100 = count % 100
+            if mod10 == 1 && mod100 != 11 {
+                return "\(count) день"
+            } else if (2...4).contains(mod10) && !(12...14).contains(mod100) {
+                return "\(count) дня"
+            } else {
+                return "\(count) дней"
+            }
+        } else {
+            return count == 1 ? "1 day" : "\(count) days"
+        }
+    }
+
+    func timeLeftString(for event: EventsModel) -> String {
+        let calendar = Calendar.current
+        let startOfToday = calendar.startOfDay(for: currentDate)
+        let startOfEventDay = calendar.startOfDay(for: event.date)
+        
+        guard let dayCount = calendar.dateComponents([.day], from: startOfToday, to: startOfEventDay).day else {
             return "Finish".localized
         }
         
-        let diff = event.date.timeIntervalSince(now)
-        let days = Int(diff / 86400)
-        if days >= 1 {
-            return "\(days)" + "days".localized
-        } else {
-            let hours = Int(diff / 3600)
-            let minutes = Int((diff.truncatingRemainder(dividingBy: 3600)) / 60)
-            let seconds = Int(diff.truncatingRemainder(dividingBy: 60))
-            return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+        if dayCount <= 0 {
+            return "Finish".localized
         }
+        
+        // Возвращаем строку с правильно локализованной формой дня
+        return localizedDaysString(dayCount)
     }
+
     
-    // MARK: - Вычисляемое свойство для поиска
-    var searchResults: [MainModel] {
+    // MARK: - Filtered Search Results
+    var searchResults: [EventsModel] {
         let text = searchText.lowercased()
         if text.isEmpty {
             return filteredModels
@@ -179,7 +180,7 @@ class MainViewModel: ObservableObject {
         }
     }
     
-    // MARK: - Deinitializer
+    // MARK: - Deinitialization
     deinit {
         timerCancellable?.cancel()
     }

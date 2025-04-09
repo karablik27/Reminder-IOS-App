@@ -1,6 +1,9 @@
 import SwiftUI
 
+// MARK: - SortSectionView
 struct SortSectionView: View {
+
+    // MARK: - Properties
     let selectedType: String
     let selectedSortOption: String
     let isTypeExpanded: Bool
@@ -12,8 +15,11 @@ struct SortSectionView: View {
     let deleteAction: () -> Void
     let searchAction: () -> Void
 
+    // MARK: - Body
     var body: some View {
         HStack(spacing: ConstantsMain.sortSection.spacing) {
+
+            // MARK: Toggle Sort Button
             Button(action: toggleSortAction) {
                 Image(systemName: "arrow.up.arrow.down")
                     .resizable()
@@ -23,6 +29,7 @@ struct SortSectionView: View {
                     .foregroundColor(.primary)
             }
 
+            // MARK: Type Filter Button
             Button(action: typeMenuAction) {
                 HStack {
                     Text(selectedType.localized)
@@ -36,6 +43,7 @@ struct SortSectionView: View {
                 .cornerRadius(ConstantsMain.sortSection.cornerRadius)
             }
 
+            // MARK: Sort Option Button
             Button(action: sortMenuAction) {
                 HStack {
                     Text(selectedSortOption.localized)
@@ -49,17 +57,9 @@ struct SortSectionView: View {
                 .cornerRadius(ConstantsMain.sortSection.cornerRadius)
             }
 
-            Button(action: deleteAction) {
-                Image(systemName: "trash")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: ConstantsMain.sortSection.iconSize,
-                           height: ConstantsMain.sortSection.iconSize)
-                    .foregroundColor(.red)
-            }
-
             Spacer()
 
+            // MARK: Search Button
             Button(action: searchAction) {
                 Image(systemName: "magnifyingglass")
                     .resizable()

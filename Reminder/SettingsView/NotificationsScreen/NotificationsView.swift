@@ -32,7 +32,7 @@ struct NotificationsView: View {
                             .font(.system(size: 18, weight: .bold))
                             .foregroundColor(.black)
                     }
-                    Text("Notifications")
+                    Text("Notifications".localized)
                         .font(.system(size: 24, weight: .bold))
                         .foregroundColor(.black)
                         .frame(maxWidth: .infinity, alignment: .trailing)

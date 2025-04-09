@@ -1,11 +1,14 @@
 import Combine
 import Foundation
 
+// MARK: - ViewModel
 final class LoadingViewModel: ObservableObject {
+
     @Published var isFinishedLoading = false
     @Published var loadingModel: LoadingModel
     private var cancellables = Set<AnyCancellable>()
-    
+
+    // MARK: - Initialization
     init() {
         let userDefaults = UserDefaults.standard
         let isFirst = !userDefaults.bool(forKey: "hasLaunchedBefore")
@@ -15,7 +18,8 @@ final class LoadingViewModel: ObservableObject {
             userDefaults.set(true, forKey: "hasLaunchedBefore")
         }
     }
-    
+
+    // MARK: - Public Methods
     func startLoading(completion: @escaping () -> Void) {
         Just(true)
             .delay(for: .seconds(3), scheduler: DispatchQueue.main)
@@ -26,8 +30,3 @@ final class LoadingViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 }
-
-
-
-
-

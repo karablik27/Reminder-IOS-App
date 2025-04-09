@@ -1,5 +1,6 @@
 import SwiftUI
 
+// MARK: - SearchConstants
 enum SearchConstants {
     static let VStackSpacing: CGFloat = 8
     static let HStackSpacing: CGFloat = 8

@@ -1,5 +1,6 @@
 import SwiftUI
 
+// MARK: - Colors
 enum Colors {
     static let mainGreen = Color(red: 0.8, green: 1, blue: 0.85, opacity: 0.9)
     static let GreenTabBar = Color(red: 0.8, green: 1, blue: 0.85, opacity: 0.9)

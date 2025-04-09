@@ -1,3 +1,4 @@
+// MARK: - FirstRemind
 enum FirstRemind: String, Codable, CaseIterable {
     case fiveMinutesBefore = "5 minutes before"
     case fifthteenMinutesBefore = "15 minutes before"
@@ -24,6 +25,7 @@ enum FirstRemind: String, Codable, CaseIterable {
     case oneWeekBefore = "1 week before"
 }
 
+// MARK: - ReminderFrequency
 enum ReminderFrequency: String, Codable, CaseIterable {
     case everyFiveSeconds = "Every 1 minute"
     case everyHour = "Every 1 hour"

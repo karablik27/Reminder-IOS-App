@@ -2,20 +2,17 @@ import SwiftUI
 
 // MARK: - Constants
 private enum Constants {
-    // SortOptionRow constants
-    static let hStackSpacing: CGFloat = 12
-    static let imageSize: CGFloat = 24
-    static let vStackSpacing: CGFloat = 4
-
-    // List row insets for both rows
-    static let listRowInsets = EdgeInsets(top: 8, leading: 20, bottom: 8, trailing: 20)
     
-    // SortSelectionMenu presentation constants
-    static let presentationHeight: CGFloat = 200
-    static let presentationCornerRadius: CGFloat = 25
+    // MARK: Layout
+    static let hStackSpacing: CGFloat = 12
+    static let imageSize: CGFloat = 14
+    static let vStackSpacing: CGFloat = 4
+    static let listRowInsets = EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
+    static let presentationHeight: CGFloat = 196
+    static let presentationCornerRadius: CGFloat = 24
 }
 
-/// MARK: - SortOptionRow
+// MARK: - SortOptionRow
 struct SortOptionRow: View {
     let option: SortOption
     let isSelected: Bool
@@ -58,7 +55,7 @@ struct SortOptionRow: View {
     }
 }
 
-/// MARK: - SortSelectionMenu
+// MARK: - SortSelectionMenu
 struct SortSelectionMenu: View {
     @Binding var isPresented: Bool
     @Binding var selectedSort: SortOption

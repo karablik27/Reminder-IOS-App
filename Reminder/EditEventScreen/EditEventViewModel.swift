@@ -5,7 +5,7 @@ import Combine
 class EditEventViewModel: ObservableObject {
     private var modelContext: ModelContext
 
-    @Published var event: MainModel
+    @Published var event: EventsModel
     @Published var title: String
     @Published var icon: String
     @Published var eventDate: Date
@@ -15,6 +15,11 @@ class EditEventViewModel: ObservableObject {
     @Published var firstRemind: FirstRemind
     @Published var howOften: ReminderFrequency
     @Published var iconData: Data?
+    @Published var selectedForDeletion: Set<Int> = []
+    @Published var isSelectionMode: Bool = false
+
+    // Новое свойство для хранения дополнительных фотографий (для редактирования информации)
+    @Published var additionalPhotos: [UIImage] = []
 
     var displayedTitle: String {
         title.isEmpty ? "Event" : title
@@ -27,7 +32,7 @@ class EditEventViewModel: ObservableObject {
         return nil
     }
 
-    init(modelContext: ModelContext, event: MainModel) {
+    init(modelContext: ModelContext, event: EventsModel) {
         self.modelContext = modelContext
         self.event = event
         self.title = event.title
@@ -39,6 +44,10 @@ class EditEventViewModel: ObservableObject {
         self.firstRemind = event.firstRemind
         self.howOften = event.howOften
         self.iconData = event.iconData
+
+        if !event.photos.isEmpty {
+            self.additionalPhotos = event.photos.compactMap { UIImage(data: $0) }
+        }
     }
 
     // MARK: - Public Methods
@@ -53,6 +62,8 @@ class EditEventViewModel: ObservableObject {
         event.firstRemind = firstRemind
         event.howOften = howOften
         event.iconData = iconData
+        // Обновляем дополнительные фотографии
+        event.photos = additionalPhotos.compactMap { $0.jpegData(compressionQuality: 1.0) }
         do {
             try modelContext.save()
             let fetchDescriptor = FetchDescriptor<NotificationsModel>(predicate: nil)
@@ -163,5 +174,22 @@ class EditEventViewModel: ObservableObject {
         case .memorable: return .memorable
         case .other: return .other
         }
+    }
+    
+    func toggleSelection(_ index: Int) {
+        if selectedForDeletion.contains(index) {
+            selectedForDeletion.remove(index)
+        } else {
+            selectedForDeletion.insert(index)
+        }
+    }
+
+    func deleteSelectedPhotos() {
+        let sorted = selectedForDeletion.sorted(by: >)
+        for index in sorted {
+            additionalPhotos.remove(at: index)
+        }
+        selectedForDeletion.removeAll()
+        isSelectionMode = false
     }
 }

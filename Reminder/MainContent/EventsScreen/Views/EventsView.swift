@@ -1,10 +1,13 @@
 import SwiftUI
 import SwiftData
 
-struct MainView: View {
-    @StateObject private var viewModel: MainViewModel
+struct EventsView: View {
+    
+    // MARK: - ViewModel & Context
+    @StateObject private var viewModel: EventsViewModel
     @Environment(\.modelContext) private var modelContext
 
+    // MARK: - UI State
     @State private var showTypeMenu = false
     @State private var showSortMenu = false
     @State private var isTypeExpanded = false
@@ -14,10 +17,12 @@ struct MainView: View {
     @State private var showSearchView = false
     @State private var showSettings = false
 
+    // MARK: - Init
     init(modelContext: ModelContext) {
-        _viewModel = StateObject(wrappedValue: MainViewModel(modelContext: modelContext))
+        _viewModel = StateObject(wrappedValue: EventsViewModel(modelContext: modelContext))
     }
 
+    // MARK: - Body
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottom) {
@@ -51,6 +56,8 @@ struct MainView: View {
                     contentSection
                 }
             }
+
+            // MARK: - Navigation & Sheets
             .environment(\.modelContext, modelContext)
             .sheet(isPresented: $showTypeMenu, onDismiss: {
                 isTypeExpanded = false
@@ -65,34 +72,19 @@ struct MainView: View {
                 SortSelectionMenu(isPresented: $showSortMenu, selectedSort: $viewModel.selectedSortOption)
             }
             .fullScreenCover(isPresented: $showSearchView) {
-                SearchView(viewModel: viewModel, isSearchActive: $showSearchView)
+                EventsSearchView(viewModel: viewModel, isSearchActive: $showSearchView)
                     .environment(\.modelContext, modelContext)
             }
             .navigationDestination(isPresented: $showSettings) {
                 SettingsView(viewModel: SettingsViewModel(modelContext: modelContext))
             }
-            .confirmationDialog("Delete Events".localized, isPresented: $showDeleteOptions, titleVisibility: .visible) {
-                Button("Delete All Events".localized, role: .destructive) {
-                    showDeleteAllAlert = true
-                }
-                Button("Cancel".localized, role: .cancel) { }
-            } message: {
-                Text("Are you sure you want to delete all events?".localized)
-            }
-            .alert("Do you want to delete all events?".localized, isPresented: $showDeleteAllAlert) {
-                Button("Delete".localized, role: .destructive) {
-                    viewModel.deleteAllEvents()
-                }
-                Button("Don't delete".localized, role: .cancel) { }
-            } message: {
-                Text("When all events are deleted, all data about them will be erased without the possibility of recovery.".localized)
-            }
         }
+        // MARK: - Lifecycle
         .onAppear { viewModel.loadEvents() }
         .environmentObject(viewModel)
-        
     }
 
+    // MARK: - Content Section
     private var contentSection: some View {
         if viewModel.filteredModels.isEmpty {
             return AnyView(
@@ -111,6 +103,7 @@ struct MainView: View {
                 }
             )
         } else {
+            // MARK: - Events List
             return AnyView(
                 List {
                     ForEach(viewModel.filteredModels, id: \.id) { model in
@@ -126,7 +119,7 @@ struct MainView: View {
                                     )
                                 }
                             )
-                            .adjustableOpacity(tabBarHeight: ConstantsMain.TabBar.height, margin: 8)
+                            .adjustableOpacity(tabBarHeight: ConstantsMain.TabBar.height, margin: ConstantsMain.contentSection.margin)
                             .contentShape(Rectangle())
                         }
                         .frame(height: ConstantsMain.contentSection.frameHeight)

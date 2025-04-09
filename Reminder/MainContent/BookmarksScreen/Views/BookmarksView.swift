@@ -1,12 +1,12 @@
 import SwiftUI
 import SwiftData
 
-// MARK: - BeautifulDatesView
-struct BeautifulDatesView: View {
+// MARK: - BookmarksView
+struct BookmarksView: View {
 
     // MARK: - Dependencies
     @Environment(\.modelContext) private var modelContext
-    @StateObject private var viewModel: BeautifulDatesViewModel
+    @StateObject private var viewModel: BookmarksViewModel
 
     // MARK: - UI State
     @State private var showTypeMenu = false
@@ -20,20 +20,21 @@ struct BeautifulDatesView: View {
 
     // MARK: - Init
     init(modelContext: ModelContext) {
-        _viewModel = StateObject(wrappedValue: BeautifulDatesViewModel(modelContext: modelContext))
+        _viewModel = StateObject(wrappedValue: BookmarksViewModel(modelContext: modelContext))
     }
 
     // MARK: - Body
     var body: some View {
         VStack(spacing: ConstantsMain.body.VStackspacing) {
-            // MARK: Header
-            HeaderSectionView(title: "Beautiful Dates".localized) {
+
+            // MARK: Header Section
+            HeaderSectionView(title: "Bookmarks".localized) {
                 showSettings = true
             }
             .padding(.horizontal)
             .padding(.top, ConstantsMain.body.headerSectionPadding)
 
-            // MARK: Sort Section
+            // MARK: Sort & Filter Section
             SortSectionView(
                 selectedType: viewModel.selectedEventType.rawValue,
                 selectedSortOption: viewModel.selectedSortOption.rawValue,
@@ -53,70 +54,61 @@ struct BeautifulDatesView: View {
             )
             .padding(.horizontal)
 
-            // MARK: Content
+            // MARK: Events Content
             contentSection
         }
+
+        // MARK: - Modifiers
         .environment(\.modelContext, modelContext)
+
+        // MARK: - Sheets
         .sheet(isPresented: $showTypeMenu, onDismiss: {
             isTypeExpanded = false
-            viewModel.loadBeautifulEvents()
+            viewModel.loadBookmarks()
         }) {
             TypeSelectionMenu(isPresented: $showTypeMenu,
                               selectedType: $viewModel.selectedEventType)
         }
         .sheet(isPresented: $showSortMenu, onDismiss: {
             isSortExpanded = false
-            viewModel.loadBeautifulEvents()
+            viewModel.loadBookmarks()
         }) {
             SortSelectionMenu(isPresented: $showSortMenu,
                               selectedSort: $viewModel.selectedSortOption)
         }
+
+        // MARK: - Full Screen & Navigation
         .fullScreenCover(isPresented: $showSearchView) {
-            BeautifulDatesSearchView(viewModel: viewModel, isSearchActive: $showSearchView)
+            BookmarksSearchView(viewModel: viewModel, isSearchActive: $showSearchView)
                 .environment(\.modelContext, modelContext)
         }
         .navigationDestination(isPresented: $showSettings) {
             SettingsView(viewModel: SettingsViewModel(modelContext: modelContext))
         }
-        .confirmationDialog("Delete Beautiful Events".localized, isPresented: $showDeleteOptions, titleVisibility: .visible) {
-            Button("Delete All Beautiful Events".localized, role: .destructive) {
-                showDeleteAllAlert = true
-            }
-            Button("Cancel".localized, role: .cancel) { }
-        } message: {
-            Text("Are you sure you want to delete all beautiful events?".localized)
-        }
-        .alert("Delete Beautiful Events", isPresented: $showDeleteAllAlert) {
-            Button("Delete", role: .destructive) {
-                viewModel.deleteAllBeautifulEvents()
-            }
-            Button("Don't delete".localized, role: .cancel) { }
-        } message: {
-            Text("When all beautiful events are deleted, they cannot be recovered.".localized)
-        }
-        .onAppear { viewModel.loadBeautifulEvents() }
+
+        // MARK: - Lifecycle
+        .onAppear { viewModel.loadBookmarks() }
         .environmentObject(viewModel)
-        .safeAreaInset(edge: .bottom) {
-            Color.clear.frame(height: ConstantsMain.TabBar.height)
-        }
     }
 
     // MARK: - Content Section
     private var contentSection: some View {
         if viewModel.filteredModels.isEmpty {
+            // MARK: Empty State
             AnyView(
                 VStack(spacing: ConstantsMain.contentSection.VStackspacing) {
                     Spacer(minLength: ConstantsMain.contentSection.spacer)
-                    Text("No beautiful events yet".localized)
+                    Text("No bookmarks yet".localized)
                         .font(.title2)
                         .foregroundColor(.gray)
-                    Text("Beautiful events will appear here".localized)
+                    Text("Bookmark your first event on the main screen".localized)
                         .font(.subheadline)
                         .foregroundColor(.gray)
                     Spacer()
                 }
             )
         } else {
+            // MARK: Events List
             AnyView(
                 List {
                     ForEach(viewModel.filteredModels, id: \.id) { model in
@@ -128,7 +120,10 @@ struct BeautifulDatesView: View {
                                 editDestination: {
                                     AnyView(
                                         EditEventView(
-                                            viewModel: EditEventViewModel(modelContext: modelContext, event: model)
+                                            viewModel: EditEventViewModel(
+                                                modelContext: modelContext,
+                                                event: model
+                                            )
                                         )
                                         .environmentObject(viewModel)
                                     )

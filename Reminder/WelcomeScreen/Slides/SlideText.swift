@@ -1,5 +1,6 @@
 import SwiftUI
 
+// MARK: - Local Model
 struct SlideText: Identifiable {
     let id = UUID()
     let text: String

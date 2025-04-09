@@ -18,6 +18,10 @@
 
 
 // FirstRemind
+"5 minutes before" = "5 minutes before";
+"15 minutes before" = "15 minutes before";
+"30 minutes before" = "30 minutes before";
+"45 minutes before" = "45 minutes before";
 "1 hour before" = "1 hour before";
 "2 hour before" = "2 hours before";
 "3 hour before" = "3 hours before";
@@ -164,22 +168,22 @@
 "Welcome" = "Welcome";
 
 "Reminder" = "Reminder";
-"welcome_text" = "Welcome to a convenient application that helps you remember the main thing.";
-"create_reminder" = "Create a new reminder";
-"create_reminder_step1" = "1. Tap the '+' button to create a new reminder.";
-"create_reminder_step2" = "2. Then choose a title, date, and more.";
-"create_reminder_step3" = "3. Save and wait for a reminder!";
-"notifications_title" = "Notifications";
-"notifications_text" = "Click allow to receive notifications about your events and more, or configure later in settings.";
-"search_sort_title" = "Search and Sort events";
-"search_symbol" = "Search symbol";
-"sort_symbol" = "Sort symbol";
+"Welcome to a convenient application that helps you remember the main thing." = "Welcome to a convenient application that helps you remember the main thing.";
+"Create a new reminder" = "Create a new reminder";
+"1. Tap the '+' button to create a new reminder." = "1. Tap the '+' button to create a new reminder.";
+"2. Then choose a title, date, and more." = "2. Then choose a title, date, and more.";
+"3. Save and wait for a reminder!" = "3. Save and wait for a reminder!";
+"Notifications" = "Notifications";
+"Click allow to receive notifications about your events and more, or configure later in settings." = "Click allow to receive notifications about your events and more, or configure later in settings.";
+"Search and Sort events" = "Search and Sort events";
+"Search symbol" = "Search symbol";
+"Sort symbol" = "Sort symbol";
 
 "language_option" = "Language";
 "Next" = "Next";
 "Get Started!" = "Get Started!";
-"search_description" = "Search: Allows you to find reminders using keywords in the title, description, or other attributes.";
-"sort_description" = "Sort: Helps you organize your reminders by date, name, or other parameters.";
+"Search: Allows you to find reminders using keywords in the title, description, or other attributes." = "Search: Allows you to find reminders using keywords in the title, description, or other attributes.";
+"Sort: Helps you organize your reminders by date, name, or other parameters." = "Sort: Helps you organize your reminders by date, name, or other parameters.";
 
 "You will create a reminder about a special anniversary." = "You will create a reminder about a special anniversary.";
 "You will create a reminder about a trip or vacation." = "You will create a reminder about a trip or vacation.";
@@ -244,3 +248,48 @@
 "Beautiful Dates" = "Beautiful Dates";
 "Search beautiful events..." = "Search beautiful events...";
 "No beautiful events found" = "No beautiful events found";
+
+"Beautiful date: " = "Beautiful date: ";
+"Palindrome" = "Palindrome";
+"All digits are identical" = "All digits are identical";
+"Repeating pairs" = "Repeating pairs";
+"29 February" = "29 February";
+"Day equals Month" = "Day equals Month";
+"Day equals last two digits" = "Day equals last two digits";
+"Month equals last two digits" = "Month equals last two digits";
+"Day + Month equals last two digits" = "Day + Month equals last two digits";
+"Perfect match" = "Perfect match";
+"Day and Month form a palindrome" = "Day and Month form a palindrome";
+"Arithmetic progression" = "Arithmetic progression";
+"Geometric progression" = "Geometric progression";
+"Product of Day and Month equals last two digits" = "Product of Day and Month equals last two digits";
+"Day and Month are perfect squares" = "Day and Month are perfect squares";
+"Mirrored structure with year" = "Mirrored structure with year";
+
+"Photos" = "Photos";
+"Details" = "Details";
+"Select" = "Select";
+"Show More" = "Show More";
+"Show Less" = "Show Less";
+"Delete Selected" = "Delete Selected";
+"Search history..." = "Search history...";
+"No history events found" = "No history events found";
+"Search events..." = "Search events...";
+"No events found" = "No events found";
+"Search bookmarks..." = "Search bookmarks...";
+" days" = " days";
+" day" = " day";
+"FAQ" = "FAQ";
+"Extra" = "Extra";
+"Show Welcome" = "Show Welcome";
+"Factory Reset " = "Factory Reset ";
+"Are you sure you want to factory reset?" = "Are you sure you want to factory reset?";
+"Cancel " = "Cancel ";
+"Q: What are beautiful dates?" = "Q: What are beautiful dates?";
+"A: Beautiful dates are dates that meet certain aesthetic and symbolic criteria making them memorable." = "A: Beautiful dates are dates that meet certain aesthetic and symbolic criteria making them memorable.";
+"Q: How is a beautiful date determined?" = "Q: How is a beautiful date determined?";
+"A: It is determined based on built-in criteria such as palindromes, repeating digits, symmetry, and other rules." = "A: It is determined based on built-in criteria such as palindromes, repeating digits, symmetry, and other rules.";
+"Q: Where can I use beautiful dates?" = "Q: Where can I use beautiful dates?";
+"A: They can be used for planning events, celebrations, or personal occasions to add a unique touch." = "A: They can be used for planning events, celebrations, or personal occasions to add a unique touch.";
+"App Version:" = "App Version:";
+"Memory Usage:" = "Memory Usage:";

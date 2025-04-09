@@ -11,12 +11,8 @@ private enum Constants {
                                           leading: listRowInsetLeading,
                                           bottom: listRowInsetBottom,
                                           trailing: listRowInsetTrailing)
-    
-    // Presentation constants
     static let presentationHeight: CGFloat = 300
     static let presentationCornerRadius: CGFloat = 25
-    
-    // Layout constants for option rows
     static let hStackSpacing: CGFloat = 12
     static let imageFrameSize: CGFloat = 24
     static let vStackSpacing: CGFloat = 4

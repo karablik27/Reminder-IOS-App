@@ -9,10 +9,10 @@ struct TabBarShape: Shape {
         let notchRadius = Constants.TabBar.notchRadius
         let notchWidth = notchRadius * 2
         let centerX = rect.midX
-        
+
         // Main rounded rectangle path.
         let mainPath = Path(roundedRect: rect, cornerRadius: cornerRadius)
-        
+
         // Notch path (semicircular arc) to be subtracted.
         var notchPath = Path()
         notchPath.addArc(
@@ -22,7 +22,7 @@ struct TabBarShape: Shape {
             endAngle: .degrees(180),
             clockwise: false
         )
-        
+
         // Return the main path minus the notch.
         return mainPath.subtracting(notchPath)
     }
@@ -30,29 +30,21 @@ struct TabBarShape: Shape {
 
 // MARK: - Constants
 private enum Constants {
-    // MARK: TabBar Constants
-    enum TabBar {
-        /// Height of the tab bar (without the notch).
-        static let height: CGFloat = 90
-        /// Icon size in the tab bar.
-        static let iconSize: CGFloat = 28
-        /// Notch radius (half the width of the notch).
-        static let notchRadius: CGFloat = 35
-        /// Size of the "plus" button (navigation link) circle.
-        static let linkCircleSize: CGFloat = 44
-        /// Corner radius for the tab bar.
-        static let cornerRadius: CGFloat = 56
-        /// Shadow radius for the green tab bar.
-        static let shadowRadius: CGFloat = 12
-        /// Shadow opacity for the green tab bar.
-        static let shadowOpacity: Double = 0.15
-        /// Vertical offset for the "plus" button.
-        static let offsetY: CGFloat = -37
-    }
     
-    // MARK: Layout Constants
-    /// Horizontal padding used in the tab bar icons row.
+    enum TabBar {
+        static let height: CGFloat = 90
+        static let iconSize: CGFloat = 28
+        static let notchRadius: CGFloat = 35
+        static let linkCircleSize: CGFloat = 44
+        static let cornerRadius: CGFloat = 56
+        static let shadowRadius: CGFloat = 12
+        static let shadowOpacity: Double = 0.15
+        static let offsetY: CGFloat = -37
+        static let iconScale: CGFloat = 1.3
+        static let shadowXY: CGFloat = 0
+    }
     static let horizontalPadding: CGFloat = 32
+    static let lineWidth: CGFloat = 4
 }
 
 // MARK: - CustomTabBar
@@ -63,54 +55,49 @@ struct CustomTabBar: View {
 
     var body: some View {
         ZStack {
-            // 1) Base white shape.
+            // MARK: 1. Base shape
             TabBarShape()
                 .fill(Color.white)
                 .frame(height: Constants.TabBar.height)
                 .padding(.horizontal)
                 .zIndex(0)
-            
-            // 2) Green tab bar shape with shadow.
+
+            // MARK: 2. Colored shape with shadow
             TabBarShape()
                 .fill(Colors.GreenTabBar)
                 .shadow(
                     color: .black.opacity(Constants.TabBar.shadowOpacity),
                     radius: Constants.TabBar.shadowRadius,
-                    x: 0, y: 0
+                    x: Constants.TabBar.shadowXY, y: Constants.TabBar.shadowXY
                 )
                 .frame(height: Constants.TabBar.height)
                 .zIndex(1)
-            
-            // 3) Tab bar icons.
+
+            // MARK: 3. Icons
             HStack {
-                // "Events" tab.
                 TabBarButton(image: "list.bullet", index: 0, selectedTab: $selectedTab)
-                // Second tab.
                 TabBarButton(image: "sparkles", index: 1, selectedTab: $selectedTab)
-                
-                // Spacer for "plus" button.
+
                 Spacer(minLength: Constants.TabBar.notchRadius * 2)
-                
-                // "Bookmarks" tab.
+
                 TabBarButton(image: "bookmark", index: 2, selectedTab: $selectedTab)
-                // "Clock" tab.
                 TabBarButton(image: "clock", index: 3, selectedTab: $selectedTab)
             }
             .padding(.horizontal, Constants.horizontalPadding)
             .frame(height: Constants.TabBar.height)
             .zIndex(2)
-            
-            // 4) Plus button in the center notch.
+
+            // MARK: 4. Plus button
             NavigationLink(destination: AddEventView(viewModel: AddEventViewModel(modelContext: modelContext))) {
                 ZStack {
                     Circle()
                         .fill(Color.white)
                         .overlay(
-                            Circle().stroke(Color.black, lineWidth: 4)
+                            Circle().stroke(Color.black, lineWidth: Constants.lineWidth)
                         )
                         .frame(width: Constants.TabBar.linkCircleSize,
                                height: Constants.TabBar.linkCircleSize)
-                    
+
                     Image(systemName: "plus")
                         .font(.system(size: Constants.TabBar.iconSize, weight: .semibold))
                         .foregroundColor(.black)
@@ -136,7 +123,7 @@ struct TabBarButton: View {
             selectedTab = index
         } label: {
             Image(systemName: image)
-                .font(.system(size: Constants.TabBar.iconSize * 1.3))
+                .font(.system(size: Constants.TabBar.iconSize * Constants.TabBar.iconScale))
                 .foregroundColor(selectedTab == index ? .black : .gray)
                 .frame(maxWidth: .infinity)
         }

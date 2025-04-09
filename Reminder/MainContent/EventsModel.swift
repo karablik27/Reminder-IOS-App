@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class MainModel {
+final class EventsModel {
     // MARK: - Attributes
     @Attribute var id: UUID
     @Attribute var title: String
@@ -14,38 +14,31 @@ final class MainModel {
     @Attribute var firstRemind: FirstRemind
     @Attribute var howOften: ReminderFrequency
     @Attribute var iconData: Data? = nil
-    
-    /// Атрибут для сохранения пользовательской отметки, что событие является "красивым".
-    @Attribute var userMarkedAsBeautiful: Bool = false
+    @Attribute var photos: [Data] = []
 
     // MARK: - Computed Properties
-    
-    /// Возвращает количество дней до события.
     var daysLeft: Int {
         let today = Calendar.current.startOfDay(for: Date())
         let eventDay = Calendar.current.startOfDay(for: date)
         return Calendar.current.dateComponents([.day], from: today, to: eventDay).day ?? 0
     }
     
-    /// Форматированная дата события без времени.
     var dateFormatted: String {
         date.formatted(date: .numeric, time: .omitted)
     }
     
-    /// Сокращённое название дня недели для события.
     var dayOfWeek: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "EEE" + "."
         return formatter.string(from: date)
     }
     
-    /// Событие считается "красивым", если пользователь отметил его или если оно удовлетворяет базовой логике.
     var isBeautiful: Bool {
-        return userMarkedAsBeautiful || date.isBeautifulDate()
+        return date.isBeautifulDate()
     }
     
     // MARK: - Initializer
-    init(id: UUID = UUID(), title: String, date: Date, icon: String, type: EventTypeMain = .allEvents, isBookmarked: Bool = false, information: String = "", firstRemind: FirstRemind = .oneDayBefore, howOften: ReminderFrequency = .everyHour, userMarkedAsBeautiful: Bool = false) {
+    init(id: UUID = UUID(), title: String, date: Date, icon: String, type: EventTypeMain = .allEvents, isBookmarked: Bool = false, information: String = "", firstRemind: FirstRemind = .oneDayBefore, howOften: ReminderFrequency = .everyHour) {
         self.id = id
         self.title = title
         self.date = date
@@ -55,6 +48,5 @@ final class MainModel {
         self.information = information
         self.firstRemind = firstRemind
         self.howOften = howOften
-        self.userMarkedAsBeautiful = userMarkedAsBeautiful
     }
 }

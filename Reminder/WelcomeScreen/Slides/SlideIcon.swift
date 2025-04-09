@@ -1,5 +1,6 @@
 import SwiftUI
 
+// MARK: - Local Model
 struct SlideIcon: Identifiable {
     let id = UUID()
     let iconName: String

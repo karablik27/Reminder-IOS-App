@@ -4,11 +4,11 @@ import SwiftUI
 private enum Constants {
     static let listRowInsetsTop: CGFloat = 8
     static let listRowInsetsBottom: CGFloat = 8
-    static let listRowInsetsLeading: CGFloat = 20
-    static let listRowInsetsTrailing: CGFloat = 20
+    static let listRowInsetsLeading: CGFloat = 16
+    static let listRowInsetsTrailing: CGFloat = 16
 
-    static let presentationHeight: CGFloat = 300
-    static let presentationCornerRadius: CGFloat = 25
+    static let presentationHeight: CGFloat = 304
+    static let presentationCornerRadius: CGFloat = 24
 
     static let hStackSpacing: CGFloat = 12
     static let imageSize: CGFloat = 24

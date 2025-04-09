@@ -1,8 +1,10 @@
 import Foundation
 import SwiftData
 
+// MARK: - Model
 @Model
 final class LoadingModel {
+    
     var time: Date
     var isFirst: Bool
     
@@ -11,4 +13,3 @@ final class LoadingModel {
         self.isFirst = isFirst
     }
 }
-

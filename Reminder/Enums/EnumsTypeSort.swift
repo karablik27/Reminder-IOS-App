@@ -1,48 +1,50 @@
+// MARK: - EventTypeMain
 enum EventTypeMain: String, Codable, CaseIterable {
     case allEvents = "All events"
     case holidays = "Holidays"
     case birthdays = "Birthdays"
     case study = "Study"
     case movies = "Movies"
-    case anniversary = "Anniversary"          // годовщины
-    case travel = "Travel"                    // поездки, путешествия
-    case concerts = "Concerts"                // концерты, фестивали
-    case goals = "Goals"                      // личные цели, дедлайны
-    case health = "Health"                    // визиты к врачу, здоровье
-    case meetings = "Meetings"                // встречи
-    case reminders = "Reminders"              // просто напоминания
-    case work = "Work"                        // рабочие события
-    case shopping = "Shopping"                // напоминания о покупках или скидках
-    case romantic = "Romantic"                // свидания, важные моменты в отношениях
+    case anniversary = "Anniversary"
+    case travel = "Travel"
+    case concerts = "Concerts"
+    case goals = "Goals"
+    case health = "Health"
+    case meetings = "Meetings"
+    case reminders = "Reminders"
+    case work = "Work"
+    case shopping = "Shopping"
+    case romantic = "Romantic"
     case firstTime = "FirstTime"
     case wishDate = "WishDate"
     case memorable = "Memorable"
     case other = "Other"
 }
 
+// MARK: - EventTypeAddEvent
 enum EventTypeAddEvent: String, Codable, CaseIterable {
     case none = "None"
     case holidays = "Holidays"
     case birthdays = "Birthdays"
     case study = "Study"
     case movies = "Movies"
-    case anniversary = "Anniversary"          // годовщины
-    case travel = "Travel"                    // поездки, путешествия
-    case concerts = "Concerts"                // концерты, фестивали
-    case goals = "Goals"                      // личные цели, дедлайны
-    case health = "Health"                    // визиты к врачу, здоровье
-    case meetings = "Meetings"                // встречи
-    case reminders = "Reminders"              // просто напоминания
-    case work = "Work"                        // рабочие события
-    case shopping = "Shopping"                // напоминания о покупках или скидках
-    case romantic = "Romantic"                // свидания, важные моменты в отношениях
+    case anniversary = "Anniversary"
+    case travel = "Travel"
+    case concerts = "Concerts"
+    case goals = "Goals"
+    case health = "Health"
+    case meetings = "Meetings"
+    case reminders = "Reminders"
+    case work = "Work"
+    case shopping = "Shopping"
+    case romantic = "Romantic"
     case firstTime = "FirstTime"
     case wishDate = "WishDate"
     case memorable = "Memorable"
     case other = "Other"
 }
 
-
+// MARK: - SortOption
 enum SortOption: String, CaseIterable {
     case byDate = "By date"
     case byName = "By name"

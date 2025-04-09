@@ -24,29 +24,27 @@ struct FAQCardView: View {
 }
 
 // MARK: - FAQ Screen
-
 struct FAQView: View {
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack {
             VStack(spacing: 16) {
-                TopHeaderView(title: "FAQ", onBack: { dismiss() })
+                TopHeaderView(title: "FAQ".localized, onBack: { dismiss() })
                 
                 ScrollView {
                     VStack(spacing: 16) {
-                        // Each FAQCardView now has the same size constraints
                         FAQCardView(
-                            question: "Q: What are beautiful dates?",
-                            answer: "A: Beautiful dates are dates that meet certain aesthetic and symbolic criteria making them memorable."
+                            question: "Q: What are beautiful dates?".localized,
+                            answer: "A: Beautiful dates are dates that meet certain aesthetic and symbolic criteria making them memorable.".localized
                         )
                         FAQCardView(
-                            question: "Q: How is a beautiful date determined?",
-                            answer: "A: It is determined based on built-in criteria such as palindromes, repeating digits, symmetry, and other rules."
+                            question: "Q: How is a beautiful date determined?".localized,
+                            answer: "A: It is determined based on built-in criteria such as palindromes, repeating digits, symmetry, and other rules.".localized
                         )
                         FAQCardView(
-                            question: "Q: Where can I use beautiful dates?",
-                            answer: "A: They can be used for planning events, celebrations, or personal occasions to add a unique touch."
+                            question: "Q: Where can I use beautiful dates?".localized,
+                            answer: "A: They can be used for planning events, celebrations, or personal occasions to add a unique touch.".localized
                         )
                     }
                     .padding(.vertical, 16)

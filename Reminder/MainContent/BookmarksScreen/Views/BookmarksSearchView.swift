@@ -1,11 +1,11 @@
 import SwiftUI
 import SwiftData
 
-// MARK: - BeautifulDatesSearchView
-struct BeautifulDatesSearchView: View {
-    
+// MARK: - BookmarksSearchView
+struct BookmarksSearchView: View {
+
     // MARK: - Properties
-    @ObservedObject var viewModel: BeautifulDatesViewModel
+    @ObservedObject var viewModel: BookmarksViewModel
     @Binding var isSearchActive: Bool
     @Environment(\.modelContext) private var modelContext
 
@@ -15,17 +15,15 @@ struct BeautifulDatesSearchView: View {
             VStack(spacing: SearchConstants.VStackSpacing) {
                 // MARK: - Search Header
                 SearchHeaderView(
-                    title: "Beautiful Dates".localized,
+                    title: "Bookmarks".localized,
                     searchText: $viewModel.searchText,
-                    placeholder: "Search beautiful events...".localized,
-                    leftButtonAction: { withAnimation { isSearchActive = false } },
-                    rightButtonAction: { withAnimation { isSearchActive = false } }
-                )
+                    placeholder: "Search bookmarks...".localized,
+                    dismissAction: { withAnimation { isSearchActive = false } })
 
                 // MARK: - Empty State or Results
                 if viewModel.searchResults.isEmpty {
                     Spacer()
-                    Text("No beautiful events found".localized)
+                    Text("No bookmarks found".localized)
                         .foregroundColor(.gray)
                     Spacer()
                 } else {

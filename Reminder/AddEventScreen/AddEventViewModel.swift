@@ -17,7 +17,12 @@ class AddEventViewModel: ObservableObject {
     @Published var newHowOften: ReminderFrequency = .everyHour
     @Published var newIconData: Data? = nil
     @Published var nextEventNumber: Int = 1
+    @Published var selectedForDeletion: Set<Int> = []
+    @Published var isSelectionMode: Bool = false
 
+    /// NEW: Store additional photos (UIImages) that the user adds in the Information screen.
+    @Published var newAdditionalPhotos: [UIImage] = []
+    
     // MARK: - Computed Properties
     var displayedTitle: String {
         newTitle.isEmpty ? ("Event".localized + " " + "№ \(nextEventNumber)") : newTitle
@@ -32,7 +37,7 @@ class AddEventViewModel: ObservableObject {
     // MARK: - Public Methods
     func updateNextEventNumber() {
         do {
-            let allEvents = try modelContext.fetch(FetchDescriptor<MainModel>())
+            let allEvents = try modelContext.fetch(FetchDescriptor<EventsModel>())
             nextEventNumber = allEvents.count + 1
         } catch {
             print("Error counting events: \(error)")
@@ -75,7 +80,7 @@ class AddEventViewModel: ObservableObject {
         }
         let mainType = convertToMainType(newType)
         let finalDate = combineDateAndTime()
-        let newEvent = MainModel(
+        let newEvent = EventsModel(
             id: UUID(),
             title: newTitle,
             date: finalDate,
@@ -89,6 +94,14 @@ class AddEventViewModel: ObservableObject {
         if let data = newIconData, !data.isEmpty {
             newEvent.iconData = data
         }
+        
+        // NEW: Convert additional photos to Data and save them.
+        if !newAdditionalPhotos.isEmpty {
+            newEvent.photos = newAdditionalPhotos.compactMap {
+                $0.jpegData(compressionQuality: 1.0)
+            }
+        }
+        
         modelContext.insert(newEvent)
         do {
             try modelContext.save()
@@ -113,6 +126,7 @@ class AddEventViewModel: ObservableObject {
         newHowOften = .everyHour
         newEventDate = Date()
         newEventTime = Date()
+        newAdditionalPhotos = []
         updateNextEventNumber()
     }
 
@@ -151,5 +165,22 @@ class AddEventViewModel: ObservableObject {
         merged.hour = timeComponents.hour
         merged.minute = timeComponents.minute
         return calendar.date(from: merged) ?? newEventDate
+    }
+    
+    func toggleSelection(_ index: Int) {
+        if selectedForDeletion.contains(index) {
+            selectedForDeletion.remove(index)
+        } else {
+            selectedForDeletion.insert(index)
+        }
+    }
+
+    func deleteSelectedPhotos() {
+        let sorted = selectedForDeletion.sorted(by: >)
+        for index in sorted {
+            newAdditionalPhotos.remove(at: index)
+        }
+        selectedForDeletion.removeAll()
+        isSelectionMode = false
     }
 }

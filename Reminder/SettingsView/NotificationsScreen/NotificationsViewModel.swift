@@ -40,7 +40,7 @@ final class NotificationsViewModel: ObservableObject {
         } else {
             // При включении уведомлений повторно планируем их для активных событий.
             let now = Date()
-            let fetchDescriptor = FetchDescriptor<MainModel>(predicate: #Predicate { (event: MainModel) in
+            let fetchDescriptor = FetchDescriptor<EventsModel>(predicate: #Predicate { (event: EventsModel) in
                 event.date > now
             })
             if let events = try? context.fetch(fetchDescriptor) {

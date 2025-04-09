@@ -8,7 +8,7 @@ class BeautifulDatesViewModel: ObservableObject {
     @Published var selectedEventType: EventTypeMain = .allEvents
     @Published var selectedSortOption: SortOption = .byDate
     @Published var isAscending = true
-    @Published var filteredModels: [MainModel] = []
+    @Published var filteredModels: [EventsModel] = []
     @Published var currentDate: Date = Date()
     @Published var searchText: String = ""
     
@@ -25,7 +25,7 @@ class BeautifulDatesViewModel: ObservableObject {
     
     // MARK: - Loading Beautiful Events
     func loadBeautifulEvents() {
-        var sortDescriptors: [SortDescriptor<MainModel>] = []
+        var sortDescriptors: [SortDescriptor<EventsModel>] = []
         switch selectedSortOption {
         case .byDate:
             sortDescriptors = [SortDescriptor(\.date, order: isAscending ? .forward : .reverse)]
@@ -33,7 +33,7 @@ class BeautifulDatesViewModel: ObservableObject {
             sortDescriptors = [SortDescriptor(\.title, order: isAscending ? .forward : .reverse)]
         }
         
-        let fetchDescriptor = FetchDescriptor<MainModel>(sortBy: sortDescriptors)
+        let fetchDescriptor = FetchDescriptor<EventsModel>(sortBy: sortDescriptors)
         
         do {
             let allEvents = try modelContext.fetch(fetchDescriptor)
@@ -56,7 +56,7 @@ class BeautifulDatesViewModel: ObservableObject {
     }
     
     // MARK: - Deletion Methods
-    func deleteEvent(_ event: MainModel) {
+    func deleteEvent(_ event: EventsModel) {
         NotificationManager.cancelNotifications(for: event)
         modelContext.delete(event)
         do {
@@ -67,24 +67,8 @@ class BeautifulDatesViewModel: ObservableObject {
         }
     }
     
-    func deleteAllBeautifulEvents() {
-        let fetchDescriptor = FetchDescriptor<MainModel>()
-        do {
-            let allEvents = try modelContext.fetch(fetchDescriptor)
-            let allBeautiful = allEvents.filter { $0.isBeautiful }
-            for event in allBeautiful {
-                NotificationManager.cancelNotifications(for: event)
-                modelContext.delete(event)
-            }
-            try modelContext.save()
-            loadBeautifulEvents()
-        } catch {
-            print("Error deleting all beautiful events: \(error)")
-        }
-    }
-    
     // MARK: - Bookmark Handling
-    func toggleBookmark(for event: MainModel) {
+    func toggleBookmark(for event: EventsModel) {
         event.isBookmarked.toggle()
         do {
             try modelContext.save()
@@ -104,24 +88,42 @@ class BeautifulDatesViewModel: ObservableObject {
     }
     
     // MARK: - Time Left Calculation
-    func timeLeftString(for event: MainModel) -> String {
-        let now = currentDate
-        if event.date <= now {
-            return "Finish"
-        }
-        let diff = event.date.timeIntervalSince(now)
-        let days = Int(diff / 86400)
-        if days >= 1 {
-            return "\(days) days"
+    func localizedDaysString(_ count: Int) -> String {
+        let languageCode = Locale.current.language.languageCode?.identifier ?? "en"
+        
+        if languageCode == "ru" {
+            let mod10 = count % 10
+            let mod100 = count % 100
+            if mod10 == 1 && mod100 != 11 {
+                return "\(count) день"
+            } else if (2...4).contains(mod10) && !(12...14).contains(mod100) {
+                return "\(count) дня"
+            } else {
+                return "\(count) дней"
+            }
         } else {
-            let hours = Int(diff / 3600)
-            let minutes = Int((diff.truncatingRemainder(dividingBy: 3600)) / 60)
-            let seconds = Int(diff.truncatingRemainder(dividingBy: 60))
-            return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+            return count == 1 ? "1 day" : "\(count) days"
         }
     }
+
+    func timeLeftString(for event: EventsModel) -> String {
+        let calendar = Calendar.current
+        let startOfToday = calendar.startOfDay(for: currentDate)
+        let startOfEventDay = calendar.startOfDay(for: event.date)
+        
+        guard let dayCount = calendar.dateComponents([.day], from: startOfToday, to: startOfEventDay).day else {
+            return "Finish".localized
+        }
+        
+        if dayCount <= 0 {
+            return "Finish".localized
+        }
+        
+        // Возвращаем строку с правильно локализованной формой дня
+        return localizedDaysString(dayCount)
+    }
     
-    var searchResults: [MainModel] {
+    var searchResults: [EventsModel] {
         let text = searchText.lowercased()
         if text.isEmpty {
             return filteredModels

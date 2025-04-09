@@ -1,7 +1,17 @@
 import SwiftUI
 
-// MARK: - OnePickerMonthYearView
+// MARK: - Constants
+private enum Constants {
+    static let rowHeight: CGFloat = 40
+    static let fontSize: CGFloat = 20
+    static let localeIdentifier = Localizer.selectedLanguage
+    static let monthDateFormat = "LLLL"
+    static let referenceYear = 2000
+    static let minLineHeight: CGFloat = 1
+    static let minimumPickerSubviewCount: Int = 3
+}
 
+// MARK: - OnePickerMonthYearView
 struct OnePickerMonthYearView: UIViewRepresentable {
     // MARK: - Bindings
     @Binding var selectedMonth: Int
@@ -117,29 +127,5 @@ struct OnePickerMonthYearView: UIViewRepresentable {
                 }
             }
         }
-    }
-    
-    // MARK: - Constants
-    private enum Constants {
-        // Row height for each picker row.
-        static let rowHeight: CGFloat = 40
-        
-        // Font size for picker labels.
-        static let fontSize: CGFloat = 20
-        
-        // Locale identifier for month formatting.
-        static let localeIdentifier = Localizer.selectedLanguage
-        
-        // Date format for full month name.
-        static let monthDateFormat = "LLLL"
-        
-        // Reference year used for formatting month names.
-        static let referenceYear = 2000
-        
-        // Minimum height threshold to consider a subview as a line.
-        static let minLineHeight: CGFloat = 1
-        
-        // Minimum number of subviews that UIPickerView must have to remove lines.
-        static let minimumPickerSubviewCount: Int = 3
     }
 }

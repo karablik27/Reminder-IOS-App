@@ -1,14 +1,21 @@
 import SwiftUI
 
+// MARK: - EventCellView
 struct EventCellView: View {
-    let model: MainModel
-    let toggleBookmark: (MainModel) -> Void
-    let timeLeftString: (MainModel) -> String
+    
+    // MARK: - Properties
+    let model: EventsModel
+    let toggleBookmark: (EventsModel) -> Void
+    let timeLeftString: (EventsModel) -> String
     let editDestination: () -> AnyView
 
+    // MARK: - Body
     var body: some View {
         HStack {
+            // MARK: - Left Section (Bookmark + Icon + Text)
             HStack(spacing: ConstantsMain.eventCell.HStackspacing) {
+                
+                // MARK: Bookmark Button
                 Button(action: { toggleBookmark(model) }) {
                     Image(systemName: model.isBookmarked ? "bookmark.fill" : "bookmark")
                         .font(.system(size: ConstantsMain.eventCell.fontSizeIcon))
@@ -18,6 +25,7 @@ struct EventCellView: View {
                 .padding(.leading, ConstantsMain.eventCell.paddingLeading)
                 .padding(.trailing, ConstantsMain.eventCell.paddingTrailing)
 
+                // MARK: Icon
                 if let iconData = model.iconData, let uiImage = UIImage(data: iconData) {
                     Image(uiImage: uiImage)
                         .resizable()
@@ -32,12 +40,14 @@ struct EventCellView: View {
                         .clipShape(Circle())
                 }
 
+                // MARK: Event Info
                 VStack(alignment: .leading, spacing: ConstantsMain.eventCell.VStackspacing) {
                     Text(model.title)
                         .font(.headline)
                         .lineLimit(ConstantsMain.eventCell.lineLimitText)
                         .truncationMode(.tail)
                         .layoutPriority(ConstantsMain.eventCell.layoutPriority)
+
                     Text("\(model.dateFormatted) \(model.dayOfWeek)")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
@@ -49,6 +59,7 @@ struct EventCellView: View {
 
             Spacer()
 
+            // MARK: - Right Section (Time Left)
             HStack {
                 NavigationLink(destination: editDestination()) {
                     Text(timeLeftString(model))
@@ -60,13 +71,14 @@ struct EventCellView: View {
                 }
                 .buttonStyle(PlainButtonStyle())
             }
-            .frame(minWidth: 72, alignment: .trailing)
+            .frame(minWidth: ConstantsMain.eventCell.frameMinHeight, alignment: .trailing)
             .padding(.trailing, ConstantsMain.eventCell.paddingTrailing)
         }
+
+        // MARK: - Cell Background
         .padding(.vertical, ConstantsMain.eventCell.paddingVertical)
         .background(Color.white)
         .cornerRadius(ConstantsMain.eventCell.cornerRadius)
         .shadow(radius: ConstantsMain.eventCell.shadowRadius)
     }
 }
-

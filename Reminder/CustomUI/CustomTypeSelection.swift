@@ -8,12 +8,8 @@ private enum Constants {
     static let listRowInsetBottom: CGFloat = 8
     static let listRowInsetTrailing: CGFloat = 20
     static let listRowInsets = EdgeInsets(top: listRowInsetTop, leading: listRowInsetLeading, bottom: listRowInsetBottom, trailing: listRowInsetTrailing)
-    
-    // Presentation constants for the menu.
     static let presentationHeight: CGFloat = 300
     static let presentationCornerRadius: CGFloat = 25
-    
-    // Row layout constants.
     static let hStackSpacing: CGFloat = 12
     static let imageFrameSize: CGFloat = 24
     static let vStackSpacing: CGFloat = 4

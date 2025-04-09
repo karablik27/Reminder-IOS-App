@@ -26,6 +26,7 @@ struct CustomCalendarView: View {
         static let bottomSpacer: CGFloat = 40
         static let explanationTopPadding: CGFloat = 8
         static let circleStrokeWidth: CGFloat = 2
+        static let greenOpacity: Double = 0.2
     }
 
     // MARK: - Properties
@@ -94,7 +95,7 @@ struct CustomCalendarView: View {
 
                 let explanation = selectedDate.beautifulReason(isUserDefined: false)
                 if !explanation.isEmpty {
-                    Text("Reason: \(explanation)")
+                    Text("Beautiful date: ".localized + "\(explanation)".localized)
                         .font(.title2)
                         .fontWeight(.bold)
                         .foregroundColor(.black)
@@ -137,7 +138,7 @@ struct CustomCalendarView: View {
             .foregroundColor(isBeautiful ? .green : .primary)
             .frame(width: Constants.dayCellSize, height: Constants.dayCellSize)
             .background(
-                Circle().fill(isSelected ? Color.green.opacity(0.2) : Color.clear)
+                Circle().fill(isSelected ? Color.green.opacity(Constants.greenOpacity) : Color.clear)
             )
             .overlay(
                 Circle().stroke(isSelected ? Colors.mainGreen : Color.clear, lineWidth: Constants.circleStrokeWidth)

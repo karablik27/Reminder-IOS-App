@@ -1,28 +1,32 @@
 import SwiftUI
 import SwiftData
 
-struct SearchView: View {
-    @ObservedObject var viewModel: MainViewModel
+struct EventsSearchView: View {
+    @ObservedObject var viewModel: EventsViewModel
     @Binding var isSearchActive: Bool
     @Environment(\.modelContext) private var modelContext
 
+    // MARK: - Body
     var body: some View {
         NavigationStack {
             VStack(spacing: SearchConstants.VStackSpacing) {
-                SearchHeaderView(
-                    title: "Events",
-                    searchText: $viewModel.searchText,
-                    placeholder: "Search events...",
-                    leftButtonAction: { withAnimation { isSearchActive = false } },
-                    rightButtonAction: { withAnimation { isSearchActive = false } }
-                )
                 
+                // MARK: - Search Header
+                SearchHeaderView(
+                    title: "Events".localized,
+                    searchText: $viewModel.searchText,
+                    placeholder: "Search events...".localized,
+                    dismissAction: { withAnimation { isSearchActive = false } }
+                )
+
+                // MARK: - Content Section
                 if viewModel.searchResults.isEmpty {
                     Spacer()
-                    Text("No events found")
+                    Text("No events found".localized)
                         .foregroundColor(.gray)
                     Spacer()
                 } else {
+                    // MARK: - Events List
                     List {
                         ForEach(viewModel.searchResults, id: \.id) { event in
                             EventCellView(
@@ -32,7 +36,10 @@ struct SearchView: View {
                                 editDestination: {
                                     AnyView(
                                         EditEventView(
-                                            viewModel: EditEventViewModel(modelContext: modelContext, event: event)
+                                            viewModel: EditEventViewModel(
+                                                modelContext: modelContext,
+                                                event: event
+                                            )
                                         )
                                         .environmentObject(viewModel)
                                     )
@@ -43,7 +50,7 @@ struct SearchView: View {
                                 Button(role: .destructive) {
                                     viewModel.deleteEvent(event)
                                 } label: {
-                                    Label("Delete", systemImage: "trash")
+                                    Label("Delete".localized, systemImage: "trash")
                                 }
                             }
                             .listRowSeparator(.hidden)
@@ -52,6 +59,7 @@ struct SearchView: View {
                     }
                     .listStyle(PlainListStyle())
                 }
+
                 Spacer()
             }
             .navigationBarHidden(true)

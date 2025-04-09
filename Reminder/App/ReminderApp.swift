@@ -10,7 +10,7 @@ struct ReminderApp: App {
         let schema = Schema([
             LoadingModel.self,
             WelcomeModel.self,
-            MainModel.self,
+            EventsModel.self,
             NotificationsModel.self,
             LocalizationModel.self,
         ])

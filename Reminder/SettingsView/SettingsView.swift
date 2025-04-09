@@ -48,7 +48,6 @@ struct SettingsView: View {
                             )
                         }
 
-                        
                         // Новая ячейка FAQ с переходом на экран FAQView
                         NavigationLink(destination: FAQView()) {
                             settingsRow(
@@ -58,28 +57,35 @@ struct SettingsView: View {
                         }
                         
                         NavigationLink(destination: ExtraInfoView()) {
-                                settingsRow(
-                                    title: "Extra",
-                                    systemImage: "gearshape.2"
-                                )
-                            }
+                            settingsRow(
+                                title: "Extra".localized,
+                                systemImage: "gearshape.2"
+                            )
+                        }
+                        
+                        NavigationLink(destination: WelcomeView(modelContext: modelContext, onDismiss: {})) {
+                            settingsRow(
+                                title: "Show Welcome".localized,
+                                systemImage: "sparkles"
+                            )
+                        }
                         
                         // Ячейка "Factory Reset" с подтверждением
                         Button {
                             showResetConfirmation = true
                         } label: {
                             settingsRow(
-                                title: "Factory Reset".localized,
+                                title: "Factory Reset ".localized,
                                 systemImage: "exclamationmark.arrow.circlepath",
                                 foregroundColor: .red
                             )
                         }
                         .buttonStyle(.plain)
-                        .confirmationDialog("Are you sure you want to factory reset?", isPresented: $showResetConfirmation, titleVisibility: .visible) {
-                            Button("Factory Reset", role: .destructive) {
+                        .confirmationDialog("Are you sure you want to factory reset?".localized, isPresented: $showResetConfirmation, titleVisibility: .visible) {
+                            Button("Factory Reset ".localized, role: .destructive) {
                                 viewModel.factoryReset()
                             }
-                            Button("Cancel", role: .cancel) { }
+                            Button("Cancel ".localized, role: .cancel) { }
                         }
                     }
                     .padding(.vertical, 16)
@@ -98,7 +104,6 @@ struct SettingsView: View {
         foregroundColor: Color = .black
     ) -> some View {
         HStack(spacing: 12) {
-            // Иконка в белом круге
             ZStack {
                 Circle()
                     .fill(Color.white)
@@ -108,14 +113,12 @@ struct SettingsView: View {
                     .foregroundColor(.gray)
             }
             
-            // Заголовок ячейки
             Text(title)
                 .font(.headline)
                 .foregroundColor(foregroundColor)
             
             Spacer()
             
-            // Стрелка вправо
             Image(systemName: "chevron.right")
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(.gray)

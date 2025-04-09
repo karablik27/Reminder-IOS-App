@@ -1,7 +1,9 @@
 import SwiftUI
 
+// MARK: - View Extension
 extension View {
     
+    // MARK: - Placeholder View Modifier
     func placeholder<Content: View>(
         when shouldShow: Bool,
         alignment: Alignment = .leading,
@@ -13,8 +15,8 @@ extension View {
         }
     }
     
+    // MARK: - Adjustable Opacity Modifier
     func adjustableOpacity(tabBarHeight: CGFloat = ConstantsMain.TabBar.height, margin: CGFloat = 8) -> some View {
         self.modifier(OpacityModifier(tabBarHeight: tabBarHeight, margin: margin))
     }
-    
 }

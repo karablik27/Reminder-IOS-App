@@ -9,7 +9,7 @@ class HistoryViewModel: ObservableObject {
     @Published var selectedEventType: EventTypeMain = .allEvents
     @Published var selectedSortOption: SortOption = .byDate
     @Published var isAscending = true
-    @Published var filteredModels: [MainModel] = []
+    @Published var filteredModels: [EventsModel] = []
     @Published var currentDate: Date = Date()
     @Published var searchText: String = ""
     
@@ -17,7 +17,7 @@ class HistoryViewModel: ObservableObject {
     private var modelContext: ModelContext
     private var timerCancellable: AnyCancellable?
     
-    var searchResults: [MainModel] {
+    var searchResults: [EventsModel] {
         let text = searchText.lowercased()
         if text.isEmpty {
             return filteredModels
@@ -37,7 +37,7 @@ class HistoryViewModel: ObservableObject {
     func loadHistoryEvents() {
         let now = Date()
         
-        var sortDescriptors: [SortDescriptor<MainModel>] = []
+        var sortDescriptors: [SortDescriptor<EventsModel>] = []
         switch selectedSortOption {
         case .byDate:
             sortDescriptors = [SortDescriptor(\.date, order: isAscending ? .forward : .reverse)]
@@ -45,7 +45,7 @@ class HistoryViewModel: ObservableObject {
             sortDescriptors = [SortDescriptor(\.title, order: isAscending ? .forward : .reverse)]
         }
         
-        let fetchDescriptor = FetchDescriptor<MainModel>(
+        let fetchDescriptor = FetchDescriptor<EventsModel>(
             predicate: #Predicate { event in
                 event.date <= now
             },
@@ -66,7 +66,7 @@ class HistoryViewModel: ObservableObject {
     }
     
     // MARK: - Deletion Methods
-    func deleteEvent(_ event: MainModel) {
+    func deleteEvent(_ event: EventsModel) {
         NotificationManager.cancelNotifications(for: event)
         modelContext.delete(event)
         do {
@@ -77,25 +77,6 @@ class HistoryViewModel: ObservableObject {
         }
     }
     
-    func deleteAllHistoryEvents() {
-        let now = Date()
-        let fetchDescriptor = FetchDescriptor<MainModel>(
-            predicate: #Predicate { event in
-                event.date <= now
-            }
-        )
-        do {
-            let allFinished = try modelContext.fetch(fetchDescriptor)
-            for event in allFinished {
-                NotificationManager.cancelNotifications(for: event)
-                modelContext.delete(event)
-            }
-            try modelContext.save()
-            loadHistoryEvents()
-        } catch {
-            print("Error deleting all finished events: \(error)")
-        }
-    }
     
     // MARK: - Sorting Methods
     func toggleSortDirection() {
@@ -104,7 +85,7 @@ class HistoryViewModel: ObservableObject {
     }
     
     // MARK: - Bookmark Handling
-    func toggleBookmark(for event: MainModel) {
+    func toggleBookmark(for event: EventsModel) {
         event.isBookmarked.toggle()
         do {
             try modelContext.save()
@@ -126,22 +107,8 @@ class HistoryViewModel: ObservableObject {
     }
     
     // MARK: - Time Calculation
-    func timeLeftString(for event: MainModel) -> String {
-        let now = currentDate
-        if event.date <= now {
-            return "Finish".localized
-        }
-        
-        let diff = event.date.timeIntervalSince(now)
-        let days = Int(diff / 86400)
-        if days >= 1 {
-            return "\(days)" + "days".localized
-        } else {
-            let hours = Int(diff / 3600)
-            let minutes = Int((diff.truncatingRemainder(dividingBy: 3600)) / 60)
-            let seconds = Int(diff.truncatingRemainder(dividingBy: 60))
-            return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
-        }
+    func timeLeftString(for event: EventsModel) -> String {
+        return "Finish".localized
     }
     
     // MARK: - Deinitializer
