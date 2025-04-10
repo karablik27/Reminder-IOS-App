@@ -1,95 +1,99 @@
 import SwiftUI
 import SwiftData
 
+// MARK: - Layout & Style Constants
+private enum LayoutConstants {
+    // Header
+    static let headerHorizontalPadding: CGFloat = 16
+    static let headerVerticalPadding: CGFloat = 8
+    static let headerFontSize: CGFloat = 24
+    static let backIconSize: CGFloat = 18
+    // Content Spacing
+    static let topStackSpacing: CGFloat = 0
+    static let sectionSpacing: CGFloat = 16
+    static let rowHStackSpacing: CGFloat = 12
+    // ScrollView Padding
+    static let scrollVerticalPadding: CGFloat = 16
+    static let scrollHorizontalPadding: CGFloat = 8
+    // Icons
+    static let rowIconSize: CGFloat = 40
+    static let rowIconFontSize: CGFloat = 18
+    static let disclosureIconFontSize: CGFloat = 16
+    // Card Styling
+    static let cornerRadius: CGFloat = 20
+    static let shadowRadius: CGFloat = 4
+    static let shadowXOffset: CGFloat = 0
+    static let shadowYOffset: CGFloat = 2
+    static let shadowOpacity: Double = 0.1
+}
+
 struct SettingsView: View {
     @ObservedObject var viewModel: SettingsViewModel
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
 
     @State private var showResetConfirmation: Bool = false
-    
+
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                // Верхняя панель с зелёным фоном
+            VStack(spacing: LayoutConstants.topStackSpacing) {
+                // MARK: - Header
                 HStack {
                     Button {
                         dismiss()
                     } label: {
                         Image(systemName: "chevron.left")
-                            .font(.system(size: 18, weight: .bold))
+                            .font(.system(size: LayoutConstants.backIconSize, weight: .bold))
                             .foregroundColor(.black)
                     }
                     Text("Settings".localized)
-                        .font(.system(size: 24, weight: .bold))
+                        .font(.system(size: LayoutConstants.headerFontSize, weight: .bold))
                         .foregroundColor(.black)
                         .frame(maxWidth: .infinity, alignment: .trailing)
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
+                .padding(.horizontal, LayoutConstants.headerHorizontalPadding)
+                .padding(.vertical, LayoutConstants.headerVerticalPadding)
                 .background(Colors.mainGreen)
-                
-                // Основное содержимое
-                ScrollView {
-                    VStack(spacing: 16) {
-                        // Ячейка с переходом к уведомлениям
-                        NavigationLink(destination: NotificationsView(modelContext: modelContext)) {
-                            settingsRow(
-                                title: "Notifications".localized,
-                                systemImage: "bell"
-                            )
-                        }
-                        
-                        // Ячейка с выбором языка
-                        NavigationLink(destination: LocalizationView(modelContext: modelContext)) {
-                            settingsRow(
-                                title: "Language".localized,
-                                systemImage: "globe"
-                            )
-                        }
 
-                        // Новая ячейка FAQ с переходом на экран FAQView
+                // MARK: - Content
+                ScrollView {
+                    VStack(spacing: LayoutConstants.sectionSpacing) {
+                        NavigationLink(destination: NotificationsView(modelContext: modelContext)) {
+                            settingsRow(title: "Notifications".localized, systemImage: "bell")
+                        }
+                        NavigationLink(destination: LocalizationView(modelContext: modelContext)) {
+                            settingsRow(title: "Language".localized, systemImage: "globe")
+                        }
                         NavigationLink(destination: FAQView()) {
-                            settingsRow(
-                                title: "FAQ".localized,
-                                systemImage: "questionmark.circle"
-                            )
+                            settingsRow(title: "FAQ".localized, systemImage: "questionmark.circle")
                         }
-                        
                         NavigationLink(destination: ExtraInfoView()) {
-                            settingsRow(
-                                title: "Extra".localized,
-                                systemImage: "gearshape.2"
-                            )
+                            settingsRow(title: "Extra".localized, systemImage: "gearshape.2")
                         }
-                        
                         NavigationLink(destination: WelcomeView(modelContext: modelContext, onDismiss: {})) {
-                            settingsRow(
-                                title: "Show Welcome".localized,
-                                systemImage: "sparkles"
-                            )
+                            settingsRow(title: "Show Welcome".localized, systemImage: "sparkles")
                         }
-                        
-                        // Ячейка "Factory Reset" с подтверждением
                         Button {
                             showResetConfirmation = true
                         } label: {
-                            settingsRow(
-                                title: "Factory Reset ".localized,
-                                systemImage: "exclamationmark.arrow.circlepath",
-                                foregroundColor: .red
-                            )
+                            settingsRow(title: "Factory Reset".localized,
+                                        systemImage: "exclamationmark.arrow.circlepath",
+                                        foregroundColor: .red)
                         }
                         .buttonStyle(.plain)
-                        .confirmationDialog("Are you sure you want to factory reset?".localized, isPresented: $showResetConfirmation, titleVisibility: .visible) {
-                            Button("Factory Reset ".localized, role: .destructive) {
+                        .confirmationDialog(
+                            "Are you sure you want to factory reset?".localized,
+                            isPresented: $showResetConfirmation,
+                            titleVisibility: .visible
+                        ) {
+                            Button("Factory Reset".localized, role: .destructive) {
                                 viewModel.factoryReset()
                             }
-                            Button("Cancel ".localized, role: .cancel) { }
+                            Button("Cancel".localized, role: .cancel) { }
                         }
                     }
-                    .padding(.vertical, 16)
-                    .padding(.horizontal, 8)
+                    .padding(.vertical, LayoutConstants.scrollVerticalPadding)
+                    .padding(.horizontal, LayoutConstants.scrollHorizontalPadding)
                 }
                 .background(Colors.background.ignoresSafeArea())
             }
@@ -97,35 +101,42 @@ struct SettingsView: View {
         .navigationBarBackButtonHidden(true)
         .navigationViewStyle(StackNavigationViewStyle())
     }
-    
+
+    // MARK: - Settings Row
     private func settingsRow(
         title: String,
         systemImage: String,
         foregroundColor: Color = .black
     ) -> some View {
-        HStack(spacing: 12) {
+        HStack(spacing: LayoutConstants.rowHStackSpacing) {
             ZStack {
                 Circle()
                     .fill(Color.white)
-                    .frame(width: 40, height: 40)
+                    .frame(width: LayoutConstants.rowIconSize,
+                           height: LayoutConstants.rowIconSize)
                 Image(systemName: systemImage)
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(.system(size: LayoutConstants.rowIconFontSize,
+                                  weight: .semibold))
                     .foregroundColor(.gray)
             }
-            
+
             Text(title)
                 .font(.headline)
                 .foregroundColor(foregroundColor)
-            
+
             Spacer()
-            
+
             Image(systemName: "chevron.right")
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: LayoutConstants.disclosureIconFontSize,
+                              weight: .semibold))
                 .foregroundColor(.gray)
         }
         .padding()
         .background(Color(.systemGray6))
-        .cornerRadius(20)
-        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+        .cornerRadius(LayoutConstants.cornerRadius)
+        .shadow(color: Color.black.opacity(LayoutConstants.shadowOpacity),
+                radius: LayoutConstants.shadowRadius,
+                x: LayoutConstants.shadowXOffset,
+                y: LayoutConstants.shadowYOffset)
     }
 }

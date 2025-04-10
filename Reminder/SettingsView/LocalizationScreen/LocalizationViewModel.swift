@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 import Combine
 
+// MARK: - LocalizationViewModel
 final class LocalizationViewModel: ObservableObject {
     @Published var selectedLanguage: String = Locale.current.language.languageCode?.identifier ?? "en"
     

@@ -87,7 +87,7 @@ struct PhotoGridSectionView: View {
             .frame(height: isPhotoGridExpanded ? nil : EventInformationUI.photoGridCollapsedHeight)
             
             if isSelectionMode && !selectedForDeletion.isEmpty {
-                Button("Delete Selected (\(selectedForDeletion.count))") {
+                Button("Delete Selected ".localized + "(\(selectedForDeletion.count))") {
                     withAnimation {
                         deleteSelectedPhotos()
                     }

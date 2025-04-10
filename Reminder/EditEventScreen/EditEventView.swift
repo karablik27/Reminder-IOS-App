@@ -84,6 +84,22 @@ struct EditEventView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+        .actionSheet(isPresented: $showIconActionSheet) {
+            ActionSheet(title: Text("Choose icon".localized), buttons: [
+                .default(Text("Take Photo".localized)) {
+                    showCamera = true
+                    showImagePicker = true
+                },
+                .default(Text("Choose from Gallery".localized)) {
+                    showCamera = false
+                    showImagePicker = true
+                },
+                .default(Text("Use default icon".localized)) {
+                    userSelectedImage = nil
+                },
+                .cancel()
+            ])
+        }
         // MARK: Sheets
         .sheet(isPresented: $showCalendarSheet) {
             CustomCalendarView(selectedDate: $viewModel.eventDate)
@@ -128,7 +144,7 @@ struct EditEventView: View {
 }
 
 extension EditEventView {
-    // Блок с кнопками действий (Delete и Save)
+
     private var actionButtons: some View {
         HStack(spacing: CommonConstants.sectionSpacing / 2) {
             Button {

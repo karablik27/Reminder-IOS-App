@@ -1,6 +1,7 @@
 import Combine
 import SwiftUI
 
+// MARK: - LocalizationManager
 class LocalizationManager: ObservableObject {
     static let shared = LocalizationManager()
     

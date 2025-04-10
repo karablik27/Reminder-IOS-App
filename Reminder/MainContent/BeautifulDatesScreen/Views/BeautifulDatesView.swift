@@ -26,15 +26,14 @@ struct BeautifulDatesView: View {
     // MARK: - Body
     var body: some View {
         VStack(spacing: ConstantsMain.body.VStackspacing) {
-            
-            // MARK: Header Section
+            // MARK: Header
             HeaderSectionView(title: "Beautiful Dates".localized) {
                 showSettings = true
             }
             .padding(.horizontal)
             .padding(.top, ConstantsMain.body.headerSectionPadding)
 
-            // MARK: Sort & Filter Section
+            // MARK: Sort Section
             SortSectionView(
                 selectedType: viewModel.selectedEventType.rawValue,
                 selectedSortOption: viewModel.selectedSortOption.rawValue,
@@ -54,14 +53,10 @@ struct BeautifulDatesView: View {
             )
             .padding(.horizontal)
 
-            // MARK: Events Content Section
+            // MARK: Content
             contentSection
         }
-
-        // MARK: - Modifiers
         .environment(\.modelContext, modelContext)
-
-        // MARK: - Sheets
         .sheet(isPresented: $showTypeMenu, onDismiss: {
             isTypeExpanded = false
             viewModel.loadBeautifulEvents()
@@ -76,8 +71,6 @@ struct BeautifulDatesView: View {
             SortSelectionMenu(isPresented: $showSortMenu,
                               selectedSort: $viewModel.selectedSortOption)
         }
-
-        // MARK: - Search & Settings
         .fullScreenCover(isPresented: $showSearchView) {
             BeautifulDatesSearchView(viewModel: viewModel, isSearchActive: $showSearchView)
                 .environment(\.modelContext, modelContext)
@@ -85,16 +78,13 @@ struct BeautifulDatesView: View {
         .navigationDestination(isPresented: $showSettings) {
             SettingsView(viewModel: SettingsViewModel(modelContext: modelContext))
         }
-
-        // MARK: - Lifecycle
         .onAppear { viewModel.loadBeautifulEvents() }
         .environmentObject(viewModel)
     }
 
-    // MARK: - Content Section View
+    // MARK: - Content Section
     private var contentSection: some View {
         if viewModel.filteredModels.isEmpty {
-            // MARK: Empty State
             AnyView(
                 VStack(spacing: ConstantsMain.contentSection.VStackspacing) {
                     Spacer(minLength: ConstantsMain.contentSection.spacer)
@@ -108,7 +98,6 @@ struct BeautifulDatesView: View {
                 }
             )
         } else {
-            // MARK: Events List
             AnyView(
                 List {
                     ForEach(viewModel.filteredModels, id: \.id) { model in

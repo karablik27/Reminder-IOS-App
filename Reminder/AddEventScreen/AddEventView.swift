@@ -81,6 +81,22 @@ struct AddEventView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+        .actionSheet(isPresented: $showIconActionSheet) {
+            ActionSheet(title: Text("Choose icon".localized), buttons: [
+                .default(Text("Take Photo".localized)) {
+                    showCamera = true
+                    showImagePicker = true
+                },
+                .default(Text("Choose from Gallery".localized)) {
+                    showCamera = false
+                    showImagePicker = true
+                },
+                .default(Text("Use default icon".localized)) {
+                    userSelectedImage = nil
+                },
+                .cancel()
+            ])
+        }
         // MARK: - Sheets
         .sheet(isPresented: $showCalendarSheet) {
             CustomCalendarView(selectedDate: $viewModel.newEventDate)
@@ -127,8 +143,8 @@ struct AddEventView: View {
     }
 }
 
+// MARK: - AddEventView
 extension AddEventView {
-    // Кнопка создания события
     private var createButton: some View {
         Button {
             if let userImage = userSelectedImage {

@@ -107,21 +107,25 @@ class BeautifulDatesViewModel: ObservableObject {
     }
 
     func timeLeftString(for event: EventsModel) -> String {
-        let calendar = Calendar.current
-        let startOfToday = calendar.startOfDay(for: currentDate)
-        let startOfEventDay = calendar.startOfDay(for: event.date)
+        let now = currentDate
+        let diff = event.date.timeIntervalSince(now)
         
-        guard let dayCount = calendar.dateComponents([.day], from: startOfToday, to: startOfEventDay).day else {
+        if diff <= 0 {
             return "Finish".localized
         }
         
-        if dayCount <= 0 {
-            return "Finish".localized
-        }
+        let secondsInDay: TimeInterval = 24 * 3600
         
-        // Возвращаем строку с правильно локализованной формой дня
-        return localizedDaysString(dayCount)
+        if diff >= secondsInDay {
+            let days = Int(diff / secondsInDay)
+            return localizedDaysString(days)
+        }
+        let hours = Int(diff / 3600)
+        let minutes = Int((diff.truncatingRemainder(dividingBy: 3600)) / 60)
+        let seconds = Int(diff.truncatingRemainder(dividingBy: 60))
+        return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
     }
+
     
     var searchResults: [EventsModel] {
         let text = searchText.lowercased()

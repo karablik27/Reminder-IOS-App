@@ -1,6 +1,7 @@
 import Foundation
 import SwiftData
 
+// MARK: - NotificationsModel
 @Model
 final class NotificationsModel {
     @Attribute var id: UUID = UUID()

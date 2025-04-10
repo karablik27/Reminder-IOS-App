@@ -28,6 +28,7 @@ struct ReminderApp: App {
         WindowGroup {
             LoadingView()
                 .modelContainer(sharedModelContainer)
+                .preferredColorScheme(.light)
         }
     }
 }

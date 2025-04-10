@@ -2,6 +2,7 @@ import SwiftUI
 import Combine
 import SwiftData
 
+//MARK: - SettingsViewModel
 final class SettingsViewModel: ObservableObject {
 
     private var modelContext: ModelContext

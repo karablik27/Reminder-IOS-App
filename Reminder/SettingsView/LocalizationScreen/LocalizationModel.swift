@@ -1,6 +1,7 @@
 import SwiftData
 import Foundation
 
+// MARK: - LocalizationModel
 @Model
 final class LocalizationModel {
     var selectedLanguage: String

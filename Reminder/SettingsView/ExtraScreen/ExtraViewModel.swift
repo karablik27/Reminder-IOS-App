@@ -1,6 +1,7 @@
 import Foundation
 import MachO
 
+// MARK: - ExtraViewModel
 class ExtraViewModel: ObservableObject {
     @Published var appVersion: String = ""
     @Published var memoryUsage: String = ""

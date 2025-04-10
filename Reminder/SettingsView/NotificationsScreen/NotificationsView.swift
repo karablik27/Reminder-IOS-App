@@ -1,6 +1,23 @@
 import SwiftUI
 import SwiftData
 
+// MARK: - Constants
+private enum Constants {
+    static let vStackSpacing: CGFloat = 0
+    static let rowSpacing: CGFloat = 16
+    static let verticalPadding: CGFloat = 16
+    static let horizontalPadding: CGFloat = 8
+    static let rowPadding: CGFloat = 16
+    static let iconSize: CGFloat = 40
+    static let iconFontSize: CGFloat = 18
+    static let cornerRadius: CGFloat = 20
+    static let shadowOpacity: Double = 0.1
+    static let shadowRadius: CGFloat = 4
+    static let shadowX: CGFloat = 0
+    static let shadowY: CGFloat = 2
+}
+
+// MARK: - NotificationsView
 struct NotificationsView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
@@ -10,71 +27,49 @@ struct NotificationsView: View {
         _viewModel = StateObject(wrappedValue: NotificationsViewModel(context: modelContext))
     }
     
-    // Вычисляемая привязка для переключателя, вызывающая togglePush при изменении значения
-    var pushBinding: Binding<Bool> {
+    private var pushBinding: Binding<Bool> {
         Binding(
             get: { viewModel.settings.isPushEnabled },
-            set: { newValue in
-                viewModel.togglePush(newValue, context: modelContext)
-            }
+            set: { newValue in viewModel.togglePush(newValue, context: modelContext) }
         )
     }
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                // Верхняя зелёная панель
-                HStack {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 18, weight: .bold))
-                            .foregroundColor(.black)
-                    }
-                    Text("Notifications".localized)
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(.black)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
+            VStack(spacing: Constants.vStackSpacing) {
+                TopHeaderView(title: "Notifications".localized) {
+                    dismiss()
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(Colors.mainGreen) // Зеленый фон, как в SettingsView
-                
-                // Основное содержимое
+
                 ScrollView {
-                    VStack(spacing: 16) {
-                        // Ячейка с переключателем
+                    VStack(spacing: Constants.rowSpacing) {
                         settingsToggleRow(
                             title: "Push Notifications".localized,
                             systemImage: "bell",
                             isOn: pushBinding
                         )
                     }
-                    .padding(.vertical, 16)
-                    .padding(.horizontal, 8)
+                    .padding(.vertical, Constants.verticalPadding)
+                    .padding(.horizontal, Constants.horizontalPadding)
                 }
-                .background(Colors.background.ignoresSafeArea()) // Светлый фон, как в SettingsView
+                .background(Colors.background.ignoresSafeArea())
             }
         }
-        .navigationBarBackButtonHidden(true)
-        .navigationViewStyle(StackNavigationViewStyle())
     }
     
-    /// Ячейка с переключателем, стилизованная аналогично SettingsView
+    // MARK: - settingsToggleRow
     private func settingsToggleRow(
         title: String,
         systemImage: String,
         isOn: Binding<Bool>
     ) -> some View {
-        HStack(spacing: 12) {
-            // Иконка в белом круге
+        HStack(spacing: Constants.rowSpacing) {
             ZStack {
                 Circle()
                     .fill(Color.white)
-                    .frame(width: 40, height: 40)
+                    .frame(width: Constants.iconSize, height: Constants.iconSize)
                 Image(systemName: systemImage)
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(.system(size: Constants.iconFontSize, weight: .semibold))
                     .foregroundColor(.gray)
             }
             
@@ -84,14 +79,13 @@ struct NotificationsView: View {
             
             Spacer()
             
-            // Переключатель с вычисляемой привязкой
             Toggle("", isOn: isOn)
                 .labelsHidden()
                 .toggleStyle(SwitchToggleStyle(tint: Color.green))
         }
-        .padding()
+        .padding(Constants.rowPadding)
         .background(Color(.systemGray6))
-        .cornerRadius(20)
-        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+        .cornerRadius(Constants.cornerRadius)
+        .shadow(color: Color.black.opacity(Constants.shadowOpacity), radius: Constants.shadowRadius, x: Constants.shadowX, y: Constants.shadowY)
     }
 }

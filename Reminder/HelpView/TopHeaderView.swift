@@ -1,7 +1,6 @@
 import SwiftUI
 
-// MARK: - Константы для TopHeaderView (верхней панели)
-
+// MARK: - TopHeaderConstants
 private enum TopHeaderConstants {
     static let fontSizeImage: CGFloat = 18
     static let fontSizeTitle: CGFloat = 24
@@ -9,8 +8,7 @@ private enum TopHeaderConstants {
     static let paddingVertical: CGFloat = 8
 }
 
-// MARK: - Subview: TopHeaderView
-
+// MARK: - TopHeaderView
 struct TopHeaderView: View {
     let title: String
     let onBack: () -> Void

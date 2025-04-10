@@ -1,61 +1,76 @@
 import SwiftUI
 import SwiftData
 
+// MARK: - Constants
+
+private enum LocalizationViewConstants {
+    static let containerSpacing: CGFloat = 0
+    static let rowPadding: CGFloat = 16
+    static let rowHeight: CGFloat = 64
+    static let rowBackgroundColor: Color = Color(.systemGray6)
+    static let cornerRadius: CGFloat = 20
+    static let shadowColor: Color = Color.black.opacity(0.1)
+    static let shadowRadius: CGFloat = 4
+    static let shadowOffsetX: CGFloat = 0
+    static let shadowOffsetY: CGFloat = 2
+    static let checkmarkCircleSize: CGFloat = 30
+    static let checkmarkFontSize: CGFloat = 16
+}
+
 struct LocalizationView: View {
     @StateObject private var viewModel: LocalizationViewModel
     @Environment(\.dismiss) private var dismiss
 
-    // Принимаем modelContext из родительского экрана
     init(modelContext: ModelContext) {
-        _viewModel = StateObject(wrappedValue: LocalizationViewModel(modelContext: modelContext))
+        _viewModel = StateObject(
+            wrappedValue: LocalizationViewModel(modelContext: modelContext)
+        )
     }
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                HStack {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 18, weight: .bold))
-                            .foregroundColor(.black)
-                    }
-                    Text("Language".localized)
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(.black)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
+            VStack(spacing: LocalizationViewConstants.containerSpacing) {
+                TopHeaderView(title: "Language".localized) {
+                    dismiss()
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(Colors.mainGreen)
-                
+
                 List {
-                    ForEach(viewModel.sortedLanguageCodes, id: \.self) { languageCode in
+                    ForEach(viewModel.sortedLanguageCodes, id: \.self) { code in
                         Button {
-                            viewModel.selectLanguage(languageCode)
+                            viewModel.selectLanguage(code)
                         } label: {
                             HStack {
-                                Text(viewModel.availableLanguages[languageCode] ?? languageCode)
+                                Text(viewModel.availableLanguages[code] ?? code)
                                     .font(.headline)
                                     .foregroundColor(.black)
                                 Spacer()
-                                if viewModel.selectedLanguage == languageCode {
+                                if viewModel.selectedLanguage == code {
                                     ZStack {
                                         Circle()
                                             .fill(Color.white)
-                                            .frame(width: 30, height: 30)
+                                            .frame(
+                                                width: LocalizationViewConstants.checkmarkCircleSize,
+                                                height: LocalizationViewConstants.checkmarkCircleSize
+                                            )
                                         Image(systemName: "checkmark")
-                                            .font(.system(size: 16, weight: .semibold))
-                                            .foregroundColor(Color.green)
+                                            .font(.system(
+                                                size: LocalizationViewConstants.checkmarkFontSize,
+                                                weight: .semibold
+                                            ))
+                                            .foregroundColor(.green)
                                     }
                                 }
                             }
-                            .padding()
-                            .frame(height: 64)
-                            .background(Color(.systemGray6))
-                            .cornerRadius(20)
-                            .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                            .padding(LocalizationViewConstants.rowPadding)
+                            .frame(height: LocalizationViewConstants.rowHeight)
+                            .background(LocalizationViewConstants.rowBackgroundColor)
+                            .cornerRadius(LocalizationViewConstants.cornerRadius)
+                            .shadow(
+                                color: LocalizationViewConstants.shadowColor,
+                                radius: LocalizationViewConstants.shadowRadius,
+                                x: LocalizationViewConstants.shadowOffsetX,
+                                y: LocalizationViewConstants.shadowOffsetY
+                            )
                         }
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
@@ -64,7 +79,5 @@ struct LocalizationView: View {
                 .listStyle(PlainListStyle())
             }
         }
-        .navigationBarBackButtonHidden(true)
-        .navigationViewStyle(StackNavigationViewStyle())
     }
 }

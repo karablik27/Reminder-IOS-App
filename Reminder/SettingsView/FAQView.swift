@@ -1,13 +1,26 @@
 import SwiftUI
 
-// MARK: - FAQ Card View with Uniform Size
+// MARK: - Layout Constants
+private enum LayoutConstants {
+    static let cardPadding: CGFloat = 16
+    static let cardSpacing: CGFloat = 8
+    static let cardMinHeight: CGFloat = 160
+    static let cornerRadius: CGFloat = 20
+    static let shadowRadius: CGFloat = 4
+    static let shadowXOffset: CGFloat = 0
+    static let shadowYOffset: CGFloat = 2
+    static let shadowOpacity: Double = 0.1
+    static let FAQVerticalSpacing: CGFloat = 16
+    static let FAQHorizontalPadding: CGFloat = 16
+}
 
+// MARK: - FAQ Card View with Uniform Size
 struct FAQCardView: View {
     let question: String
     let answer: String
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: LayoutConstants.cardSpacing) {
             Text(question)
                 .font(.headline)
                 .foregroundColor(.black)
@@ -15,11 +28,16 @@ struct FAQCardView: View {
                 .font(.body)
                 .foregroundColor(.primary)
         }
-        .padding()
-        .frame(maxWidth: .infinity, minHeight: 160, alignment: .topLeading)
+        .padding(LayoutConstants.cardPadding)
+        .frame(maxWidth: .infinity,
+               minHeight: LayoutConstants.cardMinHeight,
+               alignment: .topLeading)
         .background(Color(.systemGray6))
-        .cornerRadius(20)
-        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+        .cornerRadius(LayoutConstants.cornerRadius)
+        .shadow(color: Color.black.opacity(LayoutConstants.shadowOpacity),
+                radius: LayoutConstants.shadowRadius,
+                x: LayoutConstants.shadowXOffset,
+                y: LayoutConstants.shadowYOffset)
     }
 }
 
@@ -29,11 +47,11 @@ struct FAQView: View {
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 16) {
+            VStack(spacing: LayoutConstants.FAQVerticalSpacing) {
                 TopHeaderView(title: "FAQ".localized, onBack: { dismiss() })
                 
                 ScrollView {
-                    VStack(spacing: 16) {
+                    VStack(spacing: LayoutConstants.FAQVerticalSpacing) {
                         FAQCardView(
                             question: "Q: What are beautiful dates?".localized,
                             answer: "A: Beautiful dates are dates that meet certain aesthetic and symbolic criteria making them memorable.".localized
@@ -47,8 +65,8 @@ struct FAQView: View {
                             answer: "A: They can be used for planning events, celebrations, or personal occasions to add a unique touch.".localized
                         )
                     }
-                    .padding(.vertical, 16)
-                    .padding(.horizontal, 16)
+                    .padding(.vertical, LayoutConstants.FAQVerticalSpacing)
+                    .padding(.horizontal, LayoutConstants.FAQHorizontalPadding)
                 }
                 
                 Spacer()

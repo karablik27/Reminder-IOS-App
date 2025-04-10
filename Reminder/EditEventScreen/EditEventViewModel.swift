@@ -17,8 +17,6 @@ class EditEventViewModel: ObservableObject {
     @Published var iconData: Data?
     @Published var selectedForDeletion: Set<Int> = []
     @Published var isSelectionMode: Bool = false
-
-    // Новое свойство для хранения дополнительных фотографий (для редактирования информации)
     @Published var additionalPhotos: [UIImage] = []
 
     var displayedTitle: String {
@@ -62,7 +60,6 @@ class EditEventViewModel: ObservableObject {
         event.firstRemind = firstRemind
         event.howOften = howOften
         event.iconData = iconData
-        // Обновляем дополнительные фотографии
         event.photos = additionalPhotos.compactMap { $0.jpegData(compressionQuality: 1.0) }
         do {
             try modelContext.save()

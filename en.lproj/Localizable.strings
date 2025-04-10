@@ -271,7 +271,7 @@
 "Select" = "Select";
 "Show More" = "Show More";
 "Show Less" = "Show Less";
-"Delete Selected" = "Delete Selected";
+"Delete Selected " = "Delete Selected ";
 "Search history..." = "Search history...";
 "No history events found" = "No history events found";
 "Search events..." = "Search events...";
@@ -293,3 +293,6 @@
 "A: They can be used for planning events, celebrations, or personal occasions to add a unique touch." = "A: They can be used for planning events, celebrations, or personal occasions to add a unique touch.";
 "App Version:" = "App Version:";
 "Memory Usage:" = "Memory Usage:";
+"Event Ended" = "Event Ended";
+"The event" = "The event";
+" has ended!" = " has ended!";

@@ -1,5 +1,6 @@
 import Foundation
 
+// MARK: - Localizer
 class Localizer {
     static var selectedLanguage: String = Locale.current.language.languageCode?.identifier ?? "en" {
         didSet {

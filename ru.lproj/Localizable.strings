@@ -259,7 +259,7 @@
 "Select" = "Выбрать";
 "Show More" = "Показать больше";
 "Show Less" = "Показать меньше";
-"Delete Selected" = "Удалить выбранное";
+"Delete Selected " = "Удалить выбранное ";
 "Search history..." = "Поиск в истории...";
 "No history events found" = "История событий не найдена";
 "Search events..." = "Поиск событий...";
@@ -281,3 +281,6 @@
 "A: They can be used for planning events, celebrations, or personal occasions to add a unique touch." = "О: Их можно использовать для планирования мероприятий, праздников или личных случаев, чтобы добавить уникальности.";
 "App Version:" = "Версия приложения:";
 "Memory Usage:" = "Использование памяти:";
+"Event Ended" = "Событие завершилось";
+"The event" = "Событие";
+" has ended!" = " завершилось!";
